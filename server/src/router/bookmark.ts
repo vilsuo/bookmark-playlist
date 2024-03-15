@@ -5,6 +5,8 @@ import { singleUpload } from '../util/fileUpload';
 
 const router = express();
 
+// TODO
+// - specify header in formData fields
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   singleUpload(req, res, async (uploadError: unknown) => {
     if (uploadError) return next(uploadError);
@@ -23,8 +25,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       const fileString = file.buffer.toString();
 
       const links = linkParser.getHeaderNextDlSiblingLinks(fileString, 'music');
-      return res.status(201).send(links);  
-
+      return res.status(201).send(links);
     } catch (error) {
       console.log('Error', error);
       next(error);

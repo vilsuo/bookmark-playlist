@@ -3,7 +3,7 @@ import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 
 const options = {
-  storage: multer.memoryStorage()
+  storage: multer.memoryStorage(),
 };
 
 const FILE_TYPES = ['html'];
@@ -21,9 +21,11 @@ const fileFilter: FileFilter = (_req, file, cb) => {
     return cb(null, true);
   }
 
-  return cb(new Error(
-    `File upload only supports the filetypes [${FILE_TYPES.join('|')}]`,
-  ));
+  return cb(
+    new Error(
+      `File upload only supports the filetypes [${FILE_TYPES.join('|')}]`,
+    ),
+  );
 };
 
 const fileUpload = multer({

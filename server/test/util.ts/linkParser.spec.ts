@@ -41,7 +41,7 @@ type HtmlElement = {
  */
 type LinkElement = {
   tag: 'a';
-  attributes: Attributes & { href: string; };
+  attributes: Attributes & { href: string };
   content: string;
 };
 
@@ -116,11 +116,14 @@ type BodyElement = {
 };
 
 const isElement = (value: unknown): value is HtmlElement => {
-  return (value !== null && typeof value === 'object' && 'tag' in value);
+  return value !== null && typeof value === 'object' && 'tag' in value;
 };
 
 const isElementArray = (value: unknown): value is Array<HtmlElement> => {
-  return (Array.isArray(value) && value.filter(c => isElement(c)).length === value.length);
+  return (
+    Array.isArray(value) &&
+    value.filter((c) => isElement(c)).length === value.length
+  );
 };
 
 const parseAttributes = (attributes: Attributes) => {
@@ -129,15 +132,20 @@ const parseAttributes = (attributes: Attributes) => {
     .join(' ');
 };
 
-const parseElement = ({ tag, attributes, content }: HtmlElement, indent = 0) => {
-  const attributeString = attributes
-    ? ' ' + parseAttributes(attributes)
-    : '';
+const parseElement = (
+  { tag, attributes, content }: HtmlElement,
+  indent = 0,
+) => {
+  const attributeString = attributes ? ' ' + parseAttributes(attributes) : '';
 
   let children = '';
-  if (typeof content === 'string')  children = content;
-  else if (isElement(content))      children = parseElement(content, indent + 1);
-  else if (isElementArray(content)) children = content.map(c => parseElement(c, indent + 1)).join('');
+  if (typeof content === 'string') {
+    children = content;
+  } else if (isElement(content)) {
+    children = parseElement(content, indent + 1);
+  } else if (isElementArray(content)) {
+    children = content.map((c) => parseElement(c, indent + 1)).join('');
+  }
 
   return `
     ${'  '.repeat(indent)}<${tag}${attributeString}>
@@ -146,12 +154,12 @@ const parseElement = ({ tag, attributes, content }: HtmlElement, indent = 0) => 
   `;
 };
 
-// CREATING 
+// CREATING
 
 const createLinkElement = (href: string, text: string): LinkElement => ({
   tag: 'a',
   attributes: { href },
-  content: text
+  content: text,
 });
 
 const createHeaderElement = (level: number, text: string): HeaderElement => {
@@ -173,7 +181,11 @@ const createDtSingle = (linkElement: LinkElement): DtSingleElement => ({
   content: linkElement,
 });
 
-const createDtFolder = (level: number, headerText: string, dlElement: DlElement): DtFolderElement => ({
+const createDtFolder = (
+  level: number,
+  headerText: string,
+  dlElement: DlElement,
+): DtFolderElement => ({
   tag: 'dt',
   content: [
     createHeaderElement(level, headerText),
@@ -182,21 +194,24 @@ const createDtFolder = (level: number, headerText: string, dlElement: DlElement)
   ],
 });
 
-const createDlElement = (dtElements: Array<DtFolderElement | DtSingleElement>): DlElement => ({
+const createDlElement = (
+  dtElements: Array<DtFolderElement | DtSingleElement>,
+): DlElement => ({
   tag: 'dl',
-  content: [
-    createParagraphElement(),
-    ...dtElements,
-  ],
+  content: [createParagraphElement(), ...dtElements],
 });
 
-const createBodyElement = (level: number, headerText: string, dlElement: DlElement): BodyElement => ({
+const createBodyElement = (
+  level: number,
+  headerText: string,
+  dlElement: DlElement,
+): BodyElement => ({
   tag: 'body',
   content: [
     createHeaderElement(level, headerText),
     dlElement,
     createParagraphElement(),
-  ]
+  ],
 });
 
 // SAMPLE
@@ -205,10 +220,10 @@ const linkHrefTemplate = 'http://localhost:3000/some/addr/';
 const linkTextTemplate = 'Link';
 
 // create 10 single dts with links inside
-const singles = [...Array(10).keys()].map(
-  int => createDtSingle(
-    createLinkElement(linkHrefTemplate + int, linkTextTemplate + int)
-  )
+const singles = [...Array(10).keys()].map((int) =>
+  createDtSingle(
+    createLinkElement(linkHrefTemplate + int, linkTextTemplate + int),
+  ),
 );
 
 // create 3 dls for the folders
@@ -259,7 +274,6 @@ describe('linkParser', () => {
     });
   });
 
-
   describe('two links', () => {
     const header = 'Folder 2';
     const links = getHeaderNextDlSiblingLinks(parsedBody, header);
@@ -272,15 +286,16 @@ describe('linkParser', () => {
   it('error is thrown when header is not found', () => {
     const missingHeader = 'This does not exist';
 
-    expect(() => getHeaderNextDlSiblingLinks(parsedBody, missingHeader))
-      .toThrow(Error);
+    expect(() =>
+      getHeaderNextDlSiblingLinks(parsedBody, missingHeader),
+    ).toThrow(Error);
   });
 
   it('error is thrown if parent dl tag is not closed', () => {
-    const header = 'My header'
-    const badString = '<body><h3>' + header + '</h3><dl><a href="link">txt</a></body>';
+    const header = 'My header';
+    const badString =
+      '<body><h3>' + header + '</h3><dl><a href="link">txt</a></body>';
 
-    expect(() => getHeaderNextDlSiblingLinks(badString, header))
-      .toThrow(Error);
+    expect(() => getHeaderNextDlSiblingLinks(badString, header)).toThrow(Error);
   });
 });

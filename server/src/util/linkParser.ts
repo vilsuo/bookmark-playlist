@@ -28,13 +28,21 @@ const getHeaderRange = (htmlString: string, header: string): Range => {
     }
 
     if (standardized.at(currentIdx) === '<') {
-      const substring = standardized.substring(currentIdx, currentIdx + TAG_CLOSE.length);
+      const substring = standardized.substring(
+        currentIdx,
+        currentIdx + TAG_CLOSE.length,
+      );
 
-      if (substring.startsWith(TAG_OPEN)) openedTags.push(currentIdx);
-      else if (substring.startsWith(TAG_CLOSE)) closedTags.push(currentIdx);
+      if (substring.startsWith(TAG_OPEN)) {
+        openedTags.push(currentIdx);
+      } else if (substring.startsWith(TAG_CLOSE)) {
+        closedTags.push(currentIdx);
+      }
 
       // break if parent tag has been opened and closed
-      if (openedTags.length > 0 && openedTags.length === closedTags.length) break;
+      if (openedTags.length > 0 && openedTags.length === closedTags.length) {
+        break;
+      }
     }
 
     currentIdx++;
@@ -46,14 +54,17 @@ const getHeaderRange = (htmlString: string, header: string): Range => {
   };
 };
 
-const getHtmlBlock = (htmlString: string, { start, end }: Range): htmlParser.HTMLElement => {
+const getHtmlBlock = (
+  htmlString: string,
+  { start, end }: Range,
+): htmlParser.HTMLElement => {
   return htmlParser.parse(htmlString.substring(start, end));
 };
 
 const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
   const links = htmlBlock.querySelectorAll('a');
 
-  return links.map(link => ({
+  return links.map((link) => ({
     title: link.textContent,
     href: link.getAttribute('href'),
   }));
@@ -62,9 +73,9 @@ const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
 /**
  * Searches for HTML link elements based on a header. Search is limited to
  * inside the header elements next sibling 'dl' element. Header is case insensitive
- * 
+ *
  * If given header 'Header 1' and the htmlString is:
- * 
+ *
  * <body>
  *   <h1>Bookmarks<h1>
  *   <dl>
@@ -83,14 +94,17 @@ const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
  *      </dl>
  *   </dl>
  * </body>,
- * 
+ *
  * then only the link { title: 'B', href: link2 } is returned.
- * 
+ *
  * @param htmlString
  * @param header
  * @returns Array of link element text and href attributes
  */
-export const getHeaderNextDlSiblingLinks = (htmlString: string, header: string) => {
+export const getHeaderNextDlSiblingLinks = (
+  htmlString: string,
+  header: string,
+) => {
   const range = getHeaderRange(htmlString, header);
   const block = getHtmlBlock(htmlString, range);
   const links = getLinksFromHtmlBlock(block);
