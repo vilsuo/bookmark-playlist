@@ -1,6 +1,6 @@
 import * as htmlParser from 'node-html-parser';
 
-const TAG = 'DL';
+const TAG = 'dl';
 const TAG_OPEN = `<${TAG}>`;
 const TAG_CLOSE = `</${TAG}>`;
 
@@ -10,10 +10,12 @@ type Range = {
 };
 
 // TODO
-// - find out the tag from looking at the string
+// - find out the tag from looking at the string?
 export const getHeaderRange = (htmlString: string, name: string): Range => {
-  const headerRegex = new RegExp(`>${name}</[h|H][1-6]>`);
-  const startIdx = htmlString.search(headerRegex);
+  const headerRegex = new RegExp(`>${name}</h[1-6]>`);
+
+  const standardized = htmlString.toLowerCase();
+  const startIdx = standardized.search(headerRegex);
 
   if (startIdx === -1) throw new Error('Header was not found');
 
@@ -22,13 +24,13 @@ export const getHeaderRange = (htmlString: string, name: string): Range => {
   let currentIdx = startIdx;
 
   while (true) {
-    if (currentIdx > htmlString.length - TAG_CLOSE.length) {
+    if (currentIdx > standardized.length - TAG_CLOSE.length) {
       // reached the end without break condition
       throw new Error(`Parent tag '${TAG}' was not opened or closed`);
     }
 
-    if (htmlString.at(currentIdx) === '<') {
-      const substring = htmlString.substring(currentIdx, currentIdx + TAG_CLOSE.length);
+    if (standardized.at(currentIdx) === '<') {
+      const substring = standardized.substring(currentIdx, currentIdx + TAG_CLOSE.length);
 
       if (substring.startsWith(TAG_OPEN)) openedTags.push(currentIdx);
       else if (substring.startsWith(TAG_CLOSE)) closedTags.push(currentIdx);
