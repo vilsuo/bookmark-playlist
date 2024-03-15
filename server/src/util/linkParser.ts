@@ -10,7 +10,7 @@ type Range = {
 };
 
 const getHeaderRange = (htmlString: string, header: string): Range => {
-  const headerRegex = new RegExp(`>\\s*${header}\\s*</h[1-6]>`);
+  const headerRegex = new RegExp(`>\\s*${header.toLowerCase()}\\s*</h[1-6]>`);
 
   const standardized = htmlString.toLowerCase();
   const startIdx = standardized.search(headerRegex);
@@ -61,7 +61,7 @@ const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
 
 /**
  * Searches for HTML link elements based on a header. Search is limited to
- * inside the header elements next sibling 'dl' element.
+ * inside the header elements next sibling 'dl' element. Header is case insensitive
  * 
  * If given header 'Header 1' and the htmlString is:
  * 
