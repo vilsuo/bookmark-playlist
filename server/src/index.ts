@@ -1,32 +1,31 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const htmlParser = require('node-html-parser');
+import express, { NextFunction, Request, Response } from 'express';
+import path from 'path';
+import fs from 'fs';
+import * as htmlParser from 'node-html-parser';
 
-const fileStorage = require('./fileStorage');
+import { singleUpload } from './fileUpload';
 
 const app = express();
 
 const router = express();
 
-const fileUpload = fileStorage.upload.single('file');
-
 const TAG_START = '<DL>';
 const TAG_END = '</DL>';
 
-const getHtmlBlockByHeader = (html, name) => {
+// TODO
+// - find out the tag from looking at the string
+const getHtmlBlockByHeader = (htmlString: string, name: string) => {
   const opened = [];
   const closed = [];
 
-  const headerRegex = new RegExp(`>${name}<\/[h|H][1-6]>`);
+  const headerRegex = new RegExp(`>${name}</[h|H][1-6]>`);
 
-  const start = html.search(headerRegex);
+  const start = htmlString.search(headerRegex);
 
-  //const start = html.indexOf(`>${name}</h`);
   let current = start;
   while (true) {
-    if (html.at(current) === '<') {
-      const subs = html.substring(current, current + Math.max(TAG_START.length, TAG_END.length));
+    if (htmlString.at(current) === '<') {
+      const subs = htmlString.substring(current, current + Math.max(TAG_START.length, TAG_END.length));
       if (subs.startsWith(TAG_START)) {
         opened.push(current);
         //current =+ tagStart.length - 1;
@@ -39,19 +38,19 @@ const getHtmlBlockByHeader = (html, name) => {
       break;
     }
 
-    if (current >= html.length) {
+    if (current >= htmlString.length) {
       throw new Error('final closing tag is not found');
     }
     current++;
   }
 
-  return htmlParser.parse(html.substring(
+  return htmlParser.parse(htmlString.substring(
     opened[0],
     closed[closed.length - 1] + TAG_END.length
   ));
 };
 
-const getLinksFromBlock = (htmlBlock) => {
+const getLinksFromBlock = (htmlBlock: htmlParser.HTMLElement) => {
   const links = htmlBlock.querySelectorAll('a');
 
   return links.map(link => ({
@@ -60,8 +59,10 @@ const getLinksFromBlock = (htmlBlock) => {
   }));
 };
 
-router.post('/bookmark', async (req, res, next) => {
-  fileUpload(req, res, async (uploadError) => {
+// TODO
+// - move 'fullpath' to other file
+router.post('/bookmark', async (req: Request, res: Response, next: NextFunction) => {
+  singleUpload(req, res, async (uploadError: unknown) => {
     if (uploadError) return next(uploadError);
 
     const { file, body: fields } = req;
@@ -78,12 +79,12 @@ router.post('/bookmark', async (req, res, next) => {
       const html = fs.readFileSync(fullpath).toString();
       
       const htmlBLock = getHtmlBlockByHeader(html, 'music');
-      const links = getLinksFromBlock(htmlBLock)
+      const links = getLinksFromBlock(htmlBLock);
 
       return res.status(201).send(links);  
 
     } catch (error) {
-      console.log('Error', error)
+      console.log('Error', error);
       next(error);
     }
   });

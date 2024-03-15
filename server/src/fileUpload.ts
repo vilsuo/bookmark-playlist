@@ -1,15 +1,20 @@
-const multer = require('multer');
-const path = require('path');
+import { Request } from 'express';
+import multer, { FileFilterCallback } from 'multer';
+import path from 'path';
 
 const options = {
   //storage: multer.memoryStorage(),
   dest: 'uploads/',
 };
 
-const FILE_TYPES = ['html']
+const FILE_TYPES = ['html'];
 const regex = new RegExp(FILE_TYPES.join('|'));
 
-const fileFilter = (req, file, cb) => {
+interface FileFilter {
+  (req: Request, file: Express.Multer.File, cb: FileFilterCallback): void;
+}
+
+const fileFilter: FileFilter = (_req, file, cb) => {
   const mimetype = regex.test(file.mimetype);
   const extname = regex.test(path.extname(file.originalname).toLowerCase());
 
@@ -22,11 +27,9 @@ const fileFilter = (req, file, cb) => {
   ));
 };
 
-const upload = multer({
+const fileUpload = multer({
   ...options,
   fileFilter,
 });
 
-module.exports = {
-  upload,
-};
+export const singleUpload = fileUpload.single('file');
