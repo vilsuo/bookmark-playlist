@@ -10,7 +10,7 @@ type Range = {
 };
 
 const getHeaderRange = (htmlString: string, header: string): Range => {
-  const headerRegex = new RegExp(`>${header}</h[1-6]>`);
+  const headerRegex = new RegExp(`>\\s*${header}\\s*</h[1-6]>`);
 
   const standardized = htmlString.toLowerCase();
   const startIdx = standardized.search(headerRegex);
