@@ -17,6 +17,8 @@ Something like this...
 <link> 		  ::= "<a href=\"" <text> "\">" <text> "</a>"
 <text> 		  ::= (<letter> | <digit> | <symbol>)*
 
+these do not matter so much...
+
 <letter>	  ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 <digit> 	  ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 <symbol>	  ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "=" | "?" | "@" | "[" | "\"" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
@@ -144,7 +146,7 @@ const parseElement = ({ tag, attributes, content }: HtmlElement, indent = 0) => 
   `;
 };
 
-// SINGLE 
+// CREATING 
 
 const createLinkElement = (href: string, text: string): LinkElement => ({
   tag: 'a',
@@ -197,8 +199,11 @@ const createBodyElement = (level: number, headerText: string, dlElement: DlEleme
   ]
 });
 
+// SAMPLE
+
 const linkHrefTemplate = 'http://localhost:3000/some/addr/';
 const linkTextTemplate = 'Link';
+
 // create 10 single dts with links inside
 const singles = [...Array(10).keys()].map(
   int => createDtSingle(
@@ -216,7 +221,7 @@ const dls = [
 // create 3 folder dts
 const folders = [
   createDtFolder(3, 'folder 1', dls[0]),
-  createDtFolder(3, 'folder 2', dls[1]),
+  createDtFolder(3, 'Folder 2', dls[1]),
   createDtFolder(3, 'folder 3', dls[2]),
 ];
 
@@ -237,14 +242,30 @@ const parsedBody = parseElement(body);
 // console.log('parsed', parsedBody);
 
 describe('linkParser', () => {
-  describe('valid strings', () => {
+  describe('single link', () => {
+    const header = 'folder 1';
+    const links = getHeaderNextDlSiblingLinks(parsedBody, header);
+
     it('finds a single link', () => {
-      const links = getHeaderNextDlSiblingLinks(parsedBody, 'folder 1');
-
       expect(links).toHaveLength(1);
+    });
 
+    it('link href attribute is correct', () => {
       expect(links[0].href).toBe(linkHrefTemplate + 0);
+    });
+
+    it('link text content is correct', () => {
       expect(links[0].title.trim()).toBe(linkTextTemplate + 0);
+    });
+  });
+
+
+  describe('two links', () => {
+    const header = 'Folder 2';
+    const links = getHeaderNextDlSiblingLinks(parsedBody, header);
+
+    it('finds both links', () => {
+      expect(links).toHaveLength(2);
     });
   });
 
@@ -255,7 +276,11 @@ describe('linkParser', () => {
       .toThrow(Error);
   });
 
-  // TODO test
-  // - first dl was not opened/closed
-  // - html parse error
+  it('error is thrown if parent dl tag is not closed', () => {
+    const header = 'My header'
+    const badString = '<body><h3>' + header + '</h3><dl><a href="link">txt</a></body>';
+
+    expect(() => getHeaderNextDlSiblingLinks(badString, header))
+      .toThrow(Error);
+  });
 });
