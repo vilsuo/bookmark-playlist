@@ -104,20 +104,20 @@ const parseAttributes = (attributes: Attributes) => {
     .join(' ');
 };
 
-const parseElement = ({ tag, attributes, content }: HtmlElement) => {
+const parseElement = ({ tag, attributes, content }: HtmlElement, indent = 0) => {
   const attributeString = attributes
     ? ' ' + parseAttributes(attributes)
     : '';
 
   let children = '';
   if (typeof content === 'string')  children = content;
-  else if (isElement(content))      children = parseElement(content);
-  else if (isElementArray(content)) children = content.map(c => parseElement(c)).join('');
+  else if (isElement(content))      children = parseElement(content, indent + 1);
+  else if (isElementArray(content)) children = content.map(c => parseElement(c, indent + 1)).join('');
 
   return `
-    <${tag}${attributeString}>
-      ${children}
-    </${tag}>
+    ${'  '.repeat(indent)}<${tag}${attributeString}>
+    ${'  '.repeat(indent + 1)}${children}
+    ${'  '.repeat(indent)}</${tag}>
   `;
 };
 
