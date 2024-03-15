@@ -1,4 +1,27 @@
-//import { getHeaderRange } from '../../src/util/linkParser';
+import { getHeaderNextDlSiblingLinks } from '../../src/util/linkParser';
+
+/*
+
+##########################
+# Backus-Naur Form (BNF) #
+##########################
+
+Something like this...
+
+<root> 		  ::= "<body>" <header> <dl> <paragraph> "</body>"
+<dl> 		    ::= "<dl>" <paragraph> (<dtfolder> | <dtsingle>)+ "</dl>"
+<dtfolder> 	::= "<dt>" <header> <dl> <paragraph> "</dt>"
+<dtsingle> 	::= "<dt>" <link> "</dt>"
+<header> 	  ::= "<h>" <text> "</h>"
+<paragraph> ::= "<p>" <text> "</p>"
+<link> 		  ::= "<a href=\"" <text> "\">" <text> "</a>"
+<text> 		  ::= (<letter> | <digit> | <symbol>)*
+
+<letter>	  ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<digit> 	  ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<symbol>	  ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "=" | "?" | "@" | "[" | "\"" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
+
+*/
 
 type Attributes = Record<string, string>;
 
@@ -33,7 +56,7 @@ type ParagraphElement = {
  */
 type HeaderElement = {
   tag: HeaderType;
-  attributes?: Attributes;
+  //attributes?: Attributes;
   content: string;
 };
 
@@ -174,12 +197,12 @@ const createBodyElement = (level: number, headerText: string, dlElement: DlEleme
   ]
 });
 
-const linktTemplate = 'http://localhost:3000/some/addr/';
-
+const linkHrefTemplate = 'http://localhost:3000/some/addr/';
+const linkTextTemplate = 'Link';
 // create 10 single dts with links inside
 const singles = [...Array(10).keys()].map(
   int => createDtSingle(
-    createLinkElement(linktTemplate + int, 'Link' + int)
+    createLinkElement(linkHrefTemplate + int, linkTextTemplate + int)
   )
 );
 
@@ -208,15 +231,31 @@ const rootDl = createDlElement([
 ]);
 
 const body = createBodyElement(1, 'Bookmarks', rootDl);
+const parsedBody = parseElement(body);
 
-// console.log('singles', singles);
-// console.log('dls', dls);
-// console.log('folders', folders);
-// console.log('rootDl', rootDl);
-console.log('body', body);
+// console.log('body element', body);
+// console.log('parsed', parsedBody);
 
-describe('getHeaderRange', () => {
-  it('initial test', () => {
-    console.log('test', parseElement(body));
+describe('linkParser', () => {
+  describe('valid strings', () => {
+    it('finds a single link', () => {
+      const links = getHeaderNextDlSiblingLinks(parsedBody, 'folder 1');
+
+      expect(links).toHaveLength(1);
+
+      expect(links[0].href).toBe(linkHrefTemplate + 0);
+      expect(links[0].title.trim()).toBe(linkTextTemplate + 0);
+    });
   });
+
+  it('error is thrown when header is not found', () => {
+    const missingHeader = 'This does not exist';
+
+    expect(() => getHeaderNextDlSiblingLinks(parsedBody, missingHeader))
+      .toThrow(Error);
+  });
+
+  // TODO test
+  // - first dl was not opened/closed
+  // - html parse error
 });
