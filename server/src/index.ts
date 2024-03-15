@@ -28,10 +28,7 @@ router.post('/bookmark', async (req: Request, res: Response, next: NextFunction)
       const fullpath = path.join(__dirname, '..', file.destination, file.filename);
       const html = fs.readFileSync(fullpath).toString();
       
-      const range = linkParser.getHeaderRange(html, 'music');
-      const block = linkParser.getHtmlBlock(html, range);
-      const links = linkParser.getLinksFromHtmlBlock(block);
-
+      const links = linkParser.getHeaderNextDlSiblingLinks(html, 'music');
       return res.status(201).send(links);  
 
     } catch (error) {

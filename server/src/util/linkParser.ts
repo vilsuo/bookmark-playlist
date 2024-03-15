@@ -9,10 +9,8 @@ type Range = {
   end: number;
 };
 
-// TODO
-// - find out the tag from looking at the string?
-export const getHeaderRange = (htmlString: string, name: string): Range => {
-  const headerRegex = new RegExp(`>${name}</h[1-6]>`);
+const getHeaderRange = (htmlString: string, header: string): Range => {
+  const headerRegex = new RegExp(`>${header}</h[1-6]>`);
 
   const standardized = htmlString.toLowerCase();
   const startIdx = standardized.search(headerRegex);
@@ -48,15 +46,54 @@ export const getHeaderRange = (htmlString: string, name: string): Range => {
   };
 };
 
-export const getHtmlBlock = (htmlString: string, { start, end }: Range): htmlParser.HTMLElement => {
+const getHtmlBlock = (htmlString: string, { start, end }: Range): htmlParser.HTMLElement => {
   return htmlParser.parse(htmlString.substring(start, end));
 };
 
-export const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
+const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
   const links = htmlBlock.querySelectorAll('a');
 
   return links.map(link => ({
     title: link.textContent,
     href: link.getAttribute('href'),
   }));
+};
+
+/**
+ * Searches for HTML link elements based on a header. Search is limited to
+ * inside the header elements next sibling 'dl' element.
+ * 
+ * If given header 'Header 1' and the htmlString is:
+ * 
+ * <body>
+ *   <h1>Bookmarks<h1>
+ *   <dl>
+ *      <a></a>
+ *      <h3>Header 1</h3>
+ *      <a href="link1">A</a>
+ *      <dl>
+ *        <a href="link2">B</a>
+ *      </dl>
+ *      <dl>
+ *        <a href="link3">C</a>
+ *      </dl>
+ *      <h3>Header 2</h3>
+ *      <dl>
+ *        <a href="link4">D</a>
+ *      </dl>
+ *   </dl>
+ * </body>,
+ * 
+ * then only the link { title: 'B', href: link2 } is returned.
+ * 
+ * @param htmlString
+ * @param header
+ * @returns Array of link element text and href attributes
+ */
+export const getHeaderNextDlSiblingLinks = (htmlString: string, header: string) => {
+  const range = getHeaderRange(htmlString, header);
+  const block = getHtmlBlock(htmlString, range);
+  const links = getLinksFromHtmlBlock(block);
+
+  return links;
 };
