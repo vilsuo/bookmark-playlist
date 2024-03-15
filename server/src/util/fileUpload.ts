@@ -3,8 +3,7 @@ import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 
 const options = {
-  //storage: multer.memoryStorage(),
-  dest: 'uploads/',
+  storage: multer.memoryStorage()
 };
 
 const FILE_TYPES = ['html'];
