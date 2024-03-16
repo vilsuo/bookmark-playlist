@@ -1,4 +1,4 @@
-import { getHeaderNextDlSiblingLinks } from '../../src/util/linkParser';
+import { getHeaderNextDlSiblingLinks } from '../../src/util/htmlParser';
 
 /*
 
@@ -256,7 +256,7 @@ const parsedBody = parseElement(body);
 // console.log('body element', body);
 // console.log('parsed', parsedBody);
 
-describe('linkParser', () => {
+describe('htmlParser', () => {
   describe('single link', () => {
     const header = 'folder 1';
     const links = getHeaderNextDlSiblingLinks(parsedBody, header);

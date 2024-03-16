@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 
-import * as linkParser from '../util/linkParser';
+import * as htmlParser from '../util/htmlParser';
 import { singleUpload } from '../util/fileUpload';
 
 const router = express();
@@ -97,7 +97,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       const fileString = file.buffer.toString();
 
       // convert file string to links
-      const links = linkParser.getHeaderNextDlSiblingLinks(fileString, 'music');
+      const links = htmlParser.getHeaderNextDlSiblingLinks(fileString, 'music');
 
       return res.status(201).send(createAlbumsFromLinks(links));
     } catch (error) {
