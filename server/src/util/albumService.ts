@@ -57,7 +57,7 @@ export const createAlbumsFromLinks = (links: Array<Link>) => {
 
     return {
       videoId: getVideoId(href),
-      ...getLinkDetails(title),
+      ...getLinkDetails(title.trim()),
     };
   });
 };
