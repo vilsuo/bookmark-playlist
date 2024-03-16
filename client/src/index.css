@@ -1,0 +1,40 @@
+:root {
+  --active: lightblue;
+
+  --primary: bisque;
+  --secondary: lightgray;
+}
+
+table {
+  border: none;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+table .center {
+  text-align: center;
+}
+table thead {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+table thead td {
+  text-align: center;
+}
+table tbody >:last-child {
+  border-bottom: 1px solid black;
+}
+table tbody tr:nth-child(odd) {
+  background-color: var(--primary);
+}
+table tbody tr:hover {
+  background-color: var(--active);  
+}
+table td, table th {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  padding: 2px 4px;
+}
+
+.album-table tbody tr.selected {
+  background-color: red;
+}

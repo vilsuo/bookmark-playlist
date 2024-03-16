@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { useState } from 'react';
 import FileForm from './components/FileForm';
-import AlbumList from './components/AlbumList';
+import AlbumTable from './components/AlbumTable';
 import Video from './components/Video';
 import { Album } from './types';
 
 const App = () => {
   const [albums, setAlbums] = useState<Array<Album>>([]);
-  const [currentAlbum, setCurrentAlbum] = useState<Album | null>();
+  const [currentAlbum, setCurrentAlbum] = useState<Album | null>(null);
 
   const handleUpload = async (formData: FormData) => {
     const { data } = await axios.post(
@@ -22,13 +22,13 @@ const App = () => {
     <div>
       <FileForm upload={handleUpload} />
 
-      <p>Selected {currentAlbum ? currentAlbum.title : 'NONE'}</p>
       { currentAlbum && (
         <Video album={currentAlbum} />
       )}
 
-      <AlbumList
+      <AlbumTable
         albums={albums}
+        currentAlbum={currentAlbum}
         setCurrentAlbum={setCurrentAlbum}
       />
     </div>
