@@ -5,40 +5,74 @@ import { singleUpload } from '../util/fileUpload';
 
 const router = express();
 
+
+const getVideoId = (href: string | undefined): string => {
+  const VIDEO_PREFIX = 'https://www.youtube.com/watch?v=';
+  const VIDEO_ID_LENGTH = 11;
+
+  if (!href) {
+    throw new Error('Hyperref is missing');
+  }
+
+  if (!href.startsWith(VIDEO_PREFIX)) {
+    throw new Error('Hyperref does not have youtube prefix');
+  }
+
+  if (href.length < VIDEO_PREFIX.length + VIDEO_ID_LENGTH) {
+    throw new Error('Hyperref is too short');
+  }
+
+  return href.substring(
+    VIDEO_PREFIX.length,
+    VIDEO_PREFIX.length + VIDEO_ID_LENGTH
+  );
+};
+
+type Details = {
+  artist: string;
+  title: string;
+  published: number;
+};
+
+/**
+ * /^(artist) - (title) \((published)\)$/
+ * 
+ * @param linkTitle 
+ * @returns 
+ */
+const getAlbumDetails = (linkTitle: string): Details => {
+  const ARTIST_TITLE_SEPARATOR = ' - ';
+  const PUBLISHED_PATTERN = / \((\d{4})\)$/g;
+
+  const first = linkTitle.split(ARTIST_TITLE_SEPARATOR);
+  if (first.length !== 2) {
+    throw new Error(`Title must have a single '${ARTIST_TITLE_SEPARATOR}' separator`);
+  }
+
+  const second = first[1].split(PUBLISHED_PATTERN);
+  if (second.length !== 3) {
+    throw new Error(`Title must end to '${PUBLISHED_PATTERN}'`);
+  }
+
+  return {
+    artist: first[0],
+    title: second[0],
+    published: Number(second[1]),
+  };
+};
+
 type Link = {
   title: string;
   href: undefined | string;
 };
 
 const createAlbumsFromLinks = (links: Array<Link>) => {
-  const VIDEO_ID_LENGTH = 11;
-  const VIDEO_PREFIX = 'https://www.youtube.com/watch?v=';
-
-  //const pattern = new RegExp(`?v=(.${VIDEO_ID_LENGTH})`);
   return links.map((link) => {
     const { title, href } = link;
-    if (!href || !href.startsWith(VIDEO_PREFIX) || href.length < VIDEO_PREFIX.length + VIDEO_ID_LENGTH) {
-      throw new Error('Link has an incorrect href');
-    }
-
-    const videoId = href.substring(VIDEO_PREFIX.length, VIDEO_PREFIX.length + VIDEO_ID_LENGTH);
-
-    // artist - title (published)
-    const parts = title.split(' - ');
-    if (parts.length !== 2) {
-      throw new Error('Title does not have artist/title separator');
-    }
-
-    const otherParts = parts[1].split('(');
-    if (otherParts[1].length < 4 || isNaN(Number(otherParts[1].substring(0, 4)))) {
-      throw new Error('Invalid year');
-    }
-
+  
     return {
-      videoId,
-      artist: parts[0].trim(),
-      title: otherParts[0].trim(),
-      published: Number(otherParts[1].substring(0, 4)),
+      videoId: getVideoId(href),
+      ...getAlbumDetails(title),
     };
   });
 };
