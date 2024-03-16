@@ -1,14 +1,12 @@
 import YouTube, { YouTubeProps } from 'react-youtube';
-import { Link } from '../types';
+import { Album } from '../types';
 
 interface VideoProps {
-  link: Link;
+  album: Album;
 }
 
-const VIDEO_ID_LENGTH = 11;
-
-const Video = ({ link }: VideoProps) => {
-  const videoId = link.href.split('?v=')[1].substring(0, VIDEO_ID_LENGTH);
+const Video = ({ album }: VideoProps) => {
+  const { videoId } = album;
   
   const options = {
     width: '945',

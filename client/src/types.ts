@@ -1,10 +1,6 @@
-export type LinkDetails = {
+export type Album = {
+  videoId: string;
   artist: string;
   title: string;
-  year?: number | string;
-};
-
-export type Link = {
-  title: string;
-  href: string;
+  published: number;
 };

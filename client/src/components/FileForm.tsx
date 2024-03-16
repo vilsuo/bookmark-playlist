@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 interface FileFormProps {
-  upload: (formdata: FormData) => void;
+  upload: (formdata: FormData) => Promise<void>;
 }
 
 const FileForm = ({ upload }: FileFormProps) => {
