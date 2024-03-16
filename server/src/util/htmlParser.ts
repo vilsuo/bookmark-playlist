@@ -1,4 +1,5 @@
 import * as htmlParser from 'node-html-parser';
+import { Link } from '../types';
 
 const TAG = 'dl';
 const TAG_OPEN = `<${TAG}>`;
@@ -61,7 +62,9 @@ const getHtmlBlock = (
   return htmlParser.parse(htmlString.substring(start, end));
 };
 
-const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
+const getLinksFromHtmlBlock = (
+  htmlBlock: htmlParser.HTMLElement,
+): Array<Link> => {
   const links = htmlBlock.querySelectorAll('a');
 
   return links.map((link) => ({
@@ -104,7 +107,7 @@ const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement) => {
 export const getHeaderNextDlSiblingLinks = (
   htmlString: string,
   header: string,
-) => {
+): Array<Link> => {
   const range = getHeaderRange(htmlString, header);
   const block = getHtmlBlock(htmlString, range);
   const links = getLinksFromHtmlBlock(block);
