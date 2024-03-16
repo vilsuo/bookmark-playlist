@@ -216,41 +216,72 @@ const createBodyElement = (
 
 // SAMPLE
 
+const ROOT_HEADER = 'Bookmarks';
+const SINGLE_LINK_HEADER = 'single';
+const DOUBLE_LINK_HEADER = 'Double';
+const PARENT_FOLDER_HEADER = 'parent';
+const CHILD_FOLDER_HEADER = 'child';
+
 const linkHrefTemplate = 'http://localhost:3000/some/addr/';
 const linkTextTemplate = 'Link';
 
-// create 10 single dts with links inside
-const singles = [...Array(10).keys()].map((int) =>
+const dtSingles = [...Array(10).keys()].map((int) =>
   createDtSingle(
     createLinkElement(linkHrefTemplate + int, linkTextTemplate + int),
   ),
 );
 
-// create 3 dls for the folders
-const dls = [
-  createDlElement([singles[0]]),
-  createDlElement([singles[2], singles[3]]),
-  createDlElement([singles[5], singles[6], singles[7]]),
+const dtFolders = [
+  createDtFolder(3, SINGLE_LINK_HEADER, createDlElement([dtSingles[0]])),
+  createDtFolder(3, DOUBLE_LINK_HEADER, createDlElement([dtSingles[2], dtSingles[3]])),
+  createDtFolder(3, CHILD_FOLDER_HEADER, createDlElement([dtSingles[5], dtSingles[6]])),
 ];
 
-// create 3 folder dts
-const folders = [
-  createDtFolder(3, 'folder 1', dls[0]),
-  createDtFolder(3, 'Folder 2', dls[1]),
-  createDtFolder(3, 'folder 3', dls[2]),
-];
+const parent = createDtFolder(
+  3,
+  PARENT_FOLDER_HEADER,
+  createDlElement([dtFolders[2], dtSingles[7]]), // child
+);
 
+/**
+ *  <>                // root
+ *    <folder>        // single
+ *      <link 0 />
+ *    </folder>
+ * 
+ *    <link 1 />
+ * 
+ *    <folder>        // double
+ *      <link 2 />
+ *      <link 3 />
+ *    </folder>
+ * 
+ *    <link 4 />
+ * 
+ *    <folder>        // parent
+ *      <folder>      // child
+ *        <link 5 />
+ *        <link 6 />
+ *      </folder>
+ * 
+ *      <link 7>
+ *    </folder>
+ * 
+ *    <link 8 />
+ *    <link 9 />
+ * </>
+ */
 const rootDl = createDlElement([
-  folders[0],
-  singles[1],
-  folders[1],
-  singles[4],
-  folders[2],
-  singles[8],
-  singles[9],
+  dtFolders[0],
+  dtSingles[1],
+  dtFolders[1],
+  dtSingles[4],
+  parent,
+  dtSingles[8],
+  dtSingles[9],
 ]);
 
-const body = createBodyElement(1, 'Bookmarks', rootDl);
+const body = createBodyElement(1, ROOT_HEADER, rootDl);
 const parsedBody = parseElement(body);
 
 // console.log('body element', body);
@@ -258,8 +289,7 @@ const parsedBody = parseElement(body);
 
 describe('htmlParser', () => {
   describe('single link', () => {
-    const header = 'folder 1';
-    const links = getHeaderNextDlSiblingLinks(parsedBody, header);
+    const links = getHeaderNextDlSiblingLinks(parsedBody, SINGLE_LINK_HEADER);
 
     it('finds a single link', () => {
       expect(links).toHaveLength(1);
@@ -275,11 +305,34 @@ describe('htmlParser', () => {
   });
 
   describe('two links', () => {
-    const header = 'Folder 2';
-    const links = getHeaderNextDlSiblingLinks(parsedBody, header);
+    const links = getHeaderNextDlSiblingLinks(parsedBody, DOUBLE_LINK_HEADER);
 
     it('finds both links', () => {
       expect(links).toHaveLength(2);
+    });
+  });
+
+  describe('sub folder', () => {
+    const links = getHeaderNextDlSiblingLinks(parsedBody, CHILD_FOLDER_HEADER);
+
+    it('finds sub folder links', () => {
+      expect(links).toHaveLength(2);
+    });
+  });
+
+  describe('parent folder', () => {
+    const links = getHeaderNextDlSiblingLinks(parsedBody, PARENT_FOLDER_HEADER);
+
+    it('finds parent folder and sub folder links', () => {
+      expect(links).toHaveLength(3);
+    });
+  });
+
+  describe('root folder', () => {
+    const links = getHeaderNextDlSiblingLinks(parsedBody, ROOT_HEADER);
+
+    it('finds all links', () => {
+      expect(links).toHaveLength(10);
     });
   });
 
