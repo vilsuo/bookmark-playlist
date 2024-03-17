@@ -4,17 +4,16 @@ import AlbumRow from './AlbumRow';
 interface LinkListProps {
   albums: Album[];
   currentAlbum: Album | null;
-  setCurrentAlbum: (link: Album) => void;
+  setCurrentAlbum: (album: Album | null) => void;
 }
 
 const AlbumTable = ({ albums, currentAlbum, setCurrentAlbum } : LinkListProps) => {
-  const handleSelect = (album: Album) => {
+  const handleSelect = (album: Album | null) => {
     setCurrentAlbum(album);
-    console.log('selected', album.title);
   };
 
   const isCurrentAlbum = (album: Album) => {
-    return currentAlbum && currentAlbum.videoId === album.videoId;
+    return !!currentAlbum && currentAlbum.videoId === album.videoId;
   };
 
   return (
@@ -24,7 +23,7 @@ const AlbumTable = ({ albums, currentAlbum, setCurrentAlbum } : LinkListProps) =
       <table className='album-table'>
         <thead>
           <tr>
-            <th>Play</th>
+            <th></th>
             <th>Artist</th>
             <th>Album</th>
             <th>Year</th>

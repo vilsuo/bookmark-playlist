@@ -29,12 +29,6 @@ table thead td {
 table tbody >:last-child {
   border-bottom: 1px solid black;
 }
-table tbody tr:nth-child(odd) {
-  /*background-color: var(--primary);*/
-}
-.album-table tbody tr:hover {
-  color: var(--ma-active);
-}
 table td, table th {
   border-left: 1px solid black;
   border-right: 1px solid black;
@@ -42,6 +36,13 @@ table td, table th {
 }
 .table tbody tr.selected {
   color: red;
+}
+
+.album-table tbody tr:hover {
+  color: var(--ma-active);
+}
+.album-table .play {
+  cursor: pointer;
 }
 
 /* Dropdown */
