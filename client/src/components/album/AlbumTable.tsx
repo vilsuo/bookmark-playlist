@@ -2,7 +2,7 @@ import { Album } from '../../types';
 import AlbumRow from './AlbumRow';
 
 interface LinkListProps {
-  albums: Array<Album>;
+  albums: Album[];
   currentAlbum: Album | null;
   setCurrentAlbum: (link: Album) => void;
 }
@@ -35,7 +35,7 @@ const AlbumTable = ({ albums, currentAlbum, setCurrentAlbum } : LinkListProps) =
             <AlbumRow
               key={album.videoId}
               album={album}
-              className={isCurrentAlbum(album) ? 'selected' : ''}
+              isSelected={isCurrentAlbum(album)}
               select={handleSelect}
             />
           )}

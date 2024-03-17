@@ -5,31 +5,31 @@
   --secondary: lightgray;
 }
 
-table {
+.album-table {
   border: none;
   border-collapse: collapse;
   margin: 20px 0;
 }
-table .center {
+.album-table .center {
   text-align: center;
 }
-table thead {
+.album-table thead {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
-table thead td {
+.album-table thead td {
   text-align: center;
 }
-table tbody >:last-child {
+.album-table tbody >:last-child {
   border-bottom: 1px solid black;
 }
-table tbody tr:nth-child(odd) {
+.album-table tbody tr:nth-child(odd) {
   /*background-color: var(--primary);*/
 }
-table tbody tr:hover {
-  background-color: var(--active);  
+.album-table tbody tr:hover {
+  border: 1px solid red; 
 }
-table td, table th {
+.album-table td, table th {
   border-left: 1px solid black;
   border-right: 1px solid black;
   padding: 2px 4px;
@@ -42,18 +42,20 @@ table td, table th {
 /* Menu context */
 .dropdown-context {
   position: absolute;
-  background-color: gray;
-  box-sizing: border-box;
+  background-color: green;
 }
-.dropdown-context ul {
-  box-sizing: border-box;
-  padding: 5px;
-  margin: 0;
-  list-style: none;
-}
-.dropdown-context ul li {
+
+/*
+.link-element {
+  display: flex;
+  flex-flow: row nowrap;
   
+  text-decoration: none;
 }
-.dropdown-context ul li:hover {
-  cursor: pointer;
+*/
+.ma {
+  background-color: darkred;
+}
+.ma a {
+  color: white;
 }

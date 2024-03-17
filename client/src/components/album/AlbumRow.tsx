@@ -2,27 +2,35 @@ import { useState } from 'react';
 import { Album, Link } from '../../types';
 import { useComponentVisible } from '../../util/hooks';
 
-interface ActionLinkProps {
+import ma from '../../../assets/ma.ico';
+
+interface DropdownItemProps {
   link: Link;
-  onClick: () => void;
+  close: () => void;
 }
 
-const ActionLink = ({ link, onClick }: ActionLinkProps) => (
-  <a
-    onClick={onClick}
-    target='_blank' // to open in a new tab
-    href={link.href}
-  >
-    {link.text}
-  </a>
-);
+const DropdownItem = ({ link, close }: DropdownItemProps) => {
+  const { text, href, imageSrc, className } = link;
+  return (
+    <tr className={className}>
+      <td>
+        { imageSrc && <img src={imageSrc} /> }
+      </td>
+      <td className={className} onClick={close}>
+        <a href={href} target='_blank'>
+          {text}
+        </a>
+      </td>
+    </tr>
+  )
+};
 
 interface DropdownProps {
   children: string | JSX.Element;
-  items: Link[];
+  links: Link[];
 }
 
-const Dropdown = ({ children, items }: DropdownProps) => {
+const Dropdown = ({ children, links }: DropdownProps) => {
   // outside clicks
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
@@ -41,20 +49,18 @@ const Dropdown = ({ children, items }: DropdownProps) => {
       </div>
 
       {isComponentVisible && (
-        <div className='dropdown-context'
+        <table className='dropdown-context'
           style={{ top: points.y + 5, left: points.x - 5 }}
         >
-          <ul>
-            {items.map((item, idx) => (
-              <li key={idx}>
-                <ActionLink
-                  onClick={() => setIsComponentVisible(false)}
-                  link={item}
-                />
-              </li>
+          <tbody>
+            {links.map((link, idx) => (
+              <DropdownItem key={idx}
+                link={link}
+                close={() => setIsComponentVisible(false)}
+              />
             ))}
-          </ul>
-        </div>
+          </tbody>
+        </table>
       )}
     </div>
   );
@@ -62,44 +68,49 @@ const Dropdown = ({ children, items }: DropdownProps) => {
 
 interface AlbumRowProps {
   album: Album;
-  className: string;
+  isSelected: boolean;
   select: (album: Album) => void;
 }
 
-const AlbumRow = ({ album, className, select }: AlbumRowProps) => {
+const AlbumRow = ({ album, isSelected, select }: AlbumRowProps) => {
 
   const artistSearchString = album.artist.replace(' ', '+');
   const titleSearchString = album.title.replace(' ', '+');
 
-  const getArtistSearchLink = () => {
+  const getArtistSearchLink = (): Link => {
     const text = album.artist;
     const href = `https://www.metal-archives.com/search?searchString=${artistSearchString}&type=band_name`;
     
-    return { text, href };
+    return { text, href, imageSrc: ma, className: 'ma' };
   };
 
-  const getAlbumSearchLink = () => {
+  const getAlbumSearchLink = (): Link => {
     const text = album.title;
     const href = `https://www.metal-archives.com/search/advanced/searching/albums?bandName=${artistSearchString}&releaseTitle=${titleSearchString}`;
 
-    return { text, href };
+    return { text, href, imageSrc: ma, className: 'ma' };
   };
 
   return (
-    <tr className={className}>
+    <tr>
       <td onClick={() => select(album)}>Play</td>
 
       <td>
-        <Dropdown items={[getArtistSearchLink()]}>
+        <Dropdown links={[getArtistSearchLink()]}>
           {album.artist}
         </Dropdown>
       </td>
 
       <td>
-        <Dropdown items={[getAlbumSearchLink()]}>
+        <Dropdown links={[
+          getAlbumSearchLink(),
+          { href: 'https://google.com', text: 'google', className: 'ma' },
+          { href: 'https://google.com', text: 'again' },
+        ]}>
           {album.title}
         </Dropdown>
       </td>
+
       <td>{album.published}</td>
     </tr>
   );
