@@ -40,20 +40,20 @@ table td, table th {
 }
 
 /* Menu context */
-.menu-context-context {
+.dropdown-context {
   position: absolute;
   background-color: gray;
   box-sizing: border-box;
 }
-.menu-context-context ul {
+.dropdown-context ul {
   box-sizing: border-box;
   padding: 5px;
   margin: 0;
   list-style: none;
 }
-.menu-context-context ul li {
+.dropdown-context ul li {
   
 }
-.menu-context-context ul li:hover {
+.dropdown-context ul li:hover {
   cursor: pointer;
 }
