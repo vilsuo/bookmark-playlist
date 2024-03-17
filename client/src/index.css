@@ -24,7 +24,7 @@ table tbody >:last-child {
   border-bottom: 1px solid black;
 }
 table tbody tr:nth-child(odd) {
-  background-color: var(--primary);
+  /*background-color: var(--primary);*/
 }
 table tbody tr:hover {
   background-color: var(--active);  
@@ -36,5 +36,24 @@ table td, table th {
 }
 
 .album-table tbody tr.selected {
-  background-color: red;
+  color: red;
+}
+
+/* Menu context */
+.menu-context-context {
+  position: absolute;
+  background-color: gray;
+  box-sizing: border-box;
+}
+.menu-context-context ul {
+  box-sizing: border-box;
+  padding: 5px;
+  margin: 0;
+  list-style: none;
+}
+.menu-context-context ul li {
+  
+}
+.menu-context-context ul li:hover {
+  cursor: pointer;
 }

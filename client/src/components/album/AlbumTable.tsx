@@ -1,31 +1,13 @@
-import { Album } from '../types';
-
-interface AlbumProps {
-  album: Album;
-  className: string;
-  select: (album: Album) => void;
-}
-
-const AlbumRow = ({ album, className, select }: AlbumProps) => {
-  return (
-    <tr className={className}
-      onClick={() => select(album)}
-    >
-      <td>{album.artist}</td>
-      <td>{album.title}</td>
-      <td>{album.published}</td>
-    </tr>
-  );
-};
+import { Album } from '../../types';
+import AlbumRow from './AlbumRow';
 
 interface LinkListProps {
-  albums: Array<AlbumRow>;
-  currentAlbum: AlbumRow | null;
-  setCurrentAlbum: (link: AlbumRow) => void;
+  albums: Array<Album>;
+  currentAlbum: Album | null;
+  setCurrentAlbum: (link: Album) => void;
 }
 
 const AlbumTable = ({ albums, currentAlbum, setCurrentAlbum } : LinkListProps) => {
-
   const handleSelect = (album: Album) => {
     setCurrentAlbum(album);
     console.log('selected', album.title);
@@ -42,6 +24,7 @@ const AlbumTable = ({ albums, currentAlbum, setCurrentAlbum } : LinkListProps) =
       <table className='album-table'>
         <thead>
           <tr>
+            <th>Play</th>
             <th>Artist</th>
             <th>Album</th>
             <th>Year</th>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import FileForm from './components/FileForm';
-import AlbumTable from './components/AlbumTable';
+import AlbumTable from './components/album/AlbumTable';
 import Video from './components/Video';
 import { Album } from './types';
 
