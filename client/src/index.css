@@ -3,59 +3,81 @@
 
   --primary: bisque;
   --secondary: lightgray;
+
+  --ma: rgb(78, 5, 5);
+  --ma-active: rgb(206, 74, 74);
 }
 
-.album-table {
+table {
   border: none;
   border-collapse: collapse;
   margin: 20px 0;
+
+  background-color: var(--ma);
+  color: white;
 }
-.album-table .center {
+table .center {
   text-align: center;
 }
-.album-table thead {
+table thead {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
-.album-table thead td {
+table thead td {
   text-align: center;
 }
-.album-table tbody >:last-child {
+table tbody >:last-child {
   border-bottom: 1px solid black;
 }
-.album-table tbody tr:nth-child(odd) {
+table tbody tr:nth-child(odd) {
   /*background-color: var(--primary);*/
 }
 .album-table tbody tr:hover {
-  border: 1px solid red; 
+  color: var(--ma-active);
 }
-.album-table td, table th {
+table td, table th {
   border-left: 1px solid black;
   border-right: 1px solid black;
   padding: 2px 4px;
 }
-
-.album-table tbody tr.selected {
+.table tbody tr.selected {
   color: red;
 }
 
-/* Menu context */
-.dropdown-context {
-  position: absolute;
-  background-color: green;
+/* Dropdown */
+.dropdown-trigger {
+  cursor: pointer;
 }
 
-/*
-.link-element {
-  display: flex;
-  flex-flow: row nowrap;
-  
-  text-decoration: none;
+.dropdown-context {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
 }
-*/
+.dropdown-context ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dropdown-context ul li {
+  margin: 1px;
+  padding: 1px;
+  border: 1px solid black;
+}
+.dropdown-context ul li a {
+  text-decoration: none;
+  display: flex;
+  gap: 2px;
+  padding-right: 2px;
+}
+
+/* Link styles  */
 .ma {
-  background-color: darkred;
+  background-color: var(--ma);
 }
 .ma a {
   color: white;
+}
+.ma a:hover {
+  color: var(--ma-active);
 }

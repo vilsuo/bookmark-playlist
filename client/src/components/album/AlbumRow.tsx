@@ -12,16 +12,12 @@ interface DropdownItemProps {
 const DropdownItem = ({ link, close }: DropdownItemProps) => {
   const { text, href, imageSrc, className } = link;
   return (
-    <tr className={className}>
-      <td>
+    <li className={className} onClick={close}>
+      <a href={href} target='_blank'>
         { imageSrc && <img src={imageSrc} /> }
-      </td>
-      <td className={className} onClick={close}>
-        <a href={href} target='_blank'>
-          {text}
-        </a>
-      </td>
-    </tr>
+        <span>{text}</span>
+      </a>
+    </li>
   )
 };
 
@@ -39,7 +35,7 @@ const Dropdown = ({ children, links }: DropdownProps) => {
 
   return (
     <div ref={ref}>
-      <div
+      <div className='dropdown-trigger'
         onClick={(e) => {
           setIsComponentVisible(!isComponentVisible); // toggle context
           setPoints({ x: e.pageX, y: e.pageY });
@@ -49,18 +45,18 @@ const Dropdown = ({ children, links }: DropdownProps) => {
       </div>
 
       {isComponentVisible && (
-        <table className='dropdown-context'
+        <div className='dropdown-context'
           style={{ top: points.y + 5, left: points.x - 5 }}
         >
-          <tbody>
+          <ul>
             {links.map((link, idx) => (
               <DropdownItem key={idx}
                 link={link}
                 close={() => setIsComponentVisible(false)}
               />
             ))}
-          </tbody>
-        </table>
+          </ul>
+        </div>
       )}
     </div>
   );
@@ -104,8 +100,7 @@ const AlbumRow = ({ album, isSelected, select }: AlbumRowProps) => {
       <td>
         <Dropdown links={[
           getAlbumSearchLink(),
-          { href: 'https://google.com', text: 'google', className: 'ma' },
-          { href: 'https://google.com', text: 'again' },
+          { href: 'https://google.com', text: 'Edit', className: 'ma' },
         ]}>
           {album.title}
         </Dropdown>
