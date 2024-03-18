@@ -41,10 +41,10 @@ const AlbumRow = ({ album, isSelected, select }: AlbumRowProps) => {
       </td>
 
       <td>
-        <Dropdown links={[
-          getAlbumSearchLink(),
-          { href: 'https://google.com', text: 'Edit', className: 'ma' },
-        ]}>
+        <Dropdown
+          links={[getAlbumSearchLink()]}
+          actions={[{ onClick: () => { console.log('clicked'); }, text: 'Edit' }]}
+        >
           {album.title}
         </Dropdown>
       </td>

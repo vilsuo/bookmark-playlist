@@ -2,21 +2,16 @@ import { useState } from 'react';
 import { Link } from '../types';
 import { useComponentVisible } from '../util/hooks';
 
-interface DropdownItemProps {
+interface DropdownLinkItemProps {
   link: Link;
   close: () => void;
 }
 
-const DropdownItem = ({ link, close }: DropdownItemProps) => {
+const DropdownLinkItem = ({ link, close }: DropdownLinkItemProps) => {
   const { text, href, imageSrc, className } = link;
 
-  const handleClick = (e) => {
-    e.stopPropagation();
-    close();
-  };
-
   return (
-    <li className={className} onClick={handleClick}>
+    <li className={className} onClick={close}>
       <a href={href} target='_blank'>
         { imageSrc && <img src={imageSrc} /> }
         <span>{text}</span>
@@ -25,12 +20,38 @@ const DropdownItem = ({ link, close }: DropdownItemProps) => {
   )
 };
 
-interface DropdownProps {
-  children: string | JSX.Element;
-  links: Link[];
+interface DropdownActionItemProps {
+  action: Action;
+  close: () => void;
 }
 
-const Dropdown = ({ children, links }: DropdownProps) => {
+const DropdownActionItem = ({ action, close }: DropdownActionItemProps) => {
+  const handleClick = (e) => {
+    action.onClick();
+    close();
+  };
+
+  return (
+    <li>
+      <button onClick={handleClick}>
+        {action.text}
+      </button>
+    </li>
+  )
+};
+
+type Action = {
+  text: string;
+  onClick: () => void;
+};
+
+interface DropdownProps {
+  children: string | JSX.Element;
+  links?: Link[];
+  actions?: Action[];
+}
+
+const Dropdown = ({ children, links, actions }: DropdownProps) => {
   // outside clicks
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
@@ -40,9 +61,14 @@ const Dropdown = ({ children, links }: DropdownProps) => {
   return (
     <div ref={ref}>
       <div className='dropdown-trigger'
+        onClick={() => {
+          if (isComponentVisible) {
+            setIsComponentVisible(false);
+          }
+        }}
         onContextMenu={(e) => {
           e.preventDefault();
-          setIsComponentVisible(!isComponentVisible); // toggle context
+          setIsComponentVisible(!isComponentVisible);
           setPoints({ x: e.pageX, y: e.pageY });
         }}
       >
@@ -52,15 +78,30 @@ const Dropdown = ({ children, links }: DropdownProps) => {
       {isComponentVisible && (
         <div className='dropdown-context'
           style={{ top: points.y + 5, left: points.x - 5 }}
+          onClick={(e) => { e.stopPropagation(); }}
         >
-          <ul>
-            {links.map((link, idx) => (
-              <DropdownItem key={idx}
-                link={link}
-                close={() => setIsComponentVisible(false)}
-              />
-            ))}
-          </ul>
+          <div>
+            { links && (
+              <ul>
+                {links.map((link, idx) => (
+                  <DropdownLinkItem key={idx}
+                    link={link}
+                    close={() => setIsComponentVisible(false)}
+                  />
+                ))}
+              </ul>
+            )}
+            { actions && (
+              <ul>
+                {actions.map((action, idx) => (
+                  <DropdownActionItem key={idx}
+                    action={action}
+                    close={() => setIsComponentVisible(false)}
+                  />
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </div>
