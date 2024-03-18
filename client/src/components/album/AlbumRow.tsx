@@ -3,19 +3,6 @@ import { Album, Link } from '../../types';
 import ma from '../../../assets/ma.ico';
 import Dropdown from '../Dropdown';
 
-const Play = ({ album, isSelected, select }: AlbumRowProps) => {
-
-  const togglePlay = () => {
-    isSelected ? select(null) : select(album);
-  };
-
-  return (
-    <td className='play' onClick={togglePlay}>
-      { isSelected ? 'Cancel' : 'Play' }
-    </td>
-  );
-};
-
 interface AlbumRowProps {
   album: Album;
   isSelected: boolean;
@@ -41,10 +28,12 @@ const AlbumRow = ({ album, isSelected, select }: AlbumRowProps) => {
     return { text, href, imageSrc: ma, className: 'ma' };
   };
 
-  return (
-    <tr>
-      <Play album={album} isSelected={isSelected} select={select} />
+  const togglePlay = () => {
+    isSelected ? select(null) : select(album);
+  };
 
+  return (
+    <tr className={isSelected ? 'selected': ''} onClick={togglePlay}>
       <td>
         <Dropdown links={[getArtistSearchLink()]}>
           {album.artist}

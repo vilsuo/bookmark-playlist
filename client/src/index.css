@@ -35,7 +35,9 @@ table tbody >:last-child {
 table td, table th {
   border-left: 1px solid black;
   border-right: 1px solid black;
-  padding: 2px 4px;
+}
+table th {
+  padding: 2px;
 }
 
 /* Special tables */
@@ -53,7 +55,7 @@ table td, table th {
 
 /* Dropdown */
 .dropdown-trigger {
-  cursor: pointer;
+  padding: 2px 4px;
 }
 .dropdown-context {
   position: absolute;
