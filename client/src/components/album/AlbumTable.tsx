@@ -63,6 +63,13 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum } : LinkListProps) =
     }
   });
 
+  const getSortIcon = (colum: Column) => {
+    if (sortColumn === colum) {
+      return sortOrder === Order.ASC ? 'asc' : 'desc';
+    }
+    return undefined;
+  };
+
   return (
     <div>
       <h2>Albums</h2>
@@ -73,8 +80,18 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum } : LinkListProps) =
       <table className='album-table'>
         <thead>
           <tr>
-            <th onClick={() => handleSort(Column.ARTIST)}>Artist</th>
-            <th onClick={() => handleSort(Column.ALBUM)}>Album</th>
+            <th className='sortable'
+              onClick={() => handleSort(Column.ARTIST)}
+            >
+              Artist
+              <div className={`sortable-icon ${getSortIcon(Column.ARTIST)}`}></div>
+            </th>
+            <th className='sortable'
+              onClick={() => handleSort(Column.ALBUM)}
+            >
+              Album
+              <div className={`sortable-icon ${getSortIcon(Column.ALBUM)}`}></div>
+            </th>
             <th>Year</th>
           </tr>
         </thead>

@@ -25,9 +25,6 @@ table thead {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
-table thead td {
-  text-align: center;
-}
 table tbody >:last-child {
   border-bottom: 1px solid black;
 }
@@ -37,9 +34,44 @@ table td, table th {
   padding: 2px;
 }
 
-/* Special tables */
-.album-table  {
+/* Table sorting */
+.sortable-icon {
+  display: inline-block;
+  height: 11px;
+  margin-left: 4px;
+  position: relative;
+  width: 1px 0px;
 }
+.sortable-icon:before,
+.sortable-icon:after {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  content: "";
+  left: 0;
+  position: absolute;
+}
+.sortable-icon:before {
+  border-bottom: 4px solid dimgrey;
+}
+.sortable-icon:after {
+  border-top: 4px solid dimgrey;
+  bottom: 0;
+}
+.sortable-icon.asc:before {
+  border-bottom: 4px solid white;
+}
+.sortable-icon.desc:after {
+  border-top: 4px solid white;
+}
+table thead th.sortable {
+  cursor: pointer;
+}
+table thead th.sortable:hover {
+  color: var(--ma-active);
+  text-shadow: 2px 2px 2px black
+}
+
+/* Special tables */
 .album-table tbody tr {
   cursor: pointer;
 }
@@ -107,6 +139,7 @@ table td, table th {
   margin-top: 6px;
   color: white;
 }
+
 /* Dropdown 
 .dropdown-trigger {
   padding: 2px 4px;
