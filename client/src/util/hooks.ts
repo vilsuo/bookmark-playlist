@@ -13,8 +13,10 @@ export const useComponentVisible = (initialIsVisible: boolean) => {
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener('contextmenu', handleClickOutside, true);
     return () => {
       document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener('contextmenu', handleClickOutside, true);
     };
   }, []);
 

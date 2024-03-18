@@ -9,8 +9,14 @@ interface DropdownItemProps {
 
 const DropdownItem = ({ link, close }: DropdownItemProps) => {
   const { text, href, imageSrc, className } = link;
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    close();
+  };
+
   return (
-    <li className={className} onClick={close}>
+    <li className={className} onClick={handleClick}>
       <a href={href} target='_blank'>
         { imageSrc && <img src={imageSrc} /> }
         <span>{text}</span>
@@ -34,7 +40,8 @@ const Dropdown = ({ children, links }: DropdownProps) => {
   return (
     <div ref={ref}>
       <div className='dropdown-trigger'
-        onClick={(e) => {
+        onContextMenu={(e) => {
+          e.preventDefault();
           setIsComponentVisible(!isComponentVisible); // toggle context
           setPoints({ x: e.pageX, y: e.pageY });
         }}

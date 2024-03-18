@@ -23,7 +23,6 @@ const AlbumTable = ({ albums, currentAlbum, setCurrentAlbum } : LinkListProps) =
       <table className='album-table'>
         <thead>
           <tr>
-            <th></th>
             <th>Artist</th>
             <th>Album</th>
             <th>Year</th>

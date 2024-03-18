@@ -1,6 +1,7 @@
 :root {
   --ma: rgb(78, 5, 5);
   --ma-active: rgb(206, 74, 74);
+  --ma-selected: darkred;
 }
 
 * {
@@ -16,6 +17,7 @@ table {
 
   background-color: var(--ma);
   color: white;
+  text-shadow: 1px 1px black;
 }
 table .center {
   text-align: center;
@@ -37,11 +39,16 @@ table td, table th {
 }
 
 /* Special tables */
+.album-table tbody tr {
+  cursor: pointer;
+}
 .album-table tbody tr:hover {
   color: var(--ma-active);
+  text-shadow: 2px 2px 2px black
 }
-.album-table .play {
-  cursor: pointer;
+.album-table tbody tr.selected {
+  color: var(--ma-selected);
+  text-shadow: 2px 2px 2px black
 }
 
 /* Dropdown */
