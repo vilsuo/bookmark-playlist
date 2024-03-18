@@ -5,9 +5,32 @@ import AlbumTable from './components/album/AlbumTable';
 import Video from './components/Video';
 import { Album } from './types';
 
+const Sidebar = () => {
+
+  return (
+    <div className='sidebar'>
+
+    </div>
+  );
+};
+
+interface MainProps {
+  album: Album | null;
+}
+
+const Main = ({ album }: MainProps) => {
+  return (
+    <div className='main'>
+      { album && (
+        <Video album={album} />
+      )}
+    </div>
+  );
+};
+
 const App = () => {
   const [albums, setAlbums] = useState<Array<Album>>([]);
-  const [currentAlbum, setCurrentAlbum] = useState<Album | null>(null);
+  const [playingAlbum, setPlayingAlbum] = useState<Album | null>(null);
 
   const handleUpload = async (formData: FormData) => {
     const { data } = await axios.post(
@@ -22,17 +45,15 @@ const App = () => {
     <div>
       <FileForm upload={handleUpload} />
 
-      { currentAlbum && (
-        <Video album={currentAlbum} />
-      )}
-
       { (albums.length > 0) && (
         <AlbumTable
           albums={albums}
-          currentAlbum={currentAlbum}
-          setCurrentAlbum={setCurrentAlbum}
+          playingAlbum={playingAlbum}
+          setPlayingAlbum={setPlayingAlbum}
         />
       )}
+
+      <Main album={playingAlbum} />
     </div>
   );
 };
