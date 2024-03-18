@@ -1,11 +1,12 @@
 :root {
-  --active: lightblue;
-
-  --primary: bisque;
-  --secondary: lightgray;
-
   --ma: rgb(78, 5, 5);
   --ma-active: rgb(206, 74, 74);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 table {
@@ -34,10 +35,8 @@ table td, table th {
   border-right: 1px solid black;
   padding: 2px 4px;
 }
-.table tbody tr.selected {
-  color: red;
-}
 
+/* Special tables */
 .album-table tbody tr:hover {
   color: var(--ma-active);
 }
@@ -49,7 +48,6 @@ table td, table th {
 .dropdown-trigger {
   cursor: pointer;
 }
-
 .dropdown-context {
   position: absolute;
   background-color: white;
@@ -57,8 +55,6 @@ table td, table th {
 }
 .dropdown-context ul {
   list-style: none;
-  margin: 0;
-  padding: 0;
 }
 .dropdown-context ul li {
   margin: 1px;

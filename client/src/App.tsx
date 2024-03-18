@@ -26,11 +26,13 @@ const App = () => {
         <Video album={currentAlbum} />
       )}
 
-      <AlbumTable
-        albums={albums}
-        currentAlbum={currentAlbum}
-        setCurrentAlbum={setCurrentAlbum}
-      />
+      { (albums.length > 0) && (
+        <AlbumTable
+          albums={albums}
+          currentAlbum={currentAlbum}
+          setCurrentAlbum={setCurrentAlbum}
+        />
+      )}
     </div>
   );
 };
