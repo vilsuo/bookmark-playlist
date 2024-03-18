@@ -3,41 +3,56 @@ import { Link } from '../types';
 import { useComponentVisible } from '../util/hooks';
 
 interface DropdownLinkItemProps {
-  link: Link;
+  links: Link[];
   close: () => void;
 }
 
-const DropdownLinkItem = ({ link, close }: DropdownLinkItemProps) => {
-  const { text, href, imageSrc, className } = link;
-
+const DropdownLinkItems = ({ links, close }: DropdownLinkItemProps) => {
   return (
-    <li className={className} onClick={close}>
-      <a href={href} target='_blank'>
-        { imageSrc && <img src={imageSrc} /> }
-        <span>{text}</span>
-      </a>
-    </li>
-  )
+    <ul>
+      { links.map((link, idx) => {
+        const { text, href, imageSrc, className } = link;
+
+        return (
+          <li key={idx} className={className} onClick={close}>
+            <a href={href} target='_blank'>
+              { imageSrc && <img src={imageSrc} /> }
+              <span>{text}</span>
+            </a>
+          </li>
+        )
+      })}
+    </ul>
+  );
 };
 
 interface DropdownActionItemProps {
-  action: Action;
+  actions: Action[];
   close: () => void;
 }
 
-const DropdownActionItem = ({ action, close }: DropdownActionItemProps) => {
-  const handleClick = (e) => {
-    action.onClick();
+const DropdownActionItem = ({ actions, close }: DropdownActionItemProps) => {
+
+  const handleClick = (onClick: () => void) => (e) => {
+    onClick();
     close();
   };
 
   return (
-    <li>
-      <button onClick={handleClick}>
-        {action.text}
-      </button>
-    </li>
-  )
+    <ul>
+      { actions.map((action, idx) => {
+        const { onClick, text } = action;
+
+        return (
+          <li key={idx}>
+            <button onClick={handleClick(onClick)}>
+              {text}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 };
 
 type Action = {
@@ -58,13 +73,13 @@ const Dropdown = ({ children, links, actions }: DropdownProps) => {
   // remember click location
   const [points, setPoints] = useState({ x: 0, y: 0 });
 
+  const close = () => setIsComponentVisible(false);
+
   return (
     <div ref={ref}>
       <div className='dropdown-trigger'
         onClick={() => {
-          if (isComponentVisible) {
-            setIsComponentVisible(false);
-          }
+          if (isComponentVisible) { close(); }
         }}
         onContextMenu={(e) => {
           e.preventDefault();
@@ -82,24 +97,10 @@ const Dropdown = ({ children, links, actions }: DropdownProps) => {
         >
           <div>
             { links && (
-              <ul>
-                {links.map((link, idx) => (
-                  <DropdownLinkItem key={idx}
-                    link={link}
-                    close={() => setIsComponentVisible(false)}
-                  />
-                ))}
-              </ul>
+              <DropdownLinkItems links={links} close={close} />
             )}
             { actions && (
-              <ul>
-                {actions.map((action, idx) => (
-                  <DropdownActionItem key={idx}
-                    action={action}
-                    close={() => setIsComponentVisible(false)}
-                  />
-                ))}
-              </ul>
+              <DropdownActionItem actions={actions} close={close} />
             )}
           </div>
         </div>

@@ -76,6 +76,10 @@ table th {
   gap: 2px;
   padding-right: 2px;
 }
+.dropdown-context ul li button {
+  width: 100%;
+  text-align: start;
+}
 
 /* Link styles  */
 .ma {
