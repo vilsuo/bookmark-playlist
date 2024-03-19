@@ -15,7 +15,8 @@ h1, h2, h3 {
 }
 
 .container {
- display: flex;
+  display: flex;
+  height: 100vh;
 }
 
 .container .sidebar {
@@ -26,6 +27,7 @@ h1, h2, h3 {
   top: 0;
 
   background-color: var(--ma-selected);
+  border-right: 2px solid black;
 
   min-width: fit-content;
 }
@@ -33,9 +35,8 @@ h1, h2, h3 {
   position: sticky;
   top: 0;
   z-index: 1;
-
   display: flex;
-  margin-bottom: 10px;
+
   background-color: black;
   color: white;
 }
@@ -46,9 +47,15 @@ h1, h2, h3 {
   margin: 0 auto;
 }
 .container .sidebar .sidebar-container {
+  margin: 10px;
+}
+.container .sidebar .sidebar-container > * {
+  margin-top: 10px;
 }
 .container .main {
   flex: 1;
+  overflow-y: scroll;
+
   background-color: green;
 }
 
@@ -56,8 +63,30 @@ h1, h2, h3 {
 .file-form {
   display: flex;
   flex-flow: column;
-
-  background-color: chartreuse;
+  padding: 4px;
+  border: 2px solid black;
+  color: white;
+  background-color: var(--ma);
+}
+.file-form .inputs {
+  margin: 4px 0;
+}
+.file-form .inputs input {
+  width: 100%;
+}
+.file-form .inputs .folder-name {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 2px;
+  gap: 2px;
+}
+.file-form .inputs .folder-name label {
+  text-wrap: nowrap;
+}
+.file-form .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
 }
 
 table {
@@ -72,15 +101,15 @@ table .center {
   text-align: center;
 }
 table thead {
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
 }
 table tbody >:last-child {
-  border-bottom: 1px solid black;
+  border-bottom: 2px solid black;
 }
 table td, table th {
-  border-left: 1px solid black;
-  border-right: 1px solid black;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
   padding: 2px;
 }
 
@@ -151,7 +180,7 @@ table thead th.sortable:hover {
 
 /* Extra row */
 #extra-row {
-  border: 1px solid black;
+  border: 2px solid black;
   cursor: initial;
 }
 #extra-row .extra-row-container {

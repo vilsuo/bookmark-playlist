@@ -6,11 +6,12 @@ interface FileFormProps {
 
 const FileForm = ({ upload }: FileFormProps) => {
   const [file, setFile] = useState<File | null>();
-  const [name, setName] = useState('');
+  const [name, setName] = useState('Thrash');
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileReset = () => {
+  const handleReset = () => {
+    setName('');
     setFile(null);
     if (inputRef.current) {
       inputRef.current.value = '';
@@ -30,7 +31,7 @@ const FileForm = ({ upload }: FileFormProps) => {
 
     try {
       await upload(formData);
-      //handleFileReset();
+      handleReset();
 
     } catch (error) {
       console.log('Error uploading', error);
@@ -39,31 +40,31 @@ const FileForm = ({ upload }: FileFormProps) => {
 
   return (
     <div className='file-form'>
-      <input 
-        type='file'
-        ref={inputRef}
-        onChange={handleFileChange}
-        accept='.html'
-        required
-      />
+      <h3>Upload bookmarks</h3>
 
-      <label>
-        Name:
-        <input
-          type='text'
-          value={name}
-          onChange={({ target }) => setName(target.value)}
+      <div className='inputs'>
+        <div className='folder-name'>
+          <label htmlFor='folder-name-input'>Folder name:</label>
+          <input
+            type='text'
+            value={name}
+            onChange={({ target }) => setName(target.value)}
+            id='folder-name-input'
+          />
+        </div>
+
+        <input 
+          type='file'
+          ref={inputRef}
+          onChange={handleFileChange}
+          accept='.html'
+          required
         />
-      </label>
+      </div>
 
       <div className='actions'>
-        <button onClick={handleFileUpload}>
-          Send
-        </button>
-
-        <button onClick={handleFileReset}>
-          Clear
-        </button>
+        <button onClick={handleReset}>Clear</button>
+        <button onClick={handleFileUpload}>Send</button>
       </div>
     </div>
   );
