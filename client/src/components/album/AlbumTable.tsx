@@ -72,11 +72,6 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum } : LinkListProps) =
 
   return (
     <div>
-      <h2>Albums</h2>
-
-      <p>Column { sortColumn === Column.ARTIST ? 'artist' : 'album' }</p>
-      <p>Order { sortOrder === Order.ASC ? 'asc' : 'desc' }</p>
-      
       <table className='album-table'>
         <thead>
           <tr>

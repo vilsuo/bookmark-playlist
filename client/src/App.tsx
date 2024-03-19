@@ -20,8 +20,8 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
   return (
     <div className='sidebar'>
       <div className='sidebar-toolbar'>
-        <h2>SideBar</h2>
-        <button onClick={close}>Close</button>
+        <h2>Albums</h2>
+        <button onClick={close}>&#x2715;</button>
       </div>
 
       <div className='sidebar-container'>
@@ -36,7 +36,7 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
         )}
 
         <ul>
-          {[...Array(50).keys()].map(key => (
+          {[...Array(100).keys()].map(key => (
             <li key={key}>
               <span>item {key}</span>
             </li>

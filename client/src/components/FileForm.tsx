@@ -6,6 +6,8 @@ interface FileFormProps {
 
 const FileForm = ({ upload }: FileFormProps) => {
   const [file, setFile] = useState<File | null>();
+  const [name, setName] = useState('');
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileReset = () => {
@@ -24,6 +26,7 @@ const FileForm = ({ upload }: FileFormProps) => {
   const handleFileUpload = async () => {
     const formData = new FormData();
     formData.append('file', file, file.name);
+    formData.append('name', name);
 
     try {
       await upload(formData);
@@ -35,7 +38,7 @@ const FileForm = ({ upload }: FileFormProps) => {
   };
 
   return (
-    <div>
+    <div className='file-form'>
       <input 
         type='file'
         ref={inputRef}
@@ -44,13 +47,24 @@ const FileForm = ({ upload }: FileFormProps) => {
         required
       />
 
-      <button onClick={handleFileUpload}>
-        Send
-      </button>
+      <label>
+        Name:
+        <input
+          type='text'
+          value={name}
+          onChange={({ target }) => setName(target.value)}
+        />
+      </label>
 
-      <button onClick={handleFileReset}>
-        Reset
-      </button>
+      <div className='actions'>
+        <button onClick={handleFileUpload}>
+          Send
+        </button>
+
+        <button onClick={handleFileReset}>
+          Clear
+        </button>
+      </div>
     </div>
   );
 };
