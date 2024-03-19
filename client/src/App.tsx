@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import FileForm from './components/FileForm';
+import BookmarkForm from './components/BookmarkForm';
 import AlbumTable from './components/album/AlbumTable';
 import Video from './components/Video';
 import { Album } from './types';
@@ -15,17 +15,24 @@ interface SidebarProps {
   close: () => void;
 }
 
+// add toggle to upload form to toolbar
 const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: SidebarProps) => {
+  const [showUpload, setShowUpload] = useState(false);
+
+  const toggleUpload = () => setShowUpload(!showUpload);
 
   return (
     <div className='sidebar'>
       <div className='sidebar-toolbar'>
         <h2>Albums</h2>
+        <button onClick={toggleUpload}>Toggle upload</button>
         <button onClick={close}>&#x2715;</button>
       </div>
 
       <div className='sidebar-container'>
-        <FileForm upload={handleUpload} />
+        { showUpload && (
+          <BookmarkForm upload={handleUpload} />
+        )}
 
         { (albums.length > 0) && (
           <AlbumTable
@@ -34,14 +41,6 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
             setPlayingAlbum={setPlayingAlbum}
           />
         )}
-
-        <ul>
-          {[...Array(100).keys()].map(key => (
-            <li key={key}>
-              <span>item {key}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

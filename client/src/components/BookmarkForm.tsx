@@ -7,9 +7,9 @@ interface FileFormProps {
   upload: (formdata: FormData) => Promise<void>;
 }
 
-const FileForm = ({ upload }: FileFormProps) => {
+const BookmarkForm = ({ upload }: FileFormProps) => {
   const [file, setFile] = useState<File | null>();
-  const [name, setName] = useState('Thrash');
+  const [name, setName] = useState('');
 
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<NotificationType | null>(null);
@@ -49,13 +49,13 @@ const FileForm = ({ upload }: FileFormProps) => {
   };
 
   return (
-    <div className='file-form'>
+    <div className='bookmark-form'>
       <h3>Upload bookmarks</h3>
 
       { messageType && (
         <Notification
           type={messageType}
-          successTitle='Bookmark uploaded'
+          successTitle='Bookmarks uploaded'
           errorTitle='Bookmark upload failed'
           message={message}
           close={() => {
@@ -69,10 +69,11 @@ const FileForm = ({ upload }: FileFormProps) => {
         <div className='folder-name'>
           <label htmlFor='folder-name-input'>Folder name:</label>
           <input
+            id='folder-name-input'
             type='text'
             value={name}
             onChange={({ target }) => setName(target.value)}
-            id='folder-name-input'
+            placeholder='Look in...'
           />
         </div>
 
@@ -93,4 +94,4 @@ const FileForm = ({ upload }: FileFormProps) => {
   );
 };
 
-export default FileForm;
+export default BookmarkForm;

@@ -38,6 +38,7 @@ h1, h2, h3 {
 
   background-color: black;
   color: white;
+  border: 1px solid white;
 }
 .container .sidebar .sidebar-toolbar button {
   padding: 2px 6px;
@@ -59,7 +60,7 @@ h1, h2, h3 {
 }
 
 /* File upload form*/
-.file-form {
+.bookmark-form {
   display: flex;
   flex-flow: column;
   padding: 4px;
@@ -67,22 +68,22 @@ h1, h2, h3 {
   color: white;
   background-color: var(--ma);
 }
-.file-form .inputs {
+.bookmark-form .inputs {
   margin: 4px 0;
 }
-.file-form .inputs input {
+.bookmark-form .inputs input {
   width: 100%;
 }
-.file-form .inputs .folder-name {
+.bookmark-form .inputs .folder-name {
   display: flex;
   flex-direction: row;
   margin-bottom: 2px;
   gap: 2px;
 }
-.file-form .inputs .folder-name label {
+.bookmark-form .inputs .folder-name label {
   text-wrap: nowrap;
 }
-.file-form .actions {
+.bookmark-form .actions {
   display: flex;
   justify-content: flex-end;
   gap: 4px;
