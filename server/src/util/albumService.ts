@@ -1,3 +1,4 @@
+import { LinkError } from '../errors';
 import { Link } from '../types';
 
 const getVideoId = (href: string | undefined): string => {
@@ -9,7 +10,7 @@ const getVideoId = (href: string | undefined): string => {
   }
 
   if (!href.startsWith(VIDEO_PREFIX)) {
-    throw new Error('Hyperref does not have youtube prefix');
+    throw new Error('Hyperref is not youtube');
   }
 
   if (href.length < VIDEO_PREFIX.length + VIDEO_ID_LENGTH) {
@@ -51,7 +52,7 @@ const getLinkDetails = (linkTitle: string) => {
   };
 };
 
-export const createAlbumsFromLinks = (links: Array<Link>) => {
+export const createAlbumsFromLinks = (links: Link[]) => {
   return links.map((link) => {
     const { title, href } = link;
 
@@ -60,9 +61,12 @@ export const createAlbumsFromLinks = (links: Array<Link>) => {
         videoId: getVideoId(href),
         ...getLinkDetails(title.trim()),
       };
-    } catch (error) {
-      console.log('link', link)
-      throw error;
+    } catch (error: unknown) {
+      let message = 'Unknown error happened';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      throw new LinkError(message, link);
     }
   });
 };
