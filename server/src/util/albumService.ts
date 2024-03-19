@@ -55,9 +55,14 @@ export const createAlbumsFromLinks = (links: Array<Link>) => {
   return links.map((link) => {
     const { title, href } = link;
 
-    return {
-      videoId: getVideoId(href),
-      ...getLinkDetails(title.trim()),
-    };
+    try {
+      return {
+        videoId: getVideoId(href),
+        ...getLinkDetails(title.trim()),
+      };
+    } catch (error) {
+      console.log('link', link)
+      throw error;
+    }
   });
 };

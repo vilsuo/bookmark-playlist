@@ -26,7 +26,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       const fileString = file.buffer.toString();
 
       // convert file string to links
-      const links = htmlParser.getHeaderNextDlSiblingLinks(fileString, 'music');
+      const links = htmlParser.getHeaderNextDlSiblingLinks(fileString, fields.name);
 
       // convert links to albums
       const albums = albumService.createAlbumsFromLinks(links);
