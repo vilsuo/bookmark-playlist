@@ -51,7 +51,7 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
   return (
     <tr id='extra-row'>
       <td colSpan={3}>
-        <div className='container'>
+        <div className='extra-row-container'>
           <div className='title'>
             <span>{text}</span>
             <button onClick={close}>&#x2715;</button>
