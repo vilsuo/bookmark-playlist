@@ -1,4 +1,9 @@
 
+export enum NotificationType {
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+
 export type LinkBase = {
   text: string;
   href: string;

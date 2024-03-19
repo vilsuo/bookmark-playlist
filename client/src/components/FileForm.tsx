@@ -1,4 +1,7 @@
 import { useRef, useState } from 'react';
+import { Notification } from './Notification';
+import { NotificationType } from '../types';
+import { getErrorMessage } from '../util/axiosErrors';
 
 interface FileFormProps {
   upload: (formdata: FormData) => Promise<void>;
@@ -7,6 +10,9 @@ interface FileFormProps {
 const FileForm = ({ upload }: FileFormProps) => {
   const [file, setFile] = useState<File | null>();
   const [name, setName] = useState('Thrash');
+
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<NotificationType | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,14 +39,31 @@ const FileForm = ({ upload }: FileFormProps) => {
       await upload(formData);
       handleReset();
 
+      setMessage(null)
+      setMessageType(NotificationType.SUCCESS);
+
     } catch (error) {
-      console.log('Error uploading', error);
+      setMessage(getErrorMessage(error));
+      setMessageType(NotificationType.ERROR);
     }
   };
 
   return (
     <div className='file-form'>
       <h3>Upload bookmarks</h3>
+
+      { messageType && (
+        <Notification
+          type={messageType}
+          successTitle='Bookmark uploaded'
+          errorTitle='Bookmark upload failed'
+          message={message}
+          close={() => {
+            setMessage(null);
+            setMessageType(null);
+          }}
+        />
+      )}
 
       <div className='inputs'>
         <div className='folder-name'>
@@ -64,7 +87,7 @@ const FileForm = ({ upload }: FileFormProps) => {
 
       <div className='actions'>
         <button onClick={handleReset}>Clear</button>
-        <button onClick={handleFileUpload}>Send</button>
+        <button disabled={!(name && file)} onClick={handleFileUpload}>Send</button>
       </div>
     </div>
   );
