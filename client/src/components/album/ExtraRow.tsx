@@ -1,5 +1,7 @@
-import ma from '../../../assets/ma.ico';
 import { Album } from '../../types';
+
+// icons
+import ma from '../../../assets/ma.ico';
 
 const getArtistSearchLink = (album: Album) => {
   const text = album.artist;
@@ -56,14 +58,19 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
             <span>{text}</span>
             <button onClick={close}>&#x2715;</button>
           </div>
+
           <div className='content'>
             <div className='links'>
               { getArtistSearchLink(album) }
               { getAlbumSearchLink(album) }
             </div>
-            <button onClick={togglePlaying}>
-              { isPlaying ? 'Close' : 'Open' } Video
-            </button>
+
+            <div className='actions'>
+              <button>Queue</button>
+              <button onClick={togglePlaying}>
+                { isPlaying ? 'Close' : 'Open' } Video
+              </button>
+            </div>
           </div>
         </div>
       </td>
