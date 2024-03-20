@@ -16,7 +16,7 @@ const getHeaderRange = (htmlString: string, header: string): Range => {
   const standardized = htmlString.toLowerCase();
   const startIdx = standardized.search(headerRegex);
 
-  if (startIdx === -1) throw new Error('Header was not found');
+  if (startIdx === -1) throw new Error(`Header '${header}' was not found`);
 
   const openedTags = [];
   const closedTags = [];
