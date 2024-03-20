@@ -96,13 +96,43 @@ h1, h2, h3 {
 
 /* Album filter */
 .album-filter {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 6px;
+
   padding: 4px;
   border: 2px solid black;
   color: white;
   background-color: var(--ma);
 }
-.album-filter input {
+
+.album-filter .filter-column {
+  display: flex;
+  gap: 4px;
+}
+
+.album-filter .filter-text {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+}
+.album-filter .filter-text input {
   width: 100%;
+}
+
+.album-filter .filter-interval {
+  flex: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 4px;
+}
+.album-filter .filter-interval div {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 4px;
+}
+.album-filter .filter-interval input {
+  width: 60px;
 }
 
 /* Notification */
@@ -227,17 +257,13 @@ table thead th.sortable:hover {
 }
 #extra-row .extra-row-container .title {
   display: flex;
-  justify-content: space-between;
   margin-bottom: 4px;
 }
 #extra-row .extra-row-container .title span {
   flex-grow: 1;
-
   display: flex;
   justify-content: center;
-
   text-align: center;
-
   border: 1px solid black;
   background-color: var(--ma);
 }
@@ -265,5 +291,4 @@ table thead th.sortable:hover {
   justify-content: center;
 }
 #extra-row .extra-row-container .content .actions button {
-  
 }
