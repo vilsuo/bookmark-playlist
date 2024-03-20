@@ -1,32 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
-import Video from './components/Video';
 import { Album } from './types';
 import Sidebar from './components/Sidebar';
-
-const formatVideoTitle = (album: Album) => {
-  const { artist, title, published } = album;
-
-  return `${artist} - ${title} (${published})`;
-};
-
-interface VideoPlayerProps {
-  playingAlbum: Album;
-  closeVideo: () => void;
-}
-
-const VideoPlayer = ({ playingAlbum, closeVideo }: VideoPlayerProps) => {
-  return (
-    <div className='video-player'>
-      <div className='header'>
-        <h1>{formatVideoTitle(playingAlbum)}</h1>
-        <button onClick={closeVideo}>Close</button>
-      </div>
-      
-      <Video videoId={playingAlbum.videoId} />
-    </div>
-  );
-};
+import VideoPlayer from './components/video/VideoPlayer';
 
 interface MainProps {
   playingAlbum: Album | null;
@@ -45,6 +21,12 @@ const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
           closeVideo={closeVideo}
         />
       )}
+
+      <ul>
+        {[...Array(50).keys()].map(k => (
+          <li key={k}>Item {k}</li>
+        ))}
+      </ul>
     </div>
   );
 };
