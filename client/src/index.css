@@ -12,11 +12,15 @@
 
 h1, h2, h3 {
   text-align: center;
+  color: white;
+  text-shadow: 3px 3px black;
 }
 
 .container {
   display: flex;
   height: 100vh;
+
+  background-color: black;
 }
 /* Sidebar */
 .container .sidebar {
@@ -63,19 +67,33 @@ h1, h2, h3 {
   flex: 1;
   overflow-y: scroll;
 
-  background-color: green;
+  background-color: var(--ma-selected);
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container .main > * {
+  margin: 10px
 }
 
 /* Video */
-@media (min-width: 1000px) {
-  .video-player {
-    padding: 0 calc(0.35 * (100% - 1000px));
-    border: 2px solid orange;
-  } 
+.video-player {
+}
+.video-player .header {
+  display: flex;
+  padding: 4px;
+  border: 2px solid white;
+  background-color: var(--ma);
+}
+.video-player h1 {
+  flex: 1;
+}
+.video-player .header button {
+  font-size: larger;
 }
 .video-player .video {
-  border: 2px solid blue;
-
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
   padding-top: 25px;
