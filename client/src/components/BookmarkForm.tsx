@@ -50,13 +50,13 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
 
   return (
     <div className='bookmark-form'>
-      <h3>Upload bookmarks</h3>
+      <h3>Import bookmarks</h3>
 
       { messageType && (
         <Notification
           type={messageType}
-          successTitle='Bookmarks uploaded'
-          errorTitle='Bookmark upload failed'
+          successTitle='Bookmarks imported'
+          errorTitle='Bookmark import failed'
           message={message}
           close={() => {
             setMessage(null);
@@ -67,13 +67,13 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
 
       <div className='inputs'>
         <div className='folder-name'>
-          <label htmlFor='folder-name-input'>Folder name:</label>
+          <label htmlFor='folder-name-input'>Folder:</label>
           <input
             id='folder-name-input'
             type='text'
             value={name}
             onChange={({ target }) => setName(target.value)}
-            placeholder='Look in...'
+            placeholder='Look inside...'
           />
         </div>
 

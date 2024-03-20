@@ -64,7 +64,7 @@ h1, h2, h3 {
   background-color: green;
 }
 
-/* File upload form*/
+/* Bookmark upload form */
 .bookmark-form {
   display: flex;
   flex-flow: column;
@@ -74,19 +74,16 @@ h1, h2, h3 {
   background-color: var(--ma);
 }
 .bookmark-form .inputs {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  
   margin: 4px 0;
-}
-.bookmark-form .inputs input {
-  width: 100%;
 }
 .bookmark-form .inputs .folder-name {
   display: flex;
   flex-direction: row;
-  margin-bottom: 2px;
-  gap: 2px;
-}
-.bookmark-form .inputs .folder-name label {
-  text-wrap: nowrap;
+  gap: 4px;
 }
 .bookmark-form .actions {
   display: flex;
@@ -99,18 +96,15 @@ h1, h2, h3 {
   display: flex;
   flex-flow: row nowrap;
   gap: 6px;
-
   padding: 4px;
   border: 2px solid black;
   color: white;
   background-color: var(--ma);
 }
-
 .album-filter .filter-column {
   display: flex;
   gap: 4px;
 }
-
 .album-filter .filter-text {
   flex: 1;
   display: flex;
@@ -119,7 +113,6 @@ h1, h2, h3 {
 .album-filter .filter-text input {
   width: 100%;
 }
-
 .album-filter .filter-interval {
   flex: 1;
   display: flex;
