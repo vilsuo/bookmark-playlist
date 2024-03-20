@@ -4,6 +4,11 @@ export enum NotificationType {
   ERROR = 'error',
 }
 
+export enum AlbumColumn {
+  ARTIST = 'artist',
+  ALBUM = 'title',
+}
+
 export type LinkBase = {
   text: string;
   href: string;

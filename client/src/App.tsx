@@ -1,50 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
-import BookmarkForm from './components/BookmarkForm';
-import AlbumTable from './components/album/AlbumTable';
 import Video from './components/Video';
 import { Album } from './types';
-
-interface SidebarProps {
-  handleUpload: (formData: FormData) => Promise<void>;
-
-  albums: Album[];
-  playingAlbum: Album | null;
-  setPlayingAlbum: (album: Album | null) => void;
-
-  close: () => void;
-}
-
-// add toggle to upload form to toolbar
-const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: SidebarProps) => {
-  const [showUpload, setShowUpload] = useState(false);
-
-  const toggleUpload = () => setShowUpload(!showUpload);
-
-  return (
-    <div className='sidebar'>
-      <div className='sidebar-toolbar'>
-        <h2>Albums</h2>
-        <button onClick={toggleUpload}>Toggle upload</button>
-        <button onClick={close}>&#x2715;</button>
-      </div>
-
-      <div className='sidebar-container'>
-        { showUpload && (
-          <BookmarkForm upload={handleUpload} />
-        )}
-
-        { (albums.length > 0) && (
-          <AlbumTable
-            albums={albums}
-            playingAlbum={playingAlbum}
-            setPlayingAlbum={setPlayingAlbum}
-          />
-        )}
-      </div>
-    </div>
-  );
-};
+import Sidebar from './components/Sidebar';
 
 interface MainProps {
   album: Album | null;
