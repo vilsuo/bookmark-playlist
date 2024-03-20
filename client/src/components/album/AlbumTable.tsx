@@ -3,6 +3,35 @@ import { Album, AlbumColumn } from '../../types';
 import AlbumRow from './AlbumRow';
 import ExtraRow from './ExtraRow';
 
+const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
+  const aArtist = a.artist.toLowerCase();
+  const bArtist = b.artist.toLowerCase();
+
+  const aTitle = a.title.toLowerCase();
+  const bTitle = b.title.toLowerCase();
+
+  if (sortColumn === AlbumColumn.ARTIST) {
+    if (aArtist === bArtist) {
+      return b.published - a.published;
+    }
+
+    return sortOrder * ((aArtist < bArtist) ? -1 : 1);
+  } else {
+    if (aTitle === bTitle) {
+      return (aArtist < bArtist) ? -1 : 1;
+    }
+
+    return sortOrder * ((aTitle < bTitle) ? -1 : 1);
+  }
+}
+
+const getFilterFn = (filter: string) => (album: Album) => {
+  if (!filter) return true;
+
+  return (album.artist.toLowerCase().search(filter) !== -1)
+   || (album.title.toLowerCase().search(filter) !== -1);
+};
+
 enum Order {
   DESC = -1, // largest to smallest
   ASC = 1,  // smallest to largest
@@ -38,34 +67,9 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filter } : LinkList
     setSortColumn(colum);
   };
 
-  const filterAlbums = (album: Album) => {
-    if (!filter) return true;
-
-    return (album.artist.toLowerCase().search(filter) !== -1)
-     || (album.title.toLowerCase().search(filter) !== -1);
-  }
-
-  const sortedAlbums = albums.filter(filterAlbums).toSorted((a: Album, b: Album) => {
-    const aArtist = a.artist.toLowerCase();
-    const bArtist = b.artist.toLowerCase();
-
-    const aTitle = a.title.toLowerCase();
-    const bTitle = b.title.toLowerCase();
-
-    if (sortColumn === AlbumColumn.ARTIST) {
-      if (aArtist === bArtist) {
-        return b.published - a.published;
-      }
-
-      return sortOrder * ((aArtist < bArtist) ? -1 : 1);
-    } else {
-      if (aTitle === bTitle) {
-        return (aArtist < bArtist) ? -1 : 1;
-      }
-
-      return sortOrder * ((aTitle < bTitle) ? -1 : 1);
-    }
-  });
+  const sortedAlbums = albums
+    .filter(getFilterFn(filter))
+    .toSorted(getSortFn(sortColumn, sortOrder));
 
   const getSortIcon = (colum: AlbumColumn) => {
     if (sortColumn === colum) {
