@@ -42,7 +42,6 @@ const getLinkDetails = (linkTitle: string) => {
 
   const second = first[1].split(PUBLISHED_PATTERN);
   if (second.length !== 3) {
-    console.log('second', second)
     throw new Error(`The title must end to four figure publish year in parenthesis`);
   }
 
@@ -64,6 +63,7 @@ export const createAlbumsFromLinks = (links: Link[]) => {
 
     try {
       return {
+        category: link.category,
         videoId: getVideoId(href),
         ...getLinkDetails(title.trim()),
       };

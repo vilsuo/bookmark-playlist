@@ -4,6 +4,7 @@ import { createAlbumsFromLinks } from '../../src/util/albumService';
 const link: Link = {
   title: 'Annihilator - Alice In Hell (1989)',
   href: 'https://www.youtube.com/watch?v=IdRn9IYWuaQ',
+  category: 'Thrash',
 };
 
 const expectToThrow = (invalidLink: Link) => {
@@ -17,6 +18,7 @@ describe('createAlbumsFromLinks', () => {
       artist: 'Annihilator',
       title: 'Alice In Hell',
       published: 1989,
+      category: 'Thrash',
     };
 
     const albums = createAlbumsFromLinks([link]);
@@ -28,6 +30,10 @@ describe('createAlbumsFromLinks', () => {
 
     it('video id is correct', () => {
       expect(album.videoId).toBe(expected.videoId);
+    });
+
+    it('category is correct', () => {
+      expect(album.category).toBe(expected.category);
     });
 
     describe('album details', () => {

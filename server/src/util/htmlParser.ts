@@ -62,12 +62,13 @@ const getHtmlBlock = (
   return htmlParser.parse(htmlString.substring(start, end));
 };
 
-const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement): Link[] => {
+const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement, header: string): Link[] => {
   const links = htmlBlock.querySelectorAll('a');
 
   return links.map((link) => ({
     title: link.textContent,
     href: link.getAttribute('href'),
+    category: header,
   }));
 };
 
@@ -108,7 +109,7 @@ export const getHeaderNextDlSiblingLinks = (
 ): Link[] => {
   const range = getHeaderRange(htmlString, header);
   const block = getHtmlBlock(htmlString, range);
-  const links = getLinksFromHtmlBlock(block);
+  const links = getLinksFromHtmlBlock(block, header);
 
   return links;
 };
