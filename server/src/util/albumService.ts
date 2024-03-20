@@ -36,19 +36,25 @@ const getLinkDetails = (linkTitle: string) => {
   const first = linkTitle.split(ARTIST_TITLE_SEPARATOR);
   if (first.length !== 2) {
     throw new Error(
-      `The artist and album must be separated with '${ARTIST_TITLE_SEPARATOR}' in the title`,
+      `The artist and album must be separated with a single '${ARTIST_TITLE_SEPARATOR}' in the title`,
     );
   }
 
   const second = first[1].split(PUBLISHED_PATTERN);
   if (second.length !== 3) {
-    throw new Error(`The title must end to publish year in parenthesis`);
+    console.log('second', second)
+    throw new Error(`The title must end to four figure publish year in parenthesis`);
+  }
+
+  const published = Number(second[1]);
+  if (isNaN(published)) {
+    throw new Error('The publish year in the title is not a number');
   }
 
   return {
     artist: first[0],
     title: second[0],
-    published: Number(second[1]),
+    published,
   };
 };
 
