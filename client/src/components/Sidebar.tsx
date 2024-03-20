@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import BookmarkForm from './BookmarkForm';
 
 // albums
@@ -7,8 +7,8 @@ import AlbumTable from './album/AlbumTable';
 import { Album, AlbumColumn } from '../types';
 
 const DEFAULT_FILTER_OPTIONS: FilterOptions = {
-  text: '',
   column: AlbumColumn.ARTIST,
+  text: '',
   interval: { start: '', end: '' }
 };
 
@@ -21,7 +21,8 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: SidebarProps) => {
-  const [showUpload, setShowUpload] = useState(false);
+  const [showUpload, setShowUpload] = useState(albums.length === 0);
+
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(DEFAULT_FILTER_OPTIONS);
 
   const startRef = useRef<null | HTMLDivElement>(null);
@@ -50,18 +51,20 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
           <BookmarkForm upload={handleUpload} />
         )}
 
-        <AlbumFilter
-          filterOptions={filterOptions}
-          setFilterOptions={setFilterOptions}
-        />
-
         { (albums.length > 0) && (
-          <AlbumTable
-            albums={albums}
-            playingAlbum={playingAlbum}
-            setPlayingAlbum={setPlayingAlbum}
-            filterOptions={filterOptions}
-          />
+          <React.Fragment>
+            <AlbumFilter
+              filterOptions={filterOptions}
+              setFilterOptions={setFilterOptions}
+            />
+
+            <AlbumTable
+              albums={albums}
+              playingAlbum={playingAlbum}
+              setPlayingAlbum={setPlayingAlbum}
+              filterOptions={filterOptions}
+            />
+          </React.Fragment>
         )}
         <div ref={endRef} />
       </div>

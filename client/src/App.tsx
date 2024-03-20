@@ -30,7 +30,7 @@ const App = () => {
   const [albums, setAlbums] = useState<Array<Album>>([]);
   const [playingAlbum, setPlayingAlbum] = useState<Album | null>(null);
 
-  const [showSideBar, setShowSidebar] = useState(true);
+  const [showSideBar, setShowSidebar] = useState(false);
 
   const handleUpload = async (formData: FormData) => {
     const { data } = await axios.post(
