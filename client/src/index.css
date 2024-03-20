@@ -12,27 +12,23 @@
 
 h1, h2, h3 {
   text-align: center;
-  color: white;
-  text-shadow: 3px 3px black;
 }
 
 .container {
   display: flex;
   height: 100vh;
-
   background-color: black;
+  color: white;
+  text-shadow: 2px 2px 2px black;
 }
 /* Sidebar */
 .container .sidebar {
   position: sticky;
   overflow-y: scroll;
   max-height: 100vh;
-
   top: 0;
-
   background-color: var(--ma-selected);
   border-right: 2px solid black;
-
   width: 500px;
 }
 .container .sidebar .sidebar-toolbar {
@@ -40,9 +36,7 @@ h1, h2, h3 {
   top: 0;
   z-index: 1;
   display: flex;
-
   background-color: black;
-  color: white;
   border: 1px solid white;
 }
 .container .sidebar .sidebar-toolbar button {
@@ -124,7 +118,6 @@ h1, h2, h3 {
   flex-flow: column;
   padding: 4px;
   border: 2px solid black;
-  color: white;
   background-color: var(--ma);
 }
 .bookmark-form .info {
@@ -133,7 +126,6 @@ h1, h2, h3 {
 }
 .bookmark-form .info .format {
   color: orange;
-  text-shadow: 1px 1px black;
   text-transform: uppercase;
   font-style: oblique;
   margin-left: 4px;
@@ -163,7 +155,6 @@ h1, h2, h3 {
   gap: 6px;
   padding: 4px;
   border: 2px solid black;
-  color: white;
   background-color: var(--ma);
 }
 .album-filter .filter-column {
@@ -216,10 +207,7 @@ h1, h2, h3 {
 table {
   border: none;
   border-collapse: collapse;
-
   background-color: var(--ma);
-  color: white;
-  text-shadow: 1px 1px black;
 }
 table .center {
   text-align: center;
@@ -272,7 +260,6 @@ table thead th.sortable {
 }
 table thead th.sortable:hover {
   color: var(--ma-active);
-  text-shadow: 2px 2px 2px black
 }
 
 /* Special tables */
@@ -285,11 +272,9 @@ table thead th.sortable:hover {
 }
 .album-table tbody .album-row:hover {
   color: var(--ma-active);
-  text-shadow: 2px 2px 2px black
 }
 .album-table tbody .album-row.playing td {
   color: var(--ma-selected);
-  text-shadow: 2px 2px 2px black
 }
 .album-table tbody .album-row td:first-child,
 .album-table tbody .album-row td:nth-child(2) {
