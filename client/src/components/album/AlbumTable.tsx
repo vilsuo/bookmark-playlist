@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Album, AlbumColumn } from '../../types';
 import AlbumRow from './AlbumRow';
 import ExtraRow from './ExtraRow';
+import { FilterOptions } from './AlbumFilter';
 
 const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
   const aArtist = a.artist.toLowerCase();
@@ -25,11 +26,32 @@ const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: A
   }
 }
 
-const getFilterFn = (filter: string) => (album: Album) => {
-  if (!filter) return true;
+const getFilterFn = (filterOptions: FilterOptions) => (album: Album) => {
+  const { text, column, interval } = filterOptions;
 
-  return (album.artist.toLowerCase().search(filter) !== -1)
-   || (album.title.toLowerCase().search(filter) !== -1);
+  if (column !== AlbumColumn.PUBLISHED) {
+    if (!text) return true;
+
+    const searchText = text.toLowerCase();
+    if (column === AlbumColumn.ARTIST) {
+      return (album.artist.toLowerCase().search(searchText) !== -1);
+    } else {
+      return (album.title.toLowerCase().search(searchText) !== -1);
+    }
+  } else {
+    const { published } = album;
+    const { start, end } = interval;
+
+    if (!start && !end) {
+      return 1;
+    } else if (start && end) {
+      return published >= Number(start) && published <= Number(end);
+    } else if (start) {
+      return published >= Number(start);
+    } else {
+      return published <= Number(end);
+    }
+  }
 };
 
 enum Order {
@@ -41,11 +63,10 @@ interface LinkListProps {
   albums: Album[];
   playingAlbum: Album | null;
   setPlayingAlbum: (album: Album | null) => void;
-
-  filter: string;
+  filterOptions: FilterOptions;
 }
 
-const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filter } : LinkListProps) => {
+const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : LinkListProps) => {
   const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
 
   const [sortColumn, setSortColumn] = useState<AlbumColumn>(AlbumColumn.ARTIST);
@@ -59,7 +80,7 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filter } : LinkList
     return viewingAlbum !== null && viewingAlbum.videoId === album.videoId;
   };
 
-  const handleSort = (colum: AlbumColumn) => {
+  const handleSortChange = (colum: AlbumColumn) => {
     if (colum === sortColumn) {
       setSortOrder(sortOrder === Order.ASC ? Order.DESC : Order.ASC);
     }
@@ -67,32 +88,32 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filter } : LinkList
     setSortColumn(colum);
   };
 
-  const sortedAlbums = albums
-    .filter(getFilterFn(filter))
-    .toSorted(getSortFn(sortColumn, sortOrder));
-
-  const getSortIcon = (colum: AlbumColumn) => {
+  const getSortClassName = (colum: AlbumColumn) => {
     if (sortColumn === colum) {
       return sortOrder === Order.ASC ? 'asc' : 'desc';
     }
     return undefined;
   };
 
+  const sortedAlbums = albums
+    .filter(getFilterFn(filterOptions))
+    .toSorted(getSortFn(sortColumn, sortOrder));
+
   return (
     <table className='album-table'>
       <thead>
         <tr>
           <th className='sortable'
-            onClick={() => handleSort(AlbumColumn.ARTIST)}
+            onClick={() => handleSortChange(AlbumColumn.ARTIST)}
           >
             Artist
-            <div className={`sortable-icon ${getSortIcon(AlbumColumn.ARTIST)}`}></div>
+            <div className={`sortable-icon ${getSortClassName(AlbumColumn.ARTIST)}`}></div>
           </th>
           <th className='sortable'
-            onClick={() => handleSort(AlbumColumn.ALBUM)}
+            onClick={() => handleSortChange(AlbumColumn.ALBUM)}
           >
             Title
-            <div className={`sortable-icon ${getSortIcon(AlbumColumn.ALBUM)}`}></div>
+            <div className={`sortable-icon ${getSortClassName(AlbumColumn.ALBUM)}`}></div>
           </th>
           <th>Year</th>
         </tr>

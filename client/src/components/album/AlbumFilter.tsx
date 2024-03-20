@@ -1,8 +1,8 @@
-import { AlbumColumn } from "../../types";
+import { AlbumColumn } from '../../types';
 
 const printInterval = (int: Interval) => {
   const { start, end } = int;
-  return '["' + start + '", "' + end + '"]';
+  return '["' + Number(start) + '", "' + Number(end) + '"]';
 };
 
 type Interval = {
@@ -11,8 +11,8 @@ type Interval = {
 }
 
 export type FilterOptions = {
-  text: string;
   column: AlbumColumn;
+  text: string;
   interval: Interval;
 };
 
@@ -26,12 +26,12 @@ interface FilterFormProps {
 const AlbumFilter = ({ filterOptions, setFilterOptions }: FilterFormProps) => {
   const { text, column, interval } = filterOptions;
 
-  const handleTextChange = (value: string) => {
-    setFilterOptions({ ...filterOptions, text: value });
-  };
-
   const handleColumnChange = (value: AlbumColumn) => {
     setFilterOptions({ ...filterOptions, column: value });
+  };
+
+  const handleTextChange = (value: string) => {
+    setFilterOptions({ ...filterOptions, text: value });
   };
 
   const handleStartChange = (value: string) => {
@@ -51,21 +51,12 @@ const AlbumFilter = ({ filterOptions, setFilterOptions }: FilterFormProps) => {
   return (
     <div className='album-filter'>
       <div>
-        <p>Text: "{text}"</p>
         <p>Column {column}</p>
+        <p>Text: "{text}"</p>
         <p>Interval: {printInterval(interval)}</p>
         <br />
       </div>
 
-      <div className='filter-text'>
-        <label htmlFor='album-filter-text'>Filter {column}:</label>
-        <input
-          id='album-filter-text'
-          type='text'
-          value={text}
-          onChange={({ target }) => handleTextChange(target.value)}
-        />
-      </div>
       <div className='filter-options'>
         <div className='filter-column'>
           <select
@@ -78,8 +69,23 @@ const AlbumFilter = ({ filterOptions, setFilterOptions }: FilterFormProps) => {
             <option value={AlbumColumn.ALBUM}>
               {AlbumColumn.ALBUM}
             </option>
+            <option value={AlbumColumn.PUBLISHED}>
+              {AlbumColumn.PUBLISHED}
+            </option>
           </select>
         </div>
+
+      { column !== AlbumColumn.PUBLISHED ? (
+        <div className='filter-text'>
+          <label htmlFor='album-filter-text'>Search:</label>
+          <input
+            id='album-filter-text'
+            type='text'
+            value={text}
+            onChange={({ target }) => handleTextChange(target.value)}
+          />
+        </div>
+      ) : (
         <div className='filter-interval'>
           <div>
             <label htmlFor='album-filter-start'>From:</label>
@@ -90,6 +96,7 @@ const AlbumFilter = ({ filterOptions, setFilterOptions }: FilterFormProps) => {
               onChange={({ target }) => handleStartChange(target.value)}
             />
           </div>
+
           <div>
             <label htmlFor='album-filter-end'>to:</label>
             <input
@@ -100,6 +107,7 @@ const AlbumFilter = ({ filterOptions, setFilterOptions }: FilterFormProps) => {
             />
           </div>
         </div>
+      )}
       </div>
     </div>
   );

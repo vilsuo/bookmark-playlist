@@ -60,7 +60,7 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
             albums={albums}
             playingAlbum={playingAlbum}
             setPlayingAlbum={setPlayingAlbum}
-            filter={filterOptions.text.toLowerCase()}
+            filterOptions={filterOptions}
           />
         )}
         <div ref={endRef} />
