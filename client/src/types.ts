@@ -10,6 +10,11 @@ export enum AlbumColumn {
   PUBLISHED = 'Year',
 }
 
+export enum Order {
+  DESC = -1, // largest to smallest
+  ASC = 1,  // smallest to largest
+}
+
 export type LinkBase = {
   text: string;
   href: string;

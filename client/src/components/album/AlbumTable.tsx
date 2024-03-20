@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Album, AlbumColumn } from '../../types';
+import { Album, AlbumColumn, Order } from '../../types';
 import AlbumRow from './AlbumRow';
 import ExtraRow from './ExtraRow';
 import { FilterOptions } from './AlbumFilter';
+import SortableColumn from '../general/SortableColumn';
 
 const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
   const aArtist = a.artist.toLowerCase();
@@ -34,18 +35,19 @@ const getFilterFn = (filterOptions: FilterOptions) => (album: Album) => {
 
     const searchText = text.toLowerCase();
     if (column === AlbumColumn.ARTIST) {
-      return (album.artist.toLowerCase().search(searchText) !== -1);
+      return album.artist.toLowerCase().indexOf(searchText) !== -1;
     } else {
-      return (album.title.toLowerCase().search(searchText) !== -1);
+      return album.title.toLowerCase().indexOf(searchText) !== -1;
     }
   } else {
     const { published } = album;
     const { start, end } = interval;
 
     if (!start && !end) {
+      // no filter
       return 1;
     } else if (start && end) {
-      return published >= Number(start) && published <= Number(end);
+      return Number(start) <= published && published <= Number(end);
     } else if (start) {
       return published >= Number(start);
     } else {
@@ -53,11 +55,6 @@ const getFilterFn = (filterOptions: FilterOptions) => (album: Album) => {
     }
   }
 };
-
-enum Order {
-  DESC = -1, // largest to smallest
-  ASC = 1,  // smallest to largest
-}
 
 interface LinkListProps {
   albums: Album[];
@@ -88,13 +85,6 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : L
     setSortColumn(colum);
   };
 
-  const getSortClassName = (colum: AlbumColumn) => {
-    if (sortColumn === colum) {
-      return sortOrder === Order.ASC ? 'asc' : 'desc';
-    }
-    return undefined;
-  };
-
   const sortedAlbums = albums
     .filter(getFilterFn(filterOptions))
     .toSorted(getSortFn(sortColumn, sortOrder));
@@ -103,18 +93,18 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : L
     <table className='album-table'>
       <thead>
         <tr>
-          <th className='sortable'
-            onClick={() => handleSortChange(AlbumColumn.ARTIST)}
-          >
-            Artist
-            <div className={`sortable-icon ${getSortClassName(AlbumColumn.ARTIST)}`}></div>
-          </th>
-          <th className='sortable'
-            onClick={() => handleSortChange(AlbumColumn.ALBUM)}
-          >
-            Title
-            <div className={`sortable-icon ${getSortClassName(AlbumColumn.ALBUM)}`}></div>
-          </th>
+          <SortableColumn 
+            value={AlbumColumn.ARTIST}
+            setValue={handleSortChange}
+            sortColumn={sortColumn}
+            sortOrder={sortOrder}
+          />
+          <SortableColumn 
+            value={AlbumColumn.ALBUM}
+            setValue={handleSortChange}
+            sortColumn={sortColumn}
+            sortOrder={sortOrder}
+          />
           <th>Year</th>
         </tr>
       </thead>
