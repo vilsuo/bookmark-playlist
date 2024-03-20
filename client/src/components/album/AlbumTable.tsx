@@ -75,45 +75,43 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filter } : LinkList
   };
 
   return (
-    <div>
-      <table className='album-table'>
-        <thead>
-          <tr>
-            <th className='sortable'
-              onClick={() => handleSort(AlbumColumn.ARTIST)}
-            >
-              Artist
-              <div className={`sortable-icon ${getSortIcon(AlbumColumn.ARTIST)}`}></div>
-            </th>
-            <th className='sortable'
-              onClick={() => handleSort(AlbumColumn.ALBUM)}
-            >
-              Title
-              <div className={`sortable-icon ${getSortIcon(AlbumColumn.ALBUM)}`}></div>
-            </th>
-            <th>Year</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedAlbums.map((album) =>
-            !isViewed(album) ? (
-              <AlbumRow key={album.videoId}
-                album={album}
-                isPlaying={isPlaying(album)}
-                setViewingAlbum={setViewingAlbum}
-              />
-            ) : (
-              <ExtraRow key={album.videoId}
-                album={album}
-                isPlaying={isPlaying(album)}
-                setPlayingAlbum={setPlayingAlbum}
-                close={() => setViewingAlbum(null)}
-              />
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
+    <table className='album-table'>
+      <thead>
+        <tr>
+          <th className='sortable'
+            onClick={() => handleSort(AlbumColumn.ARTIST)}
+          >
+            Artist
+            <div className={`sortable-icon ${getSortIcon(AlbumColumn.ARTIST)}`}></div>
+          </th>
+          <th className='sortable'
+            onClick={() => handleSort(AlbumColumn.ALBUM)}
+          >
+            Title
+            <div className={`sortable-icon ${getSortIcon(AlbumColumn.ALBUM)}`}></div>
+          </th>
+          <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        {sortedAlbums.map((album) =>
+          !isViewed(album) ? (
+            <AlbumRow key={album.videoId}
+              album={album}
+              isPlaying={isPlaying(album)}
+              setViewingAlbum={setViewingAlbum}
+            />
+          ) : (
+            <ExtraRow key={album.videoId}
+              album={album}
+              isPlaying={isPlaying(album)}
+              setPlayingAlbum={setPlayingAlbum}
+              close={() => setViewingAlbum(null)}
+            />
+          )
+        )}
+      </tbody>
+    </table>
   );
 };
 
