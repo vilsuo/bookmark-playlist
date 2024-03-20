@@ -127,6 +127,15 @@ h1, h2, h3 {
   color: white;
   background-color: var(--ma);
 }
+.bookmark-form .info {
+  text-align: justify;
+  margin: 10px 0;
+}
+.bookmark-form .info .format {
+  color: black;
+  font-style: oblique;
+  margin-left: 4px;
+}
 .bookmark-form .inputs {
   flex: 1;
   display: flex;
