@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Album } from './types';
 import Sidebar from './components/Sidebar';
 import VideoPlayer from './components/video/VideoPlayer';
+import AlbumsButton from './components/AlbumsButton';
 
 interface MainProps {
   playingAlbum: Album | null;
@@ -59,7 +60,9 @@ const App = () => {
       )}
 
       { !showSideBar && (
-        <button onClick={() => setShowSidebar(true)}>Open</button>
+        <div className='open-sidebar'>
+          <AlbumsButton show={() => setShowSidebar(true)} />
+        </div>
       )}
 
       <Main
