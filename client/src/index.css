@@ -65,7 +65,15 @@ h1, h2, h3 {
 
   background-color: green;
 }
-.container .main .video {
+
+/* Video */
+@media (min-width: 1000px) {
+  .video-player {
+    padding: 0 calc(0.35 * (100% - 1000px));
+    border: 2px solid orange;
+  } 
+}
+.video-player .video {
   border: 2px solid blue;
 
   position: relative;
@@ -73,8 +81,7 @@ h1, h2, h3 {
   padding-top: 25px;
   height: 0;
 }
-
-.container .main .video iframe {
+.video-player .video iframe {
   display: block;
   margin: auto;
 

@@ -1,11 +1,8 @@
-import { Album } from '../types';
-
 interface VideoProps {
-  album: Album;
+  videoId: string;
 }
 
-const Video = ({ album }: VideoProps) => {
-  const { videoId } = album;
+const Video = ({ videoId }: VideoProps) => {
   
   return (
     <div className='video'>

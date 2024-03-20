@@ -4,24 +4,47 @@ import Video from './components/Video';
 import { Album } from './types';
 import Sidebar from './components/Sidebar';
 
-interface MainProps {
-  album: Album | null;
+const formatVideoTitle = (album: Album) => {
+  const { artist, title, published } = album;
+
+  return `${artist} - ${title} (${published})`;
+};
+
+interface VideoPlayerProps {
+  playingAlbum: Album;
+  closeVideo: () => void;
 }
 
-const Main = ({ album }: MainProps) => {
+const VideoPlayer = ({ playingAlbum, closeVideo }: VideoPlayerProps) => {
+  return (
+    <div className='video-player'>
+      <div className='header'>
+        <h1>{formatVideoTitle(playingAlbum)}</h1>
+        <button onClick={closeVideo}>Close</button>
+      </div>
+      
+      <Video videoId={playingAlbum.videoId} />
+    </div>
+  );
+};
+
+interface MainProps {
+  playingAlbum: Album | null;
+  setPlayingAlbum: (album: Album | null) => void;
+}
+
+const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
+
+  const closeVideo = () => setPlayingAlbum(null);
+
   return (
     <div className='main'>
-      <h1>A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Å Ä Ö</h1>
-      { album && (
-        <Video album={album} />
+      { playingAlbum && (
+        <VideoPlayer 
+          playingAlbum={playingAlbum}
+          closeVideo={closeVideo}
+        />
       )}
-      <ul>
-        {[...Array(50).keys()].map(key => (
-          <li key={key}>
-            <span>item {key}</span>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
@@ -57,7 +80,10 @@ const App = () => {
         <button onClick={() => setShowSidebar(true)}>Open</button>
       )}
 
-      <Main album={playingAlbum} />
+      <Main
+        playingAlbum={playingAlbum}
+        setPlayingAlbum={setPlayingAlbum}
+      />
     </div>
   );
 };
