@@ -132,7 +132,9 @@ h1, h2, h3 {
   margin: 10px 0;
 }
 .bookmark-form .info .format {
-  color: black;
+  color: orange;
+  text-shadow: 1px 1px black;
+  text-transform: uppercase;
   font-style: oblique;
   margin-left: 4px;
 }

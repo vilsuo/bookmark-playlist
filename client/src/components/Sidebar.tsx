@@ -40,7 +40,7 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
         <button onClick={() => scrollTo(startRef)}>Up</button>
         <button onClick={() => scrollTo(endRef)}>Down</button>
         <h2>Albums</h2>
-        <button onClick={toggleUpload}>Toggle upload</button>
+        <button onClick={toggleUpload}>Toggle import</button>
         <button onClick={close}>&#x2715;</button>
       </div>
 
@@ -53,6 +53,17 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
 
         { (albums.length > 0) && (
           <React.Fragment>
+            {/*
+            <a
+              href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                JSON.stringify(albums)
+              )}`}
+              download="filename.json"
+            >
+              Download
+            </a>
+            */}
+
             <AlbumFilter
               filterOptions={filterOptions}
               setFilterOptions={setFilterOptions}
