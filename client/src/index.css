@@ -52,6 +52,11 @@ h1, h2, h3 {
 .container .sidebar .sidebar-container > * {
   margin-top: 10px;
 }
+.container .sidebar #start-ref {
+  /* to fix the scrolling to top */
+  position: absolute;
+  top: -10px;
+}
 .container .main {
   flex: 1;
   overflow-y: scroll;
