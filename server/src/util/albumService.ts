@@ -6,15 +6,15 @@ const getVideoId = (href: string | undefined): string => {
   const VIDEO_ID_LENGTH = 11;
 
   if (!href) {
-    throw new Error('Hyperref is missing');
+    throw new Error('Link href attribute is missing');
   }
 
   if (!href.startsWith(VIDEO_PREFIX)) {
-    throw new Error('Hyperref is not youtube');
+    throw new Error('Link href attibute is not youtube');
   }
 
   if (href.length < VIDEO_PREFIX.length + VIDEO_ID_LENGTH) {
-    throw new Error('Hyperref is too short');
+    throw new Error('Link href attribute is too short');
   }
 
   return href.substring(
@@ -36,13 +36,13 @@ const getLinkDetails = (linkTitle: string) => {
   const first = linkTitle.split(ARTIST_TITLE_SEPARATOR);
   if (first.length !== 2) {
     throw new Error(
-      `Title must have a single '${ARTIST_TITLE_SEPARATOR}' separator`,
+      `The artist and album must be separated with '${ARTIST_TITLE_SEPARATOR}' in the title`,
     );
   }
 
   const second = first[1].split(PUBLISHED_PATTERN);
   if (second.length !== 3) {
-    throw new Error(`Title must end to '${PUBLISHED_PATTERN}'`);
+    throw new Error(`The title must end to publish year in parenthesis`);
   }
 
   return {

@@ -1,5 +1,11 @@
 import { ErrorRequestHandler } from 'express';
 import { LinkError } from '../errors';
+import { Link } from '../types';
+
+const linkToString = (link: Link) => {
+  const { href, title } = link;
+  return '{ href: ' + href + ', title: ' + title + ' }';
+};
 
 export const errorHandler: ErrorRequestHandler = (error: Error, _req, res, _next) => {
   console.log('Error handler', error);
@@ -8,7 +14,7 @@ export const errorHandler: ErrorRequestHandler = (error: Error, _req, res, _next
 
   if (error instanceof LinkError) {
     return res.status(400).send({
-      message: message + ': ' + JSON.stringify(error.link),
+      message: message + ': ' + linkToString(error.link),
     });
   }
 
