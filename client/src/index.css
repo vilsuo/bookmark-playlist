@@ -265,6 +265,7 @@ table td, table th {
   border-top: 4px solid white;
 }
 table thead th.sortable {
+  padding-right: 10px; /* ~ center with icon */
   cursor: pointer;
 }
 table thead th.sortable:hover {
@@ -298,7 +299,7 @@ table thead th.sortable:hover {
   width: 36%;
 }
 .album-table th:nth-child(2)  {
-  width: 55%;
+  width: 51%;
 }
 
 /* Extra row */

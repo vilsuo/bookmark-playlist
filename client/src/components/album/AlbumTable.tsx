@@ -6,6 +6,8 @@ import { FilterOptions } from './AlbumFilter';
 import SortableColumn from '../general/SortableColumn';
 
 const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
+  // -1 if a before b
+
   const aArtist = a.artist.toLowerCase();
   const bArtist = b.artist.toLowerCase();
 
@@ -18,12 +20,18 @@ const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: A
     }
 
     return sortOrder * ((aArtist < bArtist) ? -1 : 1);
-  } else {
+  } else if (sortColumn === AlbumColumn.ALBUM) {
     if (aTitle === bTitle) {
       return (aArtist < bArtist) ? -1 : 1;
     }
 
     return sortOrder * ((aTitle < bTitle) ? -1 : 1);
+  } else {
+    // published
+    if (a.published === b.published) {
+      return (aArtist < bArtist) ? -1 : 1;
+    }
+    return sortOrder * (a.published - b.published);
   }
 }
 
@@ -56,14 +64,14 @@ const getFilterFn = (filterOptions: FilterOptions) => (album: Album) => {
   }
 };
 
-interface LinkListProps {
+interface AlbumTableProps {
   albums: Album[];
   playingAlbum: Album | null;
   setPlayingAlbum: (album: Album | null) => void;
   filterOptions: FilterOptions;
 }
 
-const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : LinkListProps) => {
+const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : AlbumTableProps) => {
   const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
 
   const [sortColumn, setSortColumn] = useState<AlbumColumn>(AlbumColumn.ARTIST);
@@ -93,19 +101,17 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : L
     <table className='album-table'>
       <thead>
         <tr>
-          <SortableColumn 
-            value={AlbumColumn.ARTIST}
-            setValue={handleSortChange}
-            sortColumn={sortColumn}
-            sortOrder={sortOrder}
-          />
-          <SortableColumn 
-            value={AlbumColumn.ALBUM}
-            setValue={handleSortChange}
-            sortColumn={sortColumn}
-            sortOrder={sortOrder}
-          />
-          <th>Year</th>
+          {[AlbumColumn.ARTIST, AlbumColumn.ALBUM, AlbumColumn.PUBLISHED].map(
+            (col) => (
+              <SortableColumn 
+                key={col}
+                value={col}
+                setValue={handleSortChange}
+                sortColumn={sortColumn}
+                sortOrder={sortOrder}
+              />
+            )
+          )}
         </tr>
       </thead>
       <tbody>
