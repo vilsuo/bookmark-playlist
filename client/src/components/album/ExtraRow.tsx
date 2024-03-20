@@ -59,6 +59,12 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
             <button onClick={close}>&#x2715;</button>
           </div>
 
+          <div className='chips'>
+            <div className='chip'>
+              Category: <span className='category'>{album.category}</span>
+            </div>
+          </div>
+
           <div className='content'>
             <div className='links'>
               { getArtistSearchLink(album) }

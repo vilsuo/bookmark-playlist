@@ -298,10 +298,13 @@ table thead th.sortable:hover {
   background-color: var(--ma-selected);
   border: 1px solid white;
   padding: 4px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
 }
 #extra-row .extra-row-container .title {
   display: flex;
-  margin-bottom: 4px;
 }
 #extra-row .extra-row-container .title span {
   flex-grow: 1;
@@ -321,9 +324,8 @@ table thead th.sortable:hover {
   display: flex;
   align-items: center;
   gap: 2px;
-
+  padding-top: 2px;
   color: white;
-  margin-bottom: 4px;
 }
 #extra-row .extra-row-container .content .links a span {
 }
@@ -335,4 +337,21 @@ table thead th.sortable:hover {
   justify-content: center;
 }
 #extra-row .extra-row-container .content .actions button {
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 4px;
+}
+.chips .chip {
+  padding: 2px 4px 2px 4px;
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 10px;
+  font-size: 90%;
+}
+.chips .chip .category {
+  color: orange;
 }
