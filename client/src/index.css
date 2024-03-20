@@ -12,27 +12,23 @@
 
 h1, h2, h3 {
   text-align: center;
-  color: white;
-  text-shadow: 3px 3px black;
 }
 
 .container {
   display: flex;
   height: 100vh;
-
   background-color: black;
+  color: white;
+  text-shadow: 2px 2px 2px black;
 }
 /* Sidebar */
 .container .sidebar {
   position: sticky;
   overflow-y: scroll;
   max-height: 100vh;
-
   top: 0;
-
   background-color: var(--ma-selected);
   border-right: 2px solid black;
-
   width: 500px;
 }
 .container .sidebar .sidebar-toolbar {
@@ -40,9 +36,7 @@ h1, h2, h3 {
   top: 0;
   z-index: 1;
   display: flex;
-
   background-color: black;
-  color: white;
   border: 1px solid white;
 }
 .container .sidebar .sidebar-toolbar button {
@@ -124,7 +118,6 @@ h1, h2, h3 {
   flex-flow: column;
   padding: 4px;
   border: 2px solid black;
-  color: white;
   background-color: var(--ma);
 }
 .bookmark-form .info {
@@ -132,7 +125,8 @@ h1, h2, h3 {
   margin: 10px 0;
 }
 .bookmark-form .info .format {
-  color: black;
+  color: orange;
+  text-transform: uppercase;
   font-style: oblique;
   margin-left: 4px;
 }
@@ -161,7 +155,6 @@ h1, h2, h3 {
   gap: 6px;
   padding: 4px;
   border: 2px solid black;
-  color: white;
   background-color: var(--ma);
 }
 .album-filter .filter-column {
@@ -214,10 +207,7 @@ h1, h2, h3 {
 table {
   border: none;
   border-collapse: collapse;
-
   background-color: var(--ma);
-  color: white;
-  text-shadow: 1px 1px black;
 }
 table .center {
   text-align: center;
@@ -270,7 +260,6 @@ table thead th.sortable {
 }
 table thead th.sortable:hover {
   color: var(--ma-active);
-  text-shadow: 2px 2px 2px black
 }
 
 /* Special tables */
@@ -283,11 +272,9 @@ table thead th.sortable:hover {
 }
 .album-table tbody .album-row:hover {
   color: var(--ma-active);
-  text-shadow: 2px 2px 2px black
 }
 .album-table tbody .album-row.playing td {
   color: var(--ma-selected);
-  text-shadow: 2px 2px 2px black
 }
 .album-table tbody .album-row td:first-child,
 .album-table tbody .album-row td:nth-child(2) {
@@ -311,10 +298,13 @@ table thead th.sortable:hover {
   background-color: var(--ma-selected);
   border: 1px solid white;
   padding: 4px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
 }
 #extra-row .extra-row-container .title {
   display: flex;
-  margin-bottom: 4px;
 }
 #extra-row .extra-row-container .title span {
   flex-grow: 1;
@@ -334,9 +324,8 @@ table thead th.sortable:hover {
   display: flex;
   align-items: center;
   gap: 2px;
-
+  padding-top: 2px;
   color: white;
-  margin-bottom: 4px;
 }
 #extra-row .extra-row-container .content .links a span {
 }
@@ -348,4 +337,21 @@ table thead th.sortable:hover {
   justify-content: center;
 }
 #extra-row .extra-row-container .content .actions button {
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 4px;
+}
+.chips .chip {
+  padding: 2px 4px 2px 4px;
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 10px;
+  font-size: 90%;
+}
+.chips .chip .category {
+  color: orange;
 }

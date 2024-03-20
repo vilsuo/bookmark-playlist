@@ -302,6 +302,10 @@ describe('htmlParser', () => {
     it('link text content is correct', () => {
       expect(links[0].title.trim()).toBe(linkTextTemplate + 0);
     });
+
+    it('link category is the header', () => {
+      expect(links[0].category).toBe(SINGLE_LINK_HEADER);
+    });
   });
 
   describe('two links', () => {

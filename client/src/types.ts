@@ -31,4 +31,5 @@ export type Album = {
   artist: string;
   title: string;
   published: number;
+  category: string;
 };
