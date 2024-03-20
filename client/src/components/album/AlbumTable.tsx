@@ -88,7 +88,7 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filter } : LinkList
             <th className='sortable'
               onClick={() => handleSort(AlbumColumn.ALBUM)}
             >
-              Album
+              Title
               <div className={`sortable-icon ${getSortIcon(AlbumColumn.ALBUM)}`}></div>
             </th>
             <th>Year</th>

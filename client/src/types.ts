@@ -5,8 +5,8 @@ export enum NotificationType {
 }
 
 export enum AlbumColumn {
-  ARTIST = 'artist',
-  ALBUM = 'title',
+  ARTIST = 'Artist',
+  ALBUM = 'Title',
 }
 
 export type LinkBase = {
