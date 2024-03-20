@@ -89,6 +89,18 @@ h1, h2, h3 {
   gap: 4px;
 }
 
+/* Album filter */
+.album-filter {
+  padding: 4px;
+  border: 2px solid black;
+  color: white;
+  background-color: var(--ma);
+}
+
+.album-filter input {
+  width: 100%;
+}
+
 /* Notification */
 .notification {
   border: 2px solid black;
@@ -253,43 +265,3 @@ table thead th.sortable:hover {
 #extra-row .extra-row-container .content .actions button {
   
 }
-
-/* Dropdown 
-.dropdown-trigger {
-  padding: 2px 4px;
-}
-.dropdown-context {
-  position: absolute;
-  background-color: white;
-  border: 1px solid black;
-}
-.dropdown-context ul {
-  list-style: none;
-}
-.dropdown-context ul li {
-  margin: 1px;
-  padding: 1px;
-  border: 1px solid black;
-}
-.dropdown-context ul li a {
-  text-decoration: none;
-  display: flex;
-  gap: 2px;
-  padding-right: 2px;
-}
-.dropdown-context ul li button {
-  width: 100%;
-  text-align: start;
-}
-
-/* Link styles 
-.ma {
-  background-color: var(--ma);
-}
-.ma a {
-  color: white;
-}
-.ma a:hover {
-  color: var(--ma-active);
-}
-*/
