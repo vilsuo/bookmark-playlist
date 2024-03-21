@@ -1,6 +1,17 @@
 import * as htmlParser from 'node-html-parser';
 import { RawLink } from '../types';
 
+//const HEADER_REGEX = />\s*(\w+)\s*<\/h[1-6]>/g;
+
+/*
+const getHeaders = (htmlString: string) => {
+  const headerRegex = />\s*(\w+)\s*<\/h[1-6]>/g;
+  return htmlString.matchAll(headerRegex);
+};
+*/
+
+const HEADER_END = /^<\/h[1-6]>/g;
+
 const TAG = 'dl';
 const TAG_OPEN = `<${TAG}>`;
 const TAG_CLOSE = `</${TAG}>`;
@@ -10,34 +21,73 @@ type Range = {
   end: number;
 };
 
+
+/**
+ * Find the header text by back tracking
+ * 
+ * @param htmlString 
+ * @param start index of the header ending tags start character
+ * @returns 
+ */
+const getHeaderText = (htmlString: string, start: number) => {
+  for (let i = start; i >= 0; i--) {
+    if (htmlString.at(i) === '>') {
+      return htmlString.substring(i + 1, start);
+    }
+  }
+  throw new Error('Sub folder header text was not found');
+};
+
+/**
+ * Find the substring of the html string which corresponds to folder of
+ * given header
+ * 
+ * Case insensitive match for header
+ * 
+ * @param htmlString 
+ * @param header
+ * @returns 
+ */
 const getHeaderRange = (htmlString: string, header: string): Range => {
-  const headerRegex = new RegExp(`>\\s*${header.toLowerCase()}\\s*</h[1-6]>`);
+
+  // important to contain opening '>' so the header can be found
+  const startHeaderRegex = new RegExp(`>\\s*${header.toLowerCase()}\\s*</h[1-6]>`);
 
   const standardized = htmlString.toLowerCase();
-  const startIdx = standardized.search(headerRegex);
+  const startIdx = standardized.search(startHeaderRegex);
 
   if (startIdx === -1) throw new Error(`Header '${header}' was not found`);
 
+  const headers = [];
   const openedTags = [];
   const closedTags = [];
   let currentIdx = startIdx;
 
   while (true) {
-    if (currentIdx > standardized.length - TAG_CLOSE.length) {
+    if (currentIdx > standardized.length - 5) {
       // reached the end without break condition
       throw new Error(`Parent tag '${TAG}' was not opened or closed`);
     }
 
     if (standardized.at(currentIdx) === '<') {
+      // take the html element
       const substring = standardized.substring(
         currentIdx,
-        currentIdx + TAG_CLOSE.length,
+        currentIdx + 5,
       );
 
       if (substring.startsWith(TAG_OPEN)) {
         openedTags.push(currentIdx);
+
       } else if (substring.startsWith(TAG_CLOSE)) {
         closedTags.push(currentIdx);
+
+      } else if (HEADER_END.test(substring)) {
+        // start of a new folder
+        headers.push({
+          index: currentIdx, // ...
+          text: getHeaderText(htmlString, currentIdx),
+        });
       }
 
       // break if parent tag has been opened and closed
@@ -48,6 +98,8 @@ const getHeaderRange = (htmlString: string, header: string): Range => {
 
     currentIdx++;
   }
+
+  console.log('Headers', headers);
 
   return {
     start: openedTags[0],
