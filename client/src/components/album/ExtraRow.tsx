@@ -1,40 +1,6 @@
 import { Album } from '../../types';
-
-// icons
-import ma from '../../../assets/ma.ico';
-
-const getArtistSearchLink = (album: Album) => {
-  const text = album.artist;
-
-  const artistSearchString = album.artist.replace(' ', '+');
-  const href = `https://www.metal-archives.com/search?searchString=${artistSearchString}&type=band_name`;
-  
-  return (
-    <div>
-      <a href={href} target='_blank'>
-        <img src={ma} />
-        <span>{text}</span>
-      </a>
-    </div>
-  );
-};
-
-const getAlbumSearchLink = (album: Album) => {
-  const text = album.title;
-
-  const artistSearchString = album.artist.replace(' ', '+');
-  const titleSearchString = album.title.replace(' ', '+');
-  const href = `https://www.metal-archives.com/search/advanced/searching/albums?bandName=${artistSearchString}&releaseTitle=${titleSearchString}`;
-
-  return (
-    <div className='ma'>
-      <a href={href} target='_blank'>
-        <img src={ma} />
-        <span>{text}</span>
-      </a>
-    </div>
-  );
-};
+import { MaLink } from '../general/Links';
+import { getAlbumSearchLink, getArtistSearchLink } from '../../util/links';
 
 interface ExtraRowProps {
   album: Album;
@@ -67,8 +33,8 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
 
           <div className='content'>
             <div className='links'>
-              { getArtistSearchLink(album) }
-              { getAlbumSearchLink(album) }
+              <MaLink link={{ text: album.artist, href: getArtistSearchLink(album) }} />
+              <MaLink link={{ text: album.title, href: getAlbumSearchLink(album) }} />
             </div>
 
             <div className='actions'>
