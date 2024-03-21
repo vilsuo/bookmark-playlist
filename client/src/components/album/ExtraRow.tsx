@@ -1,6 +1,8 @@
 import { Album } from '../../types';
 import { MaLink } from '../general/Links';
 import { getAlbumSearchLink, getArtistSearchLink } from '../../util/links';
+import { toDateString } from '../../util/dateConverter';
+import AlbumChips from './AlbumChips';
 
 interface ExtraRowProps {
   album: Album;
@@ -25,11 +27,7 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
             <button onClick={close}>&#x2715;</button>
           </div>
 
-          <div className='chips'>
-            <div className='chip'>
-              Category: <span className='category'>{album.category}</span>
-            </div>
-          </div>
+          <AlbumChips album={album} />
 
           <div className='content'>
             <div className='links'>
