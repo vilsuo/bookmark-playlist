@@ -40,7 +40,7 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
             <div className='actions'>
               <button>Queue</button>
               <button onClick={togglePlaying}>
-                { isPlaying ? 'Close' : 'Open' } Video
+                { isPlaying ? 'Close' : 'Open' }
               </button>
             </div>
           </div>
