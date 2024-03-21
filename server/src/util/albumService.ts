@@ -1,10 +1,10 @@
 import { RawLinkError } from '../errors';
-import { Album, RawLink } from '../types';
+import { Album, CategoryLink } from '../types';
 
 /**
- * 
+ *
  * @param epoch Unix epoch time
- * @returns 
+ * @returns
  */
 export const convertEpoch = (epoch: number) => new Date(epoch * 1000);
 
@@ -79,7 +79,7 @@ const getTitleDetails = (linkTitle: string) => {
   };
 };
 
-export const createAlbumsFromLinks = (links: RawLink[]): Album[] => {
+export const createAlbumsFromLinks = (links: CategoryLink[]): Album[] => {
   return links.map((link) => {
     const { title, href, category, addDate } = link;
 

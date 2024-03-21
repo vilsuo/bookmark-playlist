@@ -56,7 +56,8 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
         Upload your exported bookmarks and select the folder where to look for videos.
         Each entry in the folder must either be a youtube video link or a folder with
         youtube videos links. Each link name must be exactly in the format:
-        <span className='format'>artist - album title (year)</span>.
+        <span className='format'>artist - album title (year)</span>. The closest folder
+        name will be the category of the album.
       </p>
 
       { messageType && (
