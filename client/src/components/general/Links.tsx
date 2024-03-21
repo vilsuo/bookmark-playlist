@@ -1,5 +1,5 @@
 // icons
-import ma from '../../assets/ma.ico';
+import ma from '../../../assets/ma.ico';
 import { LinkBase } from '../../types';
 
 interface MaLinkProps {
