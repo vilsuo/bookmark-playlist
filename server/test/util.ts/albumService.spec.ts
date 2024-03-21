@@ -1,5 +1,5 @@
 import { RawLink } from '../../src/types';
-import { createAlbumsFromLinks } from '../../src/util/albumService';
+import { convertEpoch, createAlbumsFromLinks } from '../../src/util/albumService';
 
 const link: RawLink = {
   title: 'Annihilator - Alice In Hell (1989)',
@@ -20,7 +20,7 @@ describe('createAlbumsFromLinks', () => {
       title: 'Alice In Hell',
       published: 1989,
       category: 'Thrash',
-      addDate: new Date(1711022745 * 1000),
+      addDate: convertEpoch(1711022745),
     };
 
     const albums = createAlbumsFromLinks([link]);

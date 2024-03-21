@@ -1,6 +1,13 @@
 import { RawLinkError } from '../errors';
 import { Album, RawLink } from '../types';
 
+/**
+ * 
+ * @param epoch Unix epoch time
+ * @returns 
+ */
+export const convertEpoch = (epoch: number) => new Date(epoch * 1000);
+
 const getVideoId = (href: string | undefined): string => {
   const VIDEO_PREFIX = 'https://www.youtube.com/watch?v=';
   const VIDEO_ID_LENGTH = 11;
@@ -33,7 +40,7 @@ const getAddDate = (addDate: string | undefined): Date => {
     throw new Error('Link add date is not a valid number');
   }
 
-  return new Date(utcSeconds * 1000);
+  return convertEpoch(utcSeconds);
 };
 
 /**
