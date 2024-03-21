@@ -1,7 +1,6 @@
 import { Album } from '../../types';
 import { MaLink } from '../general/Links';
 import { getAlbumSearchLink, getArtistSearchLink } from '../../util/links';
-import { toDateString } from '../../util/dateConverter';
 import AlbumChips from './AlbumChips';
 
 interface ExtraRowProps {
