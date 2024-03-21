@@ -1,5 +1,12 @@
-import { LinkError } from '../errors';
-import { Link } from '../types';
+import { RawLinkError } from '../errors';
+import { Album, RawLink } from '../types';
+
+/**
+ * 
+ * @param epoch Unix epoch time
+ * @returns 
+ */
+export const convertEpoch = (epoch: number) => new Date(epoch * 1000);
 
 const getVideoId = (href: string | undefined): string => {
   const VIDEO_PREFIX = 'https://www.youtube.com/watch?v=';
@@ -23,13 +30,26 @@ const getVideoId = (href: string | undefined): string => {
   );
 };
 
+const getAddDate = (addDate: string | undefined): Date => {
+  if (!addDate) {
+    throw new Error('Link add_date attribute is missing');
+  }
+
+  const utcSeconds = Number(addDate);
+  if (isNaN(utcSeconds)) {
+    throw new Error('Link add date is not a valid number');
+  }
+
+  return convertEpoch(utcSeconds);
+};
+
 /**
  * /^(artist) - (title) \((published)\)$/
  *
  * @param linkTitle
  * @returns
  */
-const getLinkDetails = (linkTitle: string) => {
+const getTitleDetails = (linkTitle: string) => {
   const ARTIST_TITLE_SEPARATOR = ' - ';
   const PUBLISHED_PATTERN = / \((\d{4})\)$/g;
 
@@ -42,7 +62,9 @@ const getLinkDetails = (linkTitle: string) => {
 
   const second = first[1].split(PUBLISHED_PATTERN);
   if (second.length !== 3) {
-    throw new Error(`The title must end to four figure publish year in parenthesis`);
+    throw new Error(
+      `The title must end to four figure publish year in parenthesis`,
+    );
   }
 
   const published = Number(second[1]);
@@ -57,22 +79,23 @@ const getLinkDetails = (linkTitle: string) => {
   };
 };
 
-export const createAlbumsFromLinks = (links: Link[]) => {
+export const createAlbumsFromLinks = (links: RawLink[]): Album[] => {
   return links.map((link) => {
-    const { title, href } = link;
+    const { title, href, category, addDate } = link;
 
     try {
       return {
-        category: link.category,
+        category,
         videoId: getVideoId(href),
-        ...getLinkDetails(title.trim()),
+        addDate: getAddDate(addDate),
+        ...getTitleDetails(title.trim()),
       };
     } catch (error: unknown) {
       let message = 'Unknown error happened';
       if (error instanceof Error) {
         message = error.message;
       }
-      throw new LinkError(message, link);
+      throw new RawLinkError(message, link);
     }
   });
 };

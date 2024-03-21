@@ -21,6 +21,7 @@ h1, h2, h3 {
   color: white;
   text-shadow: 2px 2px 2px black;
 }
+
 /* Sidebar */
 .container .sidebar {
   position: sticky;
@@ -339,19 +340,22 @@ table thead th.sortable:hover {
 #extra-row .extra-row-container .content .actions button {
 }
 
-/* Chips */
-.chips {
+/* Album chips */
+.album-chips {
   display: flex;
   flex-flow: row wrap;
   gap: 4px;
 }
-.chips .chip {
+.album-chips .chip {
   padding: 2px 4px 2px 4px;
   background-color: black;
   border: 1px solid white;
   border-radius: 10px;
   font-size: 90%;
 }
-.chips .chip .category {
+.album-chips .chip .category {
   color: orange;
+}
+.album-chips .chip .add-date {
+  color: lightgreen;
 }

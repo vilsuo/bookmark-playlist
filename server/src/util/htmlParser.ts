@@ -1,5 +1,5 @@
 import * as htmlParser from 'node-html-parser';
-import { Link } from '../types';
+import { RawLink } from '../types';
 
 const TAG = 'dl';
 const TAG_OPEN = `<${TAG}>`;
@@ -62,12 +62,16 @@ const getHtmlBlock = (
   return htmlParser.parse(htmlString.substring(start, end));
 };
 
-const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement, header: string): Link[] => {
+const getLinksFromHtmlBlock = (
+  htmlBlock: htmlParser.HTMLElement,
+  header: string,
+): RawLink[] => {
   const links = htmlBlock.querySelectorAll('a');
 
   return links.map((link) => ({
     title: link.textContent,
     href: link.getAttribute('href'),
+    addDate: link.getAttribute('add_date'),
     category: header,
   }));
 };
@@ -81,23 +85,23 @@ const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement, header: string
  * <body>
  *   <h1>Bookmarks<h1>
  *   <dl>
- *      <a></a>
+ *      <a href="link0" add_date="1708428547">A</a>
  *      <h3>Header 1</h3>
- *      <a href="link1">A</a>
+ *      <a href="link1" add_date="1708428548">B</a>
  *      <dl>
- *        <a href="link2">B</a>
+ *        <a href="link2" add_date="1708428549">C</a>
  *      </dl>
  *      <dl>
- *        <a href="link3">C</a>
+ *        <a href="link3" add_date="1708428550">D</a>
  *      </dl>
  *      <h3>Header 2</h3>
  *      <dl>
- *        <a href="link4">D</a>
+ *        <a href="link4" add_date="1708428551">E</a>
  *      </dl>
  *   </dl>
  * </body>,
  *
- * then only the link { title: 'B', href: link2 } is returned.
+ * then only the link { title: 'C', href: link2 } is returned.
  *
  * @param htmlString
  * @param header
@@ -106,7 +110,7 @@ const getLinksFromHtmlBlock = (htmlBlock: htmlParser.HTMLElement, header: string
 export const getHeaderNextDlSiblingLinks = (
   htmlString: string,
   header: string,
-): Link[] => {
+): RawLink[] => {
   const range = getHeaderRange(htmlString, header);
   const block = getHtmlBlock(htmlString, range);
   const links = getLinksFromHtmlBlock(block, header);

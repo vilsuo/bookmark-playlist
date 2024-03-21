@@ -1,13 +1,14 @@
-import { Link } from '../../src/types';
-import { createAlbumsFromLinks } from '../../src/util/albumService';
+import { RawLink } from '../../src/types';
+import { convertEpoch, createAlbumsFromLinks } from '../../src/util/albumService';
 
-const link: Link = {
+const link: RawLink = {
   title: 'Annihilator - Alice In Hell (1989)',
   href: 'https://www.youtube.com/watch?v=IdRn9IYWuaQ',
+  addDate: '1711022745',
   category: 'Thrash',
 };
 
-const expectToThrow = (invalidLink: Link) => {
+const expectToThrow = (invalidLink: RawLink) => {
   expect(() => createAlbumsFromLinks([invalidLink])).toThrow(Error);
 };
 
@@ -19,6 +20,7 @@ describe('createAlbumsFromLinks', () => {
       title: 'Alice In Hell',
       published: 1989,
       category: 'Thrash',
+      addDate: convertEpoch(1711022745),
     };
 
     const albums = createAlbumsFromLinks([link]);
@@ -34,6 +36,10 @@ describe('createAlbumsFromLinks', () => {
 
     it('category is correct', () => {
       expect(album.category).toBe(expected.category);
+    });
+
+    it('add date is correct', () => {
+      expect(album.addDate).toStrictEqual(expected.addDate);
     });
 
     describe('album details', () => {
@@ -52,6 +58,12 @@ describe('createAlbumsFromLinks', () => {
   });
 
   describe('invalid href throws an Error', () => {
+    it('missing href', () => {
+      const invalidLink = { ...link, href: undefined };
+
+      expectToThrow(invalidLink);
+    });
+
     it('invalid href prefix', () => {
       const invalidLink = {
         ...link,
@@ -65,6 +77,23 @@ describe('createAlbumsFromLinks', () => {
       const invalidLink = {
         ...link,
         href: 'https://www.youtube.com/watch?v=IdRn9IYWua',
+      };
+
+      expectToThrow(invalidLink);
+    });
+  });
+
+  describe('invalid add_date throws an Error', () => {
+    it('missing add_date', () => {
+      const invalidLink = { ...link, addDate: undefined };
+
+      expectToThrow(invalidLink);
+    });
+
+    it('NaN add_date', () => {
+      const invalidLink = {
+        ...link,
+        addDate: 'Thursday, March 21, 2024 12:05:45 PM',
       };
 
       expectToThrow(invalidLink);

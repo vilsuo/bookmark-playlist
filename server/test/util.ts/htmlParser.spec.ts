@@ -41,7 +41,7 @@ type HtmlElement = {
  */
 type LinkElement = {
   tag: 'a';
-  attributes: Attributes & { href: string };
+  attributes: Attributes & { href: string; add_date: string };
   content: string;
 };
 
@@ -156,9 +156,13 @@ const parseElement = (
 
 // CREATING
 
-const createLinkElement = (href: string, text: string): LinkElement => ({
+const createLinkElement = (
+  href: string,
+  add_date: string,
+  text: string,
+): LinkElement => ({
   tag: 'a',
-  attributes: { href },
+  attributes: { href, add_date },
   content: text,
 });
 
@@ -223,18 +227,31 @@ const PARENT_FOLDER_HEADER = 'parent';
 const CHILD_FOLDER_HEADER = 'child';
 
 const linkHrefTemplate = 'http://localhost:3000/some/addr/';
+const linkAddDateTemplate = 1708428277;
 const linkTextTemplate = 'Link';
 
 const dtSingles = [...Array(10).keys()].map((int) =>
   createDtSingle(
-    createLinkElement(linkHrefTemplate + int, linkTextTemplate + int),
+    createLinkElement(
+      linkHrefTemplate + int,
+      `${linkAddDateTemplate + int}`,
+      linkTextTemplate + int,
+    ),
   ),
 );
 
 const dtFolders = [
   createDtFolder(3, SINGLE_LINK_HEADER, createDlElement([dtSingles[0]])),
-  createDtFolder(3, DOUBLE_LINK_HEADER, createDlElement([dtSingles[2], dtSingles[3]])),
-  createDtFolder(3, CHILD_FOLDER_HEADER, createDlElement([dtSingles[5], dtSingles[6]])),
+  createDtFolder(
+    3,
+    DOUBLE_LINK_HEADER,
+    createDlElement([dtSingles[2], dtSingles[3]]),
+  ),
+  createDtFolder(
+    3,
+    CHILD_FOLDER_HEADER,
+    createDlElement([dtSingles[5], dtSingles[6]]),
+  ),
 ];
 
 const parent = createDtFolder(
@@ -248,25 +265,25 @@ const parent = createDtFolder(
  *    <folder>        // single
  *      <link 0 />
  *    </folder>
- * 
+ *
  *    <link 1 />
- * 
+ *
  *    <folder>        // double
  *      <link 2 />
  *      <link 3 />
  *    </folder>
- * 
+ *
  *    <link 4 />
- * 
+ *
  *    <folder>        // parent
  *      <folder>      // child
  *        <link 5 />
  *        <link 6 />
  *      </folder>
- * 
+ *
  *      <link 7>
  *    </folder>
- * 
+ *
  *    <link 8 />
  *    <link 9 />
  * </>
@@ -297,6 +314,10 @@ describe('htmlParser', () => {
 
     it('link href attribute is correct', () => {
       expect(links[0].href).toBe(linkHrefTemplate + 0);
+    });
+
+    it('link add_date attribute is correct', () => {
+      expect(links[0].addDate).toBe(linkAddDateTemplate.toString());
     });
 
     it('link text content is correct', () => {
