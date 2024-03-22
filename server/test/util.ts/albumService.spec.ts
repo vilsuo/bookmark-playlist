@@ -1,20 +1,23 @@
-import { RawLink } from '../../src/types';
-import { convertEpoch, createAlbumsFromLinks } from '../../src/util/albumService';
+import { Album, CategoryLink } from '../../src/types';
+import {
+  convertEpoch,
+  createAlbumsFromLinks,
+} from '../../src/util/albumService';
 
-const link: RawLink = {
+const link: CategoryLink = {
   title: 'Annihilator - Alice In Hell (1989)',
   href: 'https://www.youtube.com/watch?v=IdRn9IYWuaQ',
   addDate: '1711022745',
   category: 'Thrash',
 };
 
-const expectToThrow = (invalidLink: RawLink) => {
+const expectToThrow = (invalidLink: CategoryLink) => {
   expect(() => createAlbumsFromLinks([invalidLink])).toThrow(Error);
 };
 
 describe('createAlbumsFromLinks', () => {
   describe('with valid link syntax', () => {
-    const expected = {
+    const expected: Album = {
       videoId: 'IdRn9IYWuaQ',
       artist: 'Annihilator',
       title: 'Alice In Hell',
