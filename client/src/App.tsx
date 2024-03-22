@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import VideoPlayer from './components/video/VideoPlayer';
 import AlbumsButton from './components/AlbumsButton';
 import SettingsButton from './components/video/SettingsButton';
+import SettingsBar from './components/SettingsBar';
 
 interface MainProps {
   playingAlbum: Album | null;
@@ -61,9 +62,9 @@ const App = () => {
       )}
 
       { showSettings && (
-        <div className='settings'>
-          <button onClick={() => setShowSettings(false)}>Close</button>
-        </div>
+        <SettingsBar 
+          close={() => setShowSettings(false)}
+        />
       )}
 
       { !(showSideBar || showSettings) && (
