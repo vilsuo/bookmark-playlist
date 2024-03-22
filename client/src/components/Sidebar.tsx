@@ -44,9 +44,9 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
         <button onClick={close}>&#x2715;</button>
       </div>
 
+      <div id='start-ref' ref={startRef} />
+      
       <div className='sidebar-container'>
-        <div id='start-ref' ref={startRef} />
-
         { showUpload && (
           <BookmarkForm upload={handleUpload} />
         )}
@@ -77,8 +77,8 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
             />
           </React.Fragment>
         )}
-        <div ref={endRef} />
       </div>
+      <div ref={endRef} />
     </div>
   );
 };
