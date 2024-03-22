@@ -14,11 +14,13 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
       <div className='sidebar-toolbar'>
         <h2>Settings</h2>
         <button onClick={close}>&#x2715;</button>
+      </div>
 
+      <div className='sidebar-container'>
         <button
           onClick={() => dispatch(toggleAutoplay())}
         >
-          Toggle Autoplay { autoplay ? 'off' : 'on' }
+          { autoplay ? 'Disable' : 'Enable' } autoplay
         </button>
       </div>
     </div>
