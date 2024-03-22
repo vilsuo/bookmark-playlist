@@ -71,7 +71,7 @@ h1, h2, h3 {
 /* Main content */
 .container .main {
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   background-color: var(--ma-selected);
   border-left: 2px solid white;
