@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import { Notification } from './general/Notification';
-import { NotificationType } from '../types';
-import { getErrorMessage } from '../util/axiosErrors';
+import { Notification } from '../../general/Notification';
+import { NotificationType } from '../../../types';
+import { getErrorMessage } from '../../../util/axiosErrors';
 
 interface FileFormProps {
   upload: (formdata: FormData) => Promise<void>;

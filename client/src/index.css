@@ -59,6 +59,13 @@ h1, h2, h3 {
   top: -10px;
 }
 
+.container .open-sidebar {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 2px;
+  width: 44px;
+}
+
 /* Sidebar toggle button */
 #albums-button {
   width: 44px;
