@@ -37,7 +37,7 @@ type HtmlElement = {
 };
 
 /**
- * <a href="somelink" { ...attributes }>{content}</a>
+ * <a href="someUrl" add_date="someUnixEpoch" { ...attributes }>{content}</a>
  */
 type LinkElement = {
   tag: 'a';
@@ -88,7 +88,6 @@ type DtFolderElement = {
 /**
  * <dl>
  *    <p />
- *    <dt />
  *    <dt />
  *      .
  *      .
