@@ -25,12 +25,13 @@ h1, h2, h3 {
 /* Sidebar */
 .container .sidebar {
   position: sticky;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 100vh;
   top: 0;
   background-color: var(--ma-selected);
   border-right: 2px solid black;
   width: 500px;
+  border-right: 2px solid white;
 }
 .container .sidebar .sidebar-toolbar {
   position: sticky;
@@ -48,9 +49,9 @@ h1, h2, h3 {
 }
 .container .sidebar .sidebar-container {
   margin: 10px;
-}
-.container .sidebar .sidebar-container > * {
-  margin-top: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
 }
 .container .sidebar #start-ref {
   /* to fix the scrolling to top */
@@ -71,7 +72,7 @@ h1, h2, h3 {
 /* Main content */
 .container .main {
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   background-color: var(--ma-selected);
   border-left: 2px solid white;
@@ -266,7 +267,7 @@ table thead th.sortable:hover {
 /* Special tables */
 .album-table {
   table-layout: fixed;
-  width: 463px;
+  width: 100%;
 }
 .album-table tbody tr {
   cursor: pointer;
@@ -286,8 +287,11 @@ table thead th.sortable:hover {
 .album-table th:first-child {
   width: 36%;
 }
-.album-table th:nth-child(2)  {
+.album-table th:nth-child(2) {
   width: 51%;
+}
+.album-table th:last-child  {
+
 }
 
 /* Extra row */
