@@ -9,8 +9,8 @@ const TAG_CLOSE = `</${TAG}>`;
 
 /**
  * Find the header text by back tracking from header ending tag.
- * 
- * Given html string '<h1>Test<h1>' and starting index 8, 
+ *
+ * Given html string '<h1>Test<h1>' and starting index 8,
  * returns { index: 4, header: 'Test' }.
  *
  * @param htmlString
@@ -22,18 +22,17 @@ const getHeaderText = (htmlString: string, start: number) => {
     if (htmlString.at(i) === '>') {
       return {
         index: i,
-        header: htmlString.substring(i + 1, start),
+        header: htmlString.substring(i + 1, start).trim(),
       };
     }
   }
   throw new Error('Sub folder header text was not found');
 };
 
-
 /**
  * The html string is expected to constructed as given by the
  * Backus-Naur Form (BNF):
- * 
+ *
  * <root> 		  ::= "<body>" <header> <dl> "</body>"
  * <dl> 		    ::= "<dl>" (<dtfolder> | <dtsingle>)+ "</dl>"
  * <dtfolder> 	::= "<dt>" <header> <dl> "</dt>"
@@ -41,21 +40,24 @@ const getHeaderText = (htmlString: string, start: number) => {
  * <header> 	  ::= "<h" <step> (" " <attribute>)*  ">" <text> "</" <step> "h>"
  * <link> 		  ::= "<a (" " <attribute>)* ">" <text> "</a>"
  * <step>       ::= [1-6]
- * 
+ *
  * ... something like that
- * 
+ *
  * Important
- * - each folder is expected to be linked to a dl tag opening and closing
- * - dl tags can not contain any atttibutes
- * - the links inside a dl tag is expected to belong to the closes preceding header
- * - header text should not contain the character '>'
+ * - each folder is expected to be linked to the next {@link TAG} block
+ * - the element {@link TAG} can not contain any attributes
+ * - the link elements contained inside of a {@link TAG} block are expected
+ *   to belong to the closest preceding header
+ * - header text content should not contain the character '>'
  *
  * @param htmlString a syntatically valid html string
- * @param header the header text where to start searching
+ * @param header the case insensitive header text content. Searching starts
+ *   from here and ends after the first {@link TAG} element block
  * @returns Object containing the arrays:
- *    opened: indexes of opened dl tags
- *    closed: indexes of closed dl tags
- *    headers: indexes and texts of the headers
+ *    'opened':   the starting indexes of opened {@link TAG}.
+ *    'closed':   the ending indexes of closed {@link TAG}.
+ *    'headers':  the starting indexes of header text contents and the
+ *                corresponding text contents
  */
 const getHeaderRange = (htmlString: string, header: string) => {
   // important to contain opening '>' so the header can be found
@@ -139,7 +141,7 @@ const getLinksFromHtmlBlock = (
 /**
  * Searches for HTML link elements based on a header. Search is limited to
  * inside the header elements next sibling 'dl' element. Header is case insensitive.
- * 
+ *
  * See {@link getHeaderRange} and {@link getLinksFromHtmlBlock}
  *
  * @param htmlString
@@ -171,6 +173,7 @@ export const getHeaderNextDlSiblingLinks = (
     const block = getHtmlBlock(substring, range);
     const rawLinks = getLinksFromHtmlBlock(block);
 
+    // give the category for each link
     for (const rawLink of rawLinks) {
       map.set(
         rawLink.title, // is link title a valid key?
