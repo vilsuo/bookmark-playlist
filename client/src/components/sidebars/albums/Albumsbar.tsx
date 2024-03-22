@@ -2,9 +2,9 @@ import React, { useRef, useState } from 'react';
 import BookmarkForm from './BookmarkForm';
 
 // albums
-import AlbumFilter, { FilterOptions } from './album/AlbumFilter';
-import AlbumTable from './album/AlbumTable';
-import { Album, AlbumColumn } from '../types';
+import AlbumFilter, { FilterOptions } from '../../album/AlbumFilter';
+import AlbumTable from '../../album/AlbumTable';
+import { Album, AlbumColumn } from '../../../types';
 
 const DEFAULT_FILTER_OPTIONS: FilterOptions = {
   column: AlbumColumn.ARTIST,
@@ -12,7 +12,7 @@ const DEFAULT_FILTER_OPTIONS: FilterOptions = {
   interval: { start: '', end: '' }
 };
 
-interface SidebarProps {
+interface AlbumsBarProps {
   handleUpload: (formData: FormData) => Promise<void>;
   albums: Album[];
   playingAlbum: Album | null;
@@ -20,7 +20,7 @@ interface SidebarProps {
   close: () => void;
 }
 
-const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: SidebarProps) => {
+const AlbumsBar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: AlbumsBarProps) => {
   const [showUpload, setShowUpload] = useState(albums.length === 0);
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(DEFAULT_FILTER_OPTIONS);
@@ -83,4 +83,4 @@ const Sidebar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }:
   );
 };
 
-export default Sidebar;
+export default AlbumsBar;

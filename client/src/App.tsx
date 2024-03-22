@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Album } from './types';
-import Sidebar from './components/Sidebar';
+import AlbumsBar from './components/sidebars/albums/Albumsbar';
 import VideoPlayer from './components/video/VideoPlayer';
-import AlbumsButton from './components/AlbumsButton';
-import SettingsButton from './components/video/SettingsButton';
-import SettingsBar from './components/SettingsBar';
+import AlbumsButton from './components/sidebars/albums/AlbumsButton';
+import SettingsButton from './components/sidebars/settings/SettingsButton';
+import SettingsBar from './components/sidebars/settings/SettingsBar';
 
 interface MainProps {
   playingAlbum: Album | null;
@@ -52,7 +52,7 @@ const App = () => {
   return (
     <div className='container'>
       { showSideBar && (
-        <Sidebar 
+        <AlbumsBar 
           handleUpload={handleUpload}
           albums={albums}
           playingAlbum={playingAlbum}
