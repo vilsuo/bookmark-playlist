@@ -4,6 +4,7 @@ import { Album } from './types';
 import Sidebar from './components/Sidebar';
 import VideoPlayer from './components/video/VideoPlayer';
 import AlbumsButton from './components/AlbumsButton';
+import SettingsButton from './components/video/SettingsButton';
 
 interface MainProps {
   playingAlbum: Album | null;
@@ -22,9 +23,8 @@ const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
           closeVideo={closeVideo}
         />
       )}
-
       <ul>
-        {[...Array(50).keys()].map(k => (
+        {[...Array(5).keys()].map(k => (
           <li key={k}>Item {k}</li>
         ))}
       </ul>
@@ -33,10 +33,11 @@ const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
 };
 
 const App = () => {
-  const [albums, setAlbums] = useState<Array<Album>>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [playingAlbum, setPlayingAlbum] = useState<Album | null>(null);
 
   const [showSideBar, setShowSidebar] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleUpload = async (formData: FormData) => {
     const { data } = await axios.post(
@@ -59,9 +60,16 @@ const App = () => {
         />
       )}
 
-      { !showSideBar && (
+      { showSettings && (
+        <div className='settings'>
+          <button onClick={() => setShowSettings(false)}>Close</button>
+        </div>
+      )}
+
+      { !(showSideBar || showSettings) && (
         <div className='open-sidebar'>
           <AlbumsButton show={() => setShowSidebar(true)} />
+          <SettingsButton show={() => setShowSettings(true)} />
         </div>
       )}
 
