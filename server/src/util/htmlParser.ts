@@ -1,46 +1,102 @@
 import * as htmlParser from 'node-html-parser';
-import { RawLink } from '../types';
+import { CategoryLink, RawLink } from '../types';
+
+const HEADER_END = /^<\/h[1-6]>/g;
 
 const TAG = 'dl';
 const TAG_OPEN = `<${TAG}>`;
 const TAG_CLOSE = `</${TAG}>`;
 
-type Range = {
-  start: number;
-  end: number;
+/**
+ * Find the header text by back tracking from header ending tag.
+ *
+ * Given html string '<h1>Test<h1>' and starting index 8,
+ * returns { index: 4, header: 'Test' }.
+ *
+ * @param htmlString
+ * @param start index of the header ending tag '<' character
+ * @returns
+ */
+const getHeaderText = (htmlString: string, start: number) => {
+  for (let i = start; i >= 0; i--) {
+    if (htmlString.at(i) === '>') {
+      return {
+        index: i,
+        header: htmlString.substring(i + 1, start).trim(),
+      };
+    }
+  }
+  throw new Error('Sub folder header text was not found');
 };
 
-const getHeaderRange = (htmlString: string, header: string): Range => {
-  const headerRegex = new RegExp(`>\\s*${header.toLowerCase()}\\s*</h[1-6]>`);
+/**
+ * The html string is expected to constructed as given by the
+ * Backus-Naur Form (BNF):
+ *
+ * <root> 		  ::= "<body>" <header> <dl> "</body>"
+ * <dl> 		    ::= "<dl>" (<dtfolder> | <dtsingle>)+ "</dl>"
+ * <dtfolder> 	::= "<dt>" <header> <dl> "</dt>"
+ * <dtsingle> 	::= "<dt>" <link> "</dt>"
+ * <header> 	  ::= "<h" <step> (" " <attribute>)*  ">" <text> "</" <step> "h>"
+ * <link> 		  ::= "<a (" " <attribute>)* ">" <text> "</a>"
+ * <step>       ::= [1-6]
+ *
+ * ... something like that
+ *
+ * Important
+ * - each folder is expected to be linked to the next {@link TAG} block
+ * - the element {@link TAG} can not contain any attributes
+ * - the link elements contained inside of a {@link TAG} block are expected
+ *   to belong to the closest preceding header
+ * - header text content should not contain the character '>'
+ *
+ * @param htmlString a syntatically valid html string
+ * @param header the case insensitive header text content. Searching starts
+ *   from here and ends after the first {@link TAG} element block
+ * @returns Object containing the arrays:
+ *    'opened':   the starting indexes of opened {@link TAG}.
+ *    'closed':   the ending indexes of closed {@link TAG}.
+ *    'headers':  the starting indexes of header text contents and the
+ *                corresponding text contents
+ */
+const getHeaderRange = (htmlString: string, header: string) => {
+  // important to contain opening '>' so the header can be found
+  const startHeaderRegex = new RegExp(
+    `>\\s*${header.toLowerCase()}\\s*</h[1-6]>`,
+  );
 
   const standardized = htmlString.toLowerCase();
-  const startIdx = standardized.search(headerRegex);
+  const startIdx = standardized.search(startHeaderRegex);
 
   if (startIdx === -1) throw new Error(`Header '${header}' was not found`);
 
+  const headers = [];
   const openedTags = [];
   const closedTags = [];
   let currentIdx = startIdx;
 
   while (true) {
-    if (currentIdx > standardized.length - TAG_CLOSE.length) {
+    if (currentIdx > standardized.length - 5) {
       // reached the end without break condition
       throw new Error(`Parent tag '${TAG}' was not opened or closed`);
     }
 
     if (standardized.at(currentIdx) === '<') {
-      const substring = standardized.substring(
-        currentIdx,
-        currentIdx + TAG_CLOSE.length,
-      );
+      // take the html element
+      const substring = standardized.substring(currentIdx, currentIdx + 5);
 
       if (substring.startsWith(TAG_OPEN)) {
+        // save start of start tag
         openedTags.push(currentIdx);
       } else if (substring.startsWith(TAG_CLOSE)) {
-        closedTags.push(currentIdx);
+        // save end of end tag
+        closedTags.push(currentIdx + TAG_CLOSE.length);
+      } else if (HEADER_END.test(substring)) {
+        // start of a new folder
+        headers.push(getHeaderText(htmlString, currentIdx));
       }
 
-      // break if parent tag has been opened and closed
+      // break if a tag has been opened and all tags are closed
       if (openedTags.length > 0 && openedTags.length === closedTags.length) {
         break;
       }
@@ -49,10 +105,18 @@ const getHeaderRange = (htmlString: string, header: string): Range => {
     currentIdx++;
   }
 
+  console.log('Headers', headers);
+
   return {
-    start: openedTags[0],
-    end: closedTags[closedTags.length - 1] + TAG_CLOSE.length,
+    opened: openedTags,
+    closed: closedTags,
+    headers,
   };
+};
+
+type Range = {
+  start: number;
+  end: number;
 };
 
 const getHtmlBlock = (
@@ -64,7 +128,6 @@ const getHtmlBlock = (
 
 const getLinksFromHtmlBlock = (
   htmlBlock: htmlParser.HTMLElement,
-  header: string,
 ): RawLink[] => {
   const links = htmlBlock.querySelectorAll('a');
 
@@ -72,36 +135,14 @@ const getLinksFromHtmlBlock = (
     title: link.textContent,
     href: link.getAttribute('href'),
     addDate: link.getAttribute('add_date'),
-    category: header,
   }));
 };
 
 /**
  * Searches for HTML link elements based on a header. Search is limited to
- * inside the header elements next sibling 'dl' element. Header is case insensitive
+ * inside the header elements next sibling 'dl' element. Header is case insensitive.
  *
- * If given header 'Header 1' and the htmlString is:
- *
- * <body>
- *   <h1>Bookmarks<h1>
- *   <dl>
- *      <a href="link0" add_date="1708428547">A</a>
- *      <h3>Header 1</h3>
- *      <a href="link1" add_date="1708428548">B</a>
- *      <dl>
- *        <a href="link2" add_date="1708428549">C</a>
- *      </dl>
- *      <dl>
- *        <a href="link3" add_date="1708428550">D</a>
- *      </dl>
- *      <h3>Header 2</h3>
- *      <dl>
- *        <a href="link4" add_date="1708428551">E</a>
- *      </dl>
- *   </dl>
- * </body>,
- *
- * then only the link { title: 'C', href: link2 } is returned.
+ * See {@link getHeaderRange} and {@link getLinksFromHtmlBlock}
  *
  * @param htmlString
  * @param header
@@ -110,10 +151,36 @@ const getLinksFromHtmlBlock = (
 export const getHeaderNextDlSiblingLinks = (
   htmlString: string,
   header: string,
-): RawLink[] => {
-  const range = getHeaderRange(htmlString, header);
-  const block = getHtmlBlock(htmlString, range);
-  const links = getLinksFromHtmlBlock(block, header);
+): CategoryLink[] => {
+  // use map to override category names
+  const map = new Map<string, CategoryLink>();
 
-  return links;
+  // Initially just find the folder names. Include also the 'main' header
+  const { headers } = getHeaderRange(htmlString, header);
+
+  // calculate for each folder name, nested folders are calculted
+  // multiple times, each time overriding the link category
+  for (const { index, header } of headers) {
+    const substring = htmlString.substring(index);
+
+    const { opened, closed } = getHeaderRange(substring, header);
+
+    const range = {
+      start: opened[0],
+      end: closed[closed.length - 1],
+    };
+
+    const block = getHtmlBlock(substring, range);
+    const rawLinks = getLinksFromHtmlBlock(block);
+
+    // give the category for each link
+    for (const rawLink of rawLinks) {
+      map.set(
+        rawLink.title, // is link title a valid key?
+        { ...rawLink, category: header },
+      );
+    }
+  }
+
+  return Array.from(map.values());
 };

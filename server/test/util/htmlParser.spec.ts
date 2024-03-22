@@ -1,30 +1,5 @@
 import { getHeaderNextDlSiblingLinks } from '../../src/util/htmlParser';
 
-/*
-
-##########################
-# Backus-Naur Form (BNF) #
-##########################
-
-Something like this...
-
-<root> 		  ::= "<body>" <header> <dl> <paragraph> "</body>"
-<dl> 		    ::= "<dl>" <paragraph> (<dtfolder> | <dtsingle>)+ "</dl>"
-<dtfolder> 	::= "<dt>" <header> <dl> <paragraph> "</dt>"
-<dtsingle> 	::= "<dt>" <link> "</dt>"
-<header> 	  ::= "<h>" <text> "</h>"
-<paragraph> ::= "<p>" <text> "</p>"
-<link> 		  ::= "<a href=\"" <text> "\">" <text> "</a>"
-<text> 		  ::= (<letter> | <digit> | <symbol>)*
-
-these do not matter so much...
-
-<letter>	  ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
-<digit> 	  ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-<symbol>	  ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "=" | "?" | "@" | "[" | "\"" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
-
-*/
-
 type Attributes = Record<string, string>;
 
 type HeaderType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -37,7 +12,7 @@ type HtmlElement = {
 };
 
 /**
- * <a href="somelink" { ...attributes }>{content}</a>
+ * <a href="someUrl" add_date="someUnixEpoch" { ...attributes }>{content}</a>
  */
 type LinkElement = {
   tag: 'a';
@@ -58,7 +33,7 @@ type ParagraphElement = {
  */
 type HeaderElement = {
   tag: HeaderType;
-  //attributes?: Attributes;
+  attributes?: Attributes;
   content: string;
 };
 
@@ -69,7 +44,7 @@ type HeaderElement = {
  */
 type DtSingleElement = {
   tag: 'dt';
-  content: LinkElement; // HtmlElement
+  content: LinkElement;
 };
 
 /**
@@ -81,14 +56,12 @@ type DtSingleElement = {
  */
 type DtFolderElement = {
   tag: 'dt';
-  // one of each, in this order
-  content: [HeaderElement, DlElement, ParagraphElement]; // Array<HtmlElement>;
+  content: [HeaderElement, DlElement, ParagraphElement];
 };
 
 /**
  * <dl>
  *    <p />
- *    <dt />
  *    <dt />
  *      .
  *      .
@@ -98,9 +71,7 @@ type DtFolderElement = {
  */
 type DlElement = {
   tag: 'dl';
-  // exactly a single paragraph in the start
-  // rest should be Dt:s
-  content: [ParagraphElement, ...Array<DtSingleElement | DtFolderElement>]; // Array<HtmlElement>;
+  content: [ParagraphElement, ...Array<DtSingleElement | DtFolderElement>];
 };
 
 /**
@@ -119,7 +90,7 @@ const isElement = (value: unknown): value is HtmlElement => {
   return value !== null && typeof value === 'object' && 'tag' in value;
 };
 
-const isElementArray = (value: unknown): value is Array<HtmlElement> => {
+const isElementArray = (value: unknown): value is HtmlElement[] => {
   return (
     Array.isArray(value) &&
     value.filter((c) => isElement(c)).length === value.length
@@ -134,7 +105,7 @@ const parseAttributes = (attributes: Attributes) => {
 
 const parseElement = (
   { tag, attributes, content }: HtmlElement,
-  indent = 0,
+  indent = 0, // used only for pretty printing
 ) => {
   const attributeString = attributes ? ' ' + parseAttributes(attributes) : '';
 
@@ -343,6 +314,12 @@ describe('htmlParser', () => {
     it('finds sub folder links', () => {
       expect(links).toHaveLength(2);
     });
+
+    it('sub folder links have sub folder category', () => {
+      for (const link of links) {
+        expect(link.category).toBe(CHILD_FOLDER_HEADER);
+      }
+    });
   });
 
   describe('parent folder', () => {
@@ -351,6 +328,15 @@ describe('htmlParser', () => {
     it('finds parent folder and sub folder links', () => {
       expect(links).toHaveLength(3);
     });
+
+    it('parent folder links have parent folder category', () => {
+      expect(links[2].category).toBe(PARENT_FOLDER_HEADER);
+    });
+
+    it('sub folder links have sub folder category', () => {
+      expect(links[0].category).toBe(CHILD_FOLDER_HEADER);
+      expect(links[1].category).toBe(CHILD_FOLDER_HEADER);
+    });
   });
 
   describe('root folder', () => {
@@ -358,6 +344,19 @@ describe('htmlParser', () => {
 
     it('finds all links', () => {
       expect(links).toHaveLength(10);
+    });
+
+    it('link category is the closest containing folder header name', () => {
+      expect(links[0].category).toBe(SINGLE_LINK_HEADER);
+      expect(links[1].category).toBe(ROOT_HEADER);
+      expect(links[2].category).toBe(DOUBLE_LINK_HEADER);
+      expect(links[3].category).toBe(DOUBLE_LINK_HEADER);
+      expect(links[4].category).toBe(ROOT_HEADER);
+      expect(links[5].category).toBe(CHILD_FOLDER_HEADER);
+      expect(links[6].category).toBe(CHILD_FOLDER_HEADER);
+      expect(links[7].category).toBe(PARENT_FOLDER_HEADER);
+      expect(links[8].category).toBe(ROOT_HEADER);
+      expect(links[9].category).toBe(ROOT_HEADER);
     });
   });
 
@@ -374,6 +373,8 @@ describe('htmlParser', () => {
     const badString =
       '<body><h3>' + header + '</h3><dl><a href="link">txt</a></body>';
 
-    expect(() => getHeaderNextDlSiblingLinks(badString, header)).toThrow(Error);
+    expect(() => getHeaderNextDlSiblingLinks(badString, header)).toThrow(
+      /tag 'dl' was not/i,
+    );
   });
 });
