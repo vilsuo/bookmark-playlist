@@ -1,11 +1,18 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import settingsReducer from './reducers/settingsSlice.ts';
-import { loadState, saveState } from './localStorage.ts';
 
-const preloadedState = loadState();
+// reducers
+import settingsReducer from './reducers/settingsSlice.ts';
+import filterReducer from './reducers/filterSlice.ts';
+
+import { loadSettingsState, saveSettingsState } from './localStorage.ts';
+
+const preloadedState = {
+  'settings': loadSettingsState(),
+};
 
 const rootReducer = combineReducers({
   settings: settingsReducer,
+  filters: filterReducer
 });
 
 export const store = configureStore({
@@ -14,7 +21,7 @@ export const store = configureStore({
 });
 
 store.subscribe(() => {
-  saveState(store.getState());
+  saveSettingsState(store.getState().settings);
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

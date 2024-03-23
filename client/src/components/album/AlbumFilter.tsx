@@ -1,4 +1,4 @@
-import { AlbumColumn } from '../../types';
+import { AlbumColumn, Interval } from '../../types';
 
 /*
 const printInterval = (int: Interval) => {
@@ -6,11 +6,6 @@ const printInterval = (int: Interval) => {
   return '["' + Number(start) + '", "' + Number(end) + '"]';
 };
 */
-
-type Interval = {
-  start: string;
-  end: string;
-}
 
 export type FilterOptions = {
   column: AlbumColumn;

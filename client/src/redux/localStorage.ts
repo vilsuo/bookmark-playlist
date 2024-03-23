@@ -1,13 +1,15 @@
-import { RootState } from './store';
+import { SettingsState } from './reducers/settingsSlice';
+
+const SETTINGS_STATE = 'state';
 
 /**
  * Load state from the window local storage
  * 
  * @returns 
  */
-export const loadState = () => {
+export const loadSettingsState = () => {
   try {
-    const serializedState = localStorage.getItem('state');
+    const serializedState = localStorage.getItem(SETTINGS_STATE);
     if (serializedState === null) {
       console.log('state was not found in local storage')
 
@@ -29,10 +31,10 @@ export const loadState = () => {
  * 
  * @param state 
  */
-export const saveState = (state: RootState) => {
+export const saveSettingsState = (state: SettingsState) => {
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem('state', serializedState);
+    localStorage.setItem(SETTINGS_STATE, serializedState);
 
     console.log('saved state', serializedState);
 
