@@ -6,8 +6,29 @@ import SortableColumn from '../general/SortableColumn';
 import { useAppSelector } from '../../redux/hooks';
 import { FilterState, selectFilters } from '../../redux/reducers/filterSlice';
 
+/**
+ * Create a {@link Album} sorting funtion. The sorting function will sort
+ * the albums naturally by the given property and order, with the following
+ * exceptions regarding the sorting column:
+ * 
+ * {@link AlbumColumn.ARTIST}: If two {@link Album.artist} are equal, then
+ * the album with greater {@link Album.published} value will ALWAYS be first
+ * regardless of given {@link Order}.
+ * 
+ * {@link AlbumColumn.ALBUM}: If two {@link Album.title} are equal, then
+ * the album with earlier {@link Album.artist} value will ALWAYS be first
+ * regardless of given {@link Order}.
+ * 
+ * {@link AlbumColumn.PUBLISHED}: If two {@link Album.published} are equal,
+ * then the album with earlier {@link Album.artist} value will ALWAYS be first
+ * regardless of given {@link Order}.
+ * 
+ * @param sortColumn name of the current column to sort by
+ * @param sortOrder the sorting order
+ * @returns the sorting function
+ */
 const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
-  // -1 if a before b
+  // Note: return -1 if album 'a' goes before album 'b'
 
   const aArtist = a.artist.toLowerCase();
   const bArtist = b.artist.toLowerCase();
@@ -36,10 +57,18 @@ const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: A
   }
 }
 
+/**
+ * Create a {@link Album} filter function. 
+ * 
+ * @param filterState current filter options. The filters are only applied to the
+ * property specified by {@link FilterState.column}.
+ * @returns the filter funtion
+ */
 const getFilterFn = (filterState: FilterState) => (album: Album) => {
   const { text, column, interval } = filterState;
 
   if (column !== AlbumColumn.PUBLISHED) {
+    // filter only by text value, select album artist or title
     if (!text) return true;
 
     const searchText = text.toLowerCase();
@@ -49,12 +78,12 @@ const getFilterFn = (filterState: FilterState) => (album: Album) => {
       return album.title.toLowerCase().indexOf(searchText) !== -1;
     }
   } else {
+    // filter only by published
     const { published } = album;
     const { start, end } = interval;
 
     if (!start && !end) {
-      // no filter
-      return 1;
+      return 1; // no interval filter
     } else if (start && end) {
       return Number(start) <= published && published <= Number(end);
     } else if (start) {
@@ -74,10 +103,12 @@ interface AlbumTableProps {
 const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum } : AlbumTableProps) => {
   const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
 
+  // filters
   const filterState = useAppSelector(selectFilters);
 
-  const [sortColumn, setSortColumn] = useState<AlbumColumn>(AlbumColumn.ARTIST);
-  const [sortOrder, setSortOrder] = useState<Order>(Order.ASC);
+  // sort options
+  const [sortColumn, setSortColumn] = useState(AlbumColumn.ARTIST);
+  const [sortOrder, setSortOrder] = useState(Order.ASC);
 
   const isPlaying = (album: Album) => {
     return playingAlbum !== null && playingAlbum.videoId === album.videoId;
