@@ -1,4 +1,6 @@
-import { AlbumColumn, Interval } from '../../types';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { selectFilterColumn, selectFilters, setFilterInterval, setFilterText } from '../../redux/reducers/filterSlice';
+import { AlbumColumn } from '../../types';
 
 /*
 const printInterval = (int: Interval) => {
@@ -7,42 +9,25 @@ const printInterval = (int: Interval) => {
 };
 */
 
-export type FilterOptions = {
-  column: AlbumColumn;
-  text: string;
-  interval: Interval;
-};
+const AlbumFilter = () => {
+  const dispatch = useAppDispatch();
 
-interface FilterFormProps {
-  filterOptions: FilterOptions;
-  setFilterOptions: (f: FilterOptions) => void;
-}
-
-// TODO
-// - save filter options to window local storage?
-const AlbumFilter = ({ filterOptions, setFilterOptions }: FilterFormProps) => {
-  const { text, column, interval } = filterOptions;
+  const { text, column, interval } = useAppSelector(selectFilters);
 
   const handleColumnChange = (value: AlbumColumn) => {
-    setFilterOptions({ ...filterOptions, column: value });
+    dispatch(selectFilterColumn(value));
   };
 
   const handleTextChange = (value: string) => {
-    setFilterOptions({ ...filterOptions, text: value });
+    dispatch(setFilterText(value));
   };
 
   const handleStartChange = (value: string) => {
-    setFilterOptions({
-      ...filterOptions,
-      interval: { ...interval, start: value }
-    })
+    dispatch(setFilterInterval({ ...interval, start: value }));
   };
 
   const handleEndChange = (value: string) => {
-    setFilterOptions({
-      ...filterOptions,
-      interval: { ...interval, end: value }
-    })
+    dispatch(setFilterInterval({ ...interval, end: value }));
   };
 
   return (

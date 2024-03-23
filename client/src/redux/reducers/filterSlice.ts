@@ -1,7 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { AlbumColumn, Interval } from '../../types';
+import { RootState } from '../store';
 
-interface FilterState {
+export interface FilterState {
   column: AlbumColumn;
   text: string;
   interval: Interval;
@@ -33,5 +34,7 @@ const filtersSlice = createSlice({
 });
 
 export const { selectFilterColumn, setFilterText, setFilterInterval } = filtersSlice.actions;
+
+export const selectFilters = (state: RootState) => state.filters;
 
 export default filtersSlice.reducer;

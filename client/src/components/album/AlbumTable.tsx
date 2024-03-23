@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Album, AlbumColumn, Order } from '../../types';
 import AlbumRow from './AlbumRow';
 import ExtraRow from './ExtraRow';
-import { FilterOptions } from './AlbumFilter';
 import SortableColumn from '../general/SortableColumn';
+import { useAppSelector } from '../../redux/hooks';
+import { FilterState, selectFilters } from '../../redux/reducers/filterSlice';
 
 const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
   // -1 if a before b
@@ -35,8 +36,8 @@ const getSortFn = (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: A
   }
 }
 
-const getFilterFn = (filterOptions: FilterOptions) => (album: Album) => {
-  const { text, column, interval } = filterOptions;
+const getFilterFn = (filterState: FilterState) => (album: Album) => {
+  const { text, column, interval } = filterState;
 
   if (column !== AlbumColumn.PUBLISHED) {
     if (!text) return true;
@@ -68,11 +69,12 @@ interface AlbumTableProps {
   albums: Album[];
   playingAlbum: Album | null;
   setPlayingAlbum: (album: Album | null) => void;
-  filterOptions: FilterOptions;
 }
 
-const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : AlbumTableProps) => {
+const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum } : AlbumTableProps) => {
   const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
+
+  const filterState = useAppSelector(selectFilters);
 
   const [sortColumn, setSortColumn] = useState<AlbumColumn>(AlbumColumn.ARTIST);
   const [sortOrder, setSortOrder] = useState<Order>(Order.ASC);
@@ -94,7 +96,7 @@ const AlbumTable = ({ albums, playingAlbum, setPlayingAlbum, filterOptions } : A
   };
 
   const sortedAlbums = albums
-    .filter(getFilterFn(filterOptions))
+    .filter(getFilterFn(filterState))
     .toSorted(getSortFn(sortColumn, sortOrder));
 
   return (
