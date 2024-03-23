@@ -1,16 +1,12 @@
 import React, { useRef, useState } from 'react';
+
 import BookmarkForm from './BookmarkForm';
 
 // albums
-import AlbumFilter, { FilterOptions } from '../../album/AlbumFilter';
+import AlbumFilter from '../../album/AlbumFilter';
 import AlbumTable from '../../album/AlbumTable';
-import { Album, AlbumColumn } from '../../../types';
 
-const DEFAULT_FILTER_OPTIONS: FilterOptions = {
-  column: AlbumColumn.ARTIST,
-  text: '',
-  interval: { start: '', end: '' }
-};
+import { Album } from '../../../types';
 
 interface AlbumsBarProps {
   handleUpload: (formData: FormData) => Promise<void>;
@@ -22,8 +18,6 @@ interface AlbumsBarProps {
 
 const AlbumsBar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: AlbumsBarProps) => {
   const [showUpload, setShowUpload] = useState(albums.length === 0);
-
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(DEFAULT_FILTER_OPTIONS);
 
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
@@ -64,16 +58,12 @@ const AlbumsBar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close 
             </a>
             */}
 
-            <AlbumFilter
-              filterOptions={filterOptions}
-              setFilterOptions={setFilterOptions}
-            />
+            <AlbumFilter />
 
             <AlbumTable
               albums={albums}
               playingAlbum={playingAlbum}
               setPlayingAlbum={setPlayingAlbum}
-              filterOptions={filterOptions}
             />
           </React.Fragment>
         )}

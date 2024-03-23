@@ -1,26 +1,50 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import settingsReducer from './reducers/settingsSlice.ts';
-import { loadState, saveState } from './localStorage.ts';
+import { combineReducers, configureStore, isAnyOf } from '@reduxjs/toolkit';
 
-const preloadedState = loadState();
+import settingsReducer, { toggleAutoplay } from './reducers/settingsSlice.ts';
+import filterReducer from './reducers/filterSlice.ts';
+
+import { loadSettingsState, saveSettingsState } from './localStorage.ts';
+import { listenerMiddleware, startAppListening } from './listenerMiddleware.ts';
+
+/*
+const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action => {
+  console.log('dispatching', action);
+  const result = next(action);
+  console.log('next state', storeApi.getState());
+  return result;
+};
+*/
+
+startAppListening({
+  matcher: isAnyOf(toggleAutoplay),
+  effect: (_action, listenerApi) => {
+    saveSettingsState(listenerApi.getState().settings);
+  },
+});
+
+const preloadedState = {
+  'settings': loadSettingsState(),
+};
 
 const rootReducer = combineReducers({
   settings: settingsReducer,
+  filters: filterReducer
 });
 
 export const store = configureStore({
   reducer: rootReducer,
   preloadedState,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      // NOTE: Since this can receive actions with functions inside,
+      // it should go before the serializability check middleware
+      .prepend(listenerMiddleware.middleware)
+
+      //.concat(loggerMiddleware),
 });
 
-store.subscribe(() => {
-  saveState(store.getState());
-});
+export type RootState = ReturnType<typeof rootReducer>;
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 
 export type AppStore = typeof store;
