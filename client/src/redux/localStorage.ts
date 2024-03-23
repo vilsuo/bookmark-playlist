@@ -12,16 +12,14 @@ export const loadSettingsState = () => {
     const serializedState = localStorage.getItem(SETTINGS_STATE);
     if (serializedState === null) {
       console.log('state was not found in local storage')
-
       return undefined;
     }
 
     console.log('loaded state', JSON.parse(serializedState))
-
     return JSON.parse(serializedState);
+
   } catch (error: unknown) {
     console.log('Error loading state', error);
-
     return undefined;
   }
 };
@@ -35,7 +33,6 @@ export const saveSettingsState = (state: SettingsState) => {
   try {
     const serializedState = JSON.stringify(state);
     localStorage.setItem(SETTINGS_STATE, serializedState);
-
     console.log('saved state', serializedState);
 
   } catch (error) {
