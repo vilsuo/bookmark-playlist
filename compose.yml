@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+
+  server:
+    build:
+      context: server
+      dockerfile: dev.Dockerfile
+    container_name: playlist-server-dev
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
+  client:
+    build:
+      context: client
+      dockerfile: dev.Dockerfile
+      args:
+        VITE_BACKEND_URL: http://server:3000
+    container_name: playlist-client-dev
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 5173:5173
+    command: npm run dev -- --host
+    depends_on:
+      - server
