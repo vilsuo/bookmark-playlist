@@ -178,19 +178,17 @@ h1, h2, h3 {
 .album-filter .filter-text input {
   width: 100%;
 }
-.album-filter .filter-interval {
+.album-filter .filter-interval,
+.album-filter .filter-interval div {
   flex: 1;
   display: flex;
   flex-flow: row nowrap;
   gap: 4px;
 }
-.album-filter .filter-interval div {
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 4px;
-}
 .album-filter .filter-interval input {
-  width: 60px;
+  display: flex;
+  flex: 1 1 auto;
+  width: 0;
 }
 
 /* Notification */
