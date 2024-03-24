@@ -33,7 +33,8 @@ const filtersSlice = createSlice({
   },
 });
 
-export const { selectFilterColumn, setFilterText, setFilterInterval } = filtersSlice.actions;
+export const { selectFilterColumn, setFilterText, setFilterInterval } =
+  filtersSlice.actions;
 
 export const selectFilters = (state: RootState) => state.filters;
 

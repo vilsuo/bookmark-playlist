@@ -16,19 +16,15 @@ interface MainProps {
 }
 
 const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
-
   const closeVideo = () => setPlayingAlbum(null);
 
   return (
-    <div className='main'>
-      { playingAlbum && (
-        <VideoPlayer 
-          playingAlbum={playingAlbum}
-          closeVideo={closeVideo}
-        />
+    <div className="main">
+      {playingAlbum && (
+        <VideoPlayer playingAlbum={playingAlbum} closeVideo={closeVideo} />
       )}
       <ul>
-        {[...Array(5).keys()].map(k => (
+        {[...Array(5).keys()].map((k) => (
           <li key={k}>Item {k}</li>
         ))}
       </ul>
@@ -49,9 +45,9 @@ const App = () => {
   };
 
   return (
-    <div className='container'>
-      { showSideBar && (
-        <AlbumsBar 
+    <div className="container">
+      {showSideBar && (
+        <AlbumsBar
           handleUpload={handleUpload}
           albums={albums}
           playingAlbum={playingAlbum}
@@ -60,23 +56,16 @@ const App = () => {
         />
       )}
 
-      { showSettings && (
-        <SettingsBar 
-          close={() => setShowSettings(false)}
-        />
-      )}
+      {showSettings && <SettingsBar close={() => setShowSettings(false)} />}
 
-      { !(showSideBar || showSettings) && (
-        <div className='open-sidebar'>
+      {!(showSideBar || showSettings) && (
+        <div className="open-sidebar">
           <AlbumsButton show={() => setShowSidebar(true)} />
           <SettingsButton show={() => setShowSettings(true)} />
         </div>
       )}
 
-      <Main
-        playingAlbum={playingAlbum}
-        setPlayingAlbum={setPlayingAlbum}
-      />
+      <Main playingAlbum={playingAlbum} setPlayingAlbum={setPlayingAlbum} />
     </div>
   );
 };

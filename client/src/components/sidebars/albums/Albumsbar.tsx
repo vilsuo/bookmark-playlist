@@ -16,21 +16,27 @@ interface AlbumsBarProps {
   close: () => void;
 }
 
-const AlbumsBar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close }: AlbumsBarProps) => {
+const AlbumsBar = ({
+  handleUpload,
+  albums,
+  playingAlbum,
+  setPlayingAlbum,
+  close,
+}: AlbumsBarProps) => {
   const [showUpload, setShowUpload] = useState(albums.length === 0);
 
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
 
   const scrollTo = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const toggleUpload = () => setShowUpload(!showUpload);
 
   return (
-    <div className='sidebar'>
-      <div className='sidebar-toolbar'>
+    <div className="sidebar">
+      <div className="sidebar-toolbar">
         <button onClick={() => scrollTo(startRef)}>Up</button>
         <button onClick={() => scrollTo(endRef)}>Down</button>
         <h2>Albums</h2>
@@ -38,14 +44,12 @@ const AlbumsBar = ({ handleUpload, albums, playingAlbum, setPlayingAlbum, close 
         <button onClick={close}>&#x2715;</button>
       </div>
 
-      <div id='start-ref' ref={startRef} />
-      
-      <div className='sidebar-container'>
-        { showUpload && (
-          <BookmarkForm upload={handleUpload} />
-        )}
+      <div id="start-ref" ref={startRef} />
 
-        { (albums.length > 0) && (
+      <div className="sidebar-container">
+        {showUpload && <BookmarkForm upload={handleUpload} />}
+
+        {albums.length > 0 && (
           <React.Fragment>
             {/*
             <a

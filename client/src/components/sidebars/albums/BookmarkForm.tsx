@@ -39,9 +39,8 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
       await upload(formData);
       handleReset();
 
-      setMessage(null)
+      setMessage(null);
       setMessageType(NotificationType.SUCCESS);
-
     } catch (error) {
       setMessage(getErrorMessage(error));
       setMessageType(NotificationType.ERROR);
@@ -49,22 +48,23 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
   };
 
   return (
-    <div className='bookmark-form'>
+    <div className="bookmark-form">
       <h3>Import bookmarks</h3>
 
-      <p className='info'>
-        Upload your exported bookmarks and select the folder where to look for videos.
-        Each entry in the folder must either be a youtube video link or a folder with
-        youtube videos links. Each link name must be exactly in the format:
-        <span className='format'>artist - album title (year)</span>. The closest folder
-        name will be the category of the album.
+      <p className="info">
+        Upload your exported bookmarks and select the folder where to look for
+        videos. Each entry in the folder must either be a youtube video link or
+        a folder with youtube videos links. Each link name must be exactly in
+        the format:
+        <span className="format">artist - album title (year)</span>. The closest
+        folder name will be the category of the album.
       </p>
 
-      { messageType && (
+      {messageType && (
         <Notification
           type={messageType}
-          successTitle='Bookmarks imported'
-          errorTitle='Bookmark import failed'
+          successTitle="Bookmarks imported"
+          errorTitle="Bookmark import failed"
           message={message}
           close={() => {
             setMessage(null);
@@ -73,30 +73,32 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
         />
       )}
 
-      <div className='inputs'>
-        <div className='folder-name'>
-          <label htmlFor='folder-name-input'>Folder:</label>
+      <div className="inputs">
+        <div className="folder-name">
+          <label htmlFor="folder-name-input">Folder:</label>
           <input
-            id='folder-name-input'
-            type='text'
+            id="folder-name-input"
+            type="text"
             value={name}
             onChange={({ target }) => setName(target.value)}
-            placeholder='Look inside...'
+            placeholder="Look inside..."
           />
         </div>
 
-        <input 
-          type='file'
+        <input
+          type="file"
           ref={inputRef}
           onChange={handleFileChange}
-          accept='.html'
+          accept=".html"
           required
         />
       </div>
 
-      <div className='actions'>
+      <div className="actions">
         <button onClick={handleReset}>Clear</button>
-        <button disabled={!(name && file)} onClick={handleFileUpload}>Send</button>
+        <button disabled={!(name && file)} onClick={handleFileUpload}>
+          Send
+        </button>
       </div>
     </div>
   );

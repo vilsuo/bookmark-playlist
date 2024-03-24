@@ -10,8 +10,8 @@ export const MaLink = ({ link }: MaLinkProps) => {
   const { text, href } = link;
 
   return (
-    <div className='ma'>
-      <a href={href} target='_blank'>
+    <div className="ma">
+      <a href={href} target="_blank">
         <img src={ma} />
         <span>{text}</span>
       </a>

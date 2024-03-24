@@ -1,5 +1,10 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectFilterColumn, selectFilters, setFilterInterval, setFilterText } from '../../redux/reducers/filterSlice';
+import {
+  selectFilterColumn,
+  selectFilters,
+  setFilterInterval,
+  setFilterText,
+} from '../../redux/reducers/filterSlice';
 import { AlbumColumn } from '../../types';
 
 /*
@@ -31,7 +36,7 @@ const AlbumFilter = () => {
   };
 
   return (
-    <div className='album-filter'>
+    <div className="album-filter">
       {/*
       <div>
         <p>Column {column}</p>
@@ -40,58 +45,54 @@ const AlbumFilter = () => {
         <br />
       </div>
       */}
-      <div className='filter-column'>
-        <label htmlFor='album-filter-column'>Filter by:</label>
+      <div className="filter-column">
+        <label htmlFor="album-filter-column">Filter by:</label>
         <select
-          id='album-filter-column'
+          id="album-filter-column"
           value={column}
-          onChange={({ target }) => handleColumnChange(target.value as AlbumColumn)}
+          onChange={({ target }) =>
+            handleColumnChange(target.value as AlbumColumn)
+          }
         >
-          <option value={AlbumColumn.ARTIST}>
-            {AlbumColumn.ARTIST}
-          </option>
-          <option value={AlbumColumn.ALBUM}>
-            {AlbumColumn.ALBUM}
-          </option>
-          <option value={AlbumColumn.PUBLISHED}>
-            {AlbumColumn.PUBLISHED}
-          </option>
+          <option value={AlbumColumn.ARTIST}>{AlbumColumn.ARTIST}</option>
+          <option value={AlbumColumn.ALBUM}>{AlbumColumn.ALBUM}</option>
+          <option value={AlbumColumn.PUBLISHED}>{AlbumColumn.PUBLISHED}</option>
         </select>
       </div>
 
-    { column !== AlbumColumn.PUBLISHED ? (
-      <div className='filter-text'>
-        <label htmlFor='album-filter-text'>Search:</label>
-        <input
-          id='album-filter-text'
-          type='text'
-          value={text}
-          onChange={({ target }) => handleTextChange(target.value)}
-        />
-      </div>
-    ) : (
-      <div className='filter-interval'>
-        <div>
-          <label htmlFor='album-filter-start'>From:</label>
+      {column !== AlbumColumn.PUBLISHED ? (
+        <div className="filter-text">
+          <label htmlFor="album-filter-text">Search:</label>
           <input
-            id='album-filter-start'
-            type='text'
-            value={interval.start}
-            onChange={({ target }) => handleStartChange(target.value)}
+            id="album-filter-text"
+            type="text"
+            value={text}
+            onChange={({ target }) => handleTextChange(target.value)}
           />
         </div>
+      ) : (
+        <div className="filter-interval">
+          <div>
+            <label htmlFor="album-filter-start">From:</label>
+            <input
+              id="album-filter-start"
+              type="text"
+              value={interval.start}
+              onChange={({ target }) => handleStartChange(target.value)}
+            />
+          </div>
 
-        <div>
-          <label htmlFor='album-filter-end'>to:</label>
-          <input
-            id='album-filter-end'
-            type='text'
-            value={interval.end}
-            onChange={({ target }) => handleEndChange(target.value)}
-          />
+          <div>
+            <label htmlFor="album-filter-end">to:</label>
+            <input
+              id="album-filter-end"
+              type="text"
+              value={interval.end}
+              onChange={({ target }) => handleEndChange(target.value)}
+            />
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };

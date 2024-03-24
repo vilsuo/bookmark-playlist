@@ -7,12 +7,12 @@ interface AlbumChipsProps {
 
 const AlbumChips = ({ album }: AlbumChipsProps) => {
   return (
-    <div className='album-chips'>
-      <div className='chip'>
-        Category: <span className='category'>{album.category}</span>
+    <div className="album-chips">
+      <div className="chip">
+        Category: <span className="category">{album.category}</span>
       </div>
-      <div className='chip'>
-        Added: <span className='add-date'>{toDateString(album.addDate)}</span>
+      <div className="chip">
+        Added: <span className="add-date">{toDateString(album.addDate)}</span>
       </div>
     </div>
   );

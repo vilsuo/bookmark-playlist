@@ -14,8 +14,8 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({ playingAlbum, closeVideo }: VideoPlayerProps) => {
   return (
-    <div className='video-player'>
-      <div className='header'>
+    <div className="video-player">
+      <div className="header">
         <h1>{formatVideoTitle(playingAlbum)}</h1>
         <button onClick={closeVideo}>&#x2715;</button>
       </div>

@@ -6,11 +6,13 @@ interface VideoProps {
 }
 
 const Video = ({ videoId }: VideoProps) => {
-  const autoPlay = useAppSelector(state => selectAutoplay(state));
-  
+  const autoPlay = useAppSelector((state) => selectAutoplay(state));
+
   return (
-    <div className='video'>
-      <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=${+autoPlay}`} />
+    <div className="video">
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=${+autoPlay}`}
+      />
     </div>
   );
 };

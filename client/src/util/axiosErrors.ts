@@ -5,7 +5,6 @@ export const getErrorMessage = (error: unknown): string => {
     const { response } = error;
     if (response && response.data && 'message' in response.data) {
       return response.data.message;
-
     } else {
       return 'Unknown axios error';
     }

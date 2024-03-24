@@ -23,12 +23,12 @@ startAppListening({
 });
 
 const preloadedState = {
-  'settings': loadSettingsState(),
+  settings: loadSettingsState(),
 };
 
 const rootReducer = combineReducers({
   settings: settingsReducer,
-  filters: filterReducer
+  filters: filterReducer,
 });
 
 export const store = configureStore({
@@ -38,9 +38,9 @@ export const store = configureStore({
     getDefaultMiddleware()
       // NOTE: Since this can receive actions with functions inside,
       // it should go before the serializability check middleware
-      .prepend(listenerMiddleware.middleware)
+      .prepend(listenerMiddleware.middleware),
 
-      //.concat(loggerMiddleware),
+  //.concat(loggerMiddleware),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

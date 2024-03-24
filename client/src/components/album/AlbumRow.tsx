@@ -7,9 +7,9 @@ interface AlbumRowProps {
 }
 
 const AlbumRow = ({ album, isPlaying, setViewingAlbum }: AlbumRowProps) => {
-
   return (
-    <tr className={`album-row ${isPlaying ? 'playing': ''}`}
+    <tr
+      className={`album-row ${isPlaying ? 'playing' : ''}`}
       onClick={() => setViewingAlbum(album)}
     >
       <td>{album.artist}</td>

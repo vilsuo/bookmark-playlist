@@ -10,5 +10,5 @@ export const getArtistSearchLink = (album: Album) => {
 export const getAlbumSearchLink = (album: Album) => {
   const artistSearchString = toSearchString(album.artist);
   const titleSearchString = toSearchString(album.title);
-  return  `https://www.metal-archives.com/search/advanced/searching/albums?bandName=${artistSearchString}&releaseTitle=${titleSearchString}`;
+  return `https://www.metal-archives.com/search/advanced/searching/albums?bandName=${artistSearchString}&releaseTitle=${titleSearchString}`;
 };

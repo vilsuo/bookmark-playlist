@@ -18,18 +18,18 @@ interface SortableColumnProps<T> {
   sortOrder: Order;
 }
 
-const SortableColumn = <T extends string>(
-  { value, setValue, sortColumn, sortOrder }: SortableColumnProps<T>
-) => {
-
+const SortableColumn = <T extends string>({
+  value,
+  setValue,
+  sortColumn,
+  sortOrder,
+}: SortableColumnProps<T>) => {
   return (
-    <th className='sortable'
-      onClick={() => setValue(value)}
-    >
+    <th className="sortable" onClick={() => setValue(value)}>
       {value}
-      <div className={
-        `sortable-icon ${getSortClassName(value, sortColumn, sortOrder)}`
-      }/>
+      <div
+        className={`sortable-icon ${getSortClassName(value, sortColumn, sortOrder)}`}
+      />
     </th>
   );
 };

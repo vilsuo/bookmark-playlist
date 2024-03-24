@@ -9,9 +9,12 @@ interface NotificationProps {
 }
 
 export const Notification = ({
-  type, successTitle, errorTitle, message, close,
+  type,
+  successTitle,
+  errorTitle,
+  message,
+  close,
 }: NotificationProps) => {
-
   const isSuccess = type === NotificationType.SUCCESS;
   const title = isSuccess ? successTitle : errorTitle;
 
@@ -23,9 +26,11 @@ export const Notification = ({
   return (
     <div className={`notification ${type}`}>
       <p>{title}</p>
-      { message && <p className='message'>{message}</p> }
-      <div className='action'>
-        <button type='button' onClick={close}>Ok</button>
+      {message && <p className="message">{message}</p>}
+      <div className="action">
+        <button type="button" onClick={close}>
+          Ok
+        </button>
       </div>
     </div>
   );

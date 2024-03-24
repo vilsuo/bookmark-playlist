@@ -10,7 +10,12 @@ interface ExtraRowProps {
   close: () => void;
 }
 
-const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) => {
+const ExtraRow = ({
+  album,
+  isPlaying,
+  setPlayingAlbum,
+  close,
+}: ExtraRowProps) => {
   const text = `${album.artist} - ${album.title} (${album.published})`;
 
   const togglePlaying = () => {
@@ -18,26 +23,30 @@ const ExtraRow = ({ album, isPlaying, setPlayingAlbum, close }: ExtraRowProps) =
   };
 
   return (
-    <tr id='extra-row'>
+    <tr id="extra-row">
       <td colSpan={3}>
-        <div className='extra-row-container'>
-          <div className='title'>
+        <div className="extra-row-container">
+          <div className="title">
             <span>{text}</span>
             <button onClick={close}>&#x2715;</button>
           </div>
 
           <AlbumChips album={album} />
 
-          <div className='content'>
-            <div className='links'>
-              <MaLink link={{ text: album.artist, href: getArtistSearchLink(album) }} />
-              <MaLink link={{ text: album.title, href: getAlbumSearchLink(album) }} />
+          <div className="content">
+            <div className="links">
+              <MaLink
+                link={{ text: album.artist, href: getArtistSearchLink(album) }}
+              />
+              <MaLink
+                link={{ text: album.title, href: getAlbumSearchLink(album) }}
+              />
             </div>
 
-            <div className='actions'>
+            <div className="actions">
               <button>Queue</button>
               <button onClick={togglePlaying}>
-                { isPlaying ? 'Close' : 'Open' }
+                {isPlaying ? 'Close' : 'Open'}
               </button>
             </div>
           </div>
