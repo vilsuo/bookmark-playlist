@@ -1,8 +1,11 @@
-import axios from 'axios';
 import { useState } from 'react';
+
 import { Album } from './types';
-import AlbumsBar from './components/sidebars/albums/Albumsbar';
+import * as bookmarksService from './util/bookmarksService';
 import VideoPlayer from './components/video/VideoPlayer';
+
+// sidebars
+import AlbumsBar from './components/sidebars/albums/Albumsbar';
 import AlbumsButton from './components/sidebars/albums/AlbumsButton';
 import SettingsButton from './components/sidebars/settings/SettingsButton';
 import SettingsBar from './components/sidebars/settings/SettingsBar';
@@ -41,12 +44,8 @@ const App = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   const handleUpload = async (formData: FormData) => {
-    const { data } = await axios.post(
-      `api/bookmark`,
-      formData,
-    );
-
-    setAlbums(data);
+    const responseData = await bookmarksService.createAlbums(formData);
+    setAlbums(responseData);
   };
 
   return (
