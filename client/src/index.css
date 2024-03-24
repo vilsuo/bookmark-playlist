@@ -329,6 +329,9 @@ table thead th.sortable:hover {
   border: 1px solid black;
   background-color: var(--ma);
 }
+#extra-row .extra-row-container .title button {
+  width: 20px;
+}
 #extra-row .extra-row-container .content {
   display: flex;
   justify-content: space-between;
