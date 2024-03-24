@@ -75,6 +75,7 @@ const getHeaderRange = (htmlString: string, header: string) => {
   const closedTags = [];
   let currentIdx = startIdx;
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (currentIdx > standardized.length - 5) {
       // reached the end without break condition
