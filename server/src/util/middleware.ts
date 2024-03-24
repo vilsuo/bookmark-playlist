@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { ErrorRequestHandler, RequestHandler } from 'express';
 import { RawLinkError } from '../errors';
 import { RawLink } from '../types';
 
@@ -15,11 +15,7 @@ const rawLinkToString = (rawLink: RawLink) => {
   );
 };
 
-export const requestLogger = (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-) => {
+export const requestLogger: RequestHandler = (req, _res, next) => {
   console.log('Method:', req.method);
   console.log('Path:  ', req.path);
   console.log('Query: ', req.query);
