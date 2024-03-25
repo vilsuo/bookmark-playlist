@@ -1,41 +1,142 @@
-import supertest, { Response } from 'supertest';
+import supertest from 'supertest';
 import app from '../../src/app';
 import { Album } from '../../src/types';
+import { convertEpoch } from '../../src/util/albumService';
 
 const api = supertest(app);
 
-/**
- * Api 'error' response body
- */
-export type MessageBody = { message: string };
+const ROOT_HEADER = 'Bookmarks bar';
+const CHILD_HEADER = 'Example';
+const SUB_HEADER = 'Sub';
 
-// Overwrite the supertest response body to be generic
-type SuperTestResponse<T> = Omit<Response, 'body'> & { body: T };
+const FILEPATH = './test/bookmarks-example.html';
 
-type ApiResponse<T> = SuperTestResponse<T | MessageBody>;
+const EXPECTED = [
+  {
+    videoId: 'IdRn9IYWuaQ',
+    artist: 'Annihilator',
+    title: 'Alice In Hell',
+    published: 1989,
+    category: ROOT_HEADER,
+    addDate: convertEpoch(1653126836).toJSON(),
+  },
+  {
+    videoId: '5av2oGfw34g',
+    artist: 'A.O.D',
+    title: 'Altars of Destruction',
+    published: 1989,
+    category: CHILD_HEADER,
+    addDate: convertEpoch(1711378433).toJSON(),
+  },
+  {
+    videoId: 'zopfZLQibWw',
+    artist: 'Nuclear Assault',
+    title: 'Survive',
+    published: 1988,
+    category: CHILD_HEADER,
+    addDate: convertEpoch(1711378636).toJSON(),
+  },
+  {
+    videoId: 'DopHEl-BCGQ',
+    artist: 'Angel Dust',
+    title: 'Into the Dark Past',
+    published: 1986,
+    category: SUB_HEADER,
+    addDate: convertEpoch(1711378617).toJSON(),
+  },
+  {
+    videoId: 'MV3yQFU3Z6s',
+    artist: 'Paradox',
+    title: 'Product of Imagination',
+    published: 1987,
+    category: SUB_HEADER,
+    addDate: convertEpoch(1711378656).toJSON(),
+  },
+  {
+    videoId: 'Zof79HxNpMs',
+    artist: 'Exodus',
+    title: 'Fabulous Disaster',
+    published: 1989,
+    category: CHILD_HEADER,
+    addDate: convertEpoch(1711378682).toJSON(),
+  },
+];
 
-// Specific
 type AlbumResponse = Album & { addDate: string };
-type PostBookmarkResponse = ApiResponse<AlbumResponse[]>;
 
-const postBookmarks = async (foldername: string, filename: string, statusCode: number): Promise<PostBookmarkResponse> => {
+const postBookmarks = async (foldername: string, filename: string): Promise<AlbumResponse[]> => {
   const response = await api
     .post('/api/bookmark')
     .field('name', foldername)
     .attach('file', filename)
-    .expect(statusCode)
+    .expect(201)
     .expect('Content-Type', /application\/json/);
   
   return response.body;
 };
 
 describe('post bookmarks', () => {
-  const foldername = 'Example';
-  const filepath = './test/bookmarks-example.html';
+  describe('root folder', () => {
+    let responseBody: AlbumResponse[];
 
-  it('initial test', async () => {
-    const responseBody = await postBookmarks(foldername, filepath, 201);
+    beforeAll(async () => {
+      responseBody = await postBookmarks(ROOT_HEADER, FILEPATH);
+    });
 
-    expect(responseBody).toHaveLength(5);
+    it('finds all links', () => {
+      expect(responseBody).toHaveLength(EXPECTED.length);
+    });
+
+    it('the category is given by root when the link is not in a nested folder', () => {
+      const rootAlbums = responseBody.filter((album) => album.category === ROOT_HEADER);
+
+      expect(rootAlbums).toHaveLength(1);
+      expect(rootAlbums[0]).toStrictEqual(EXPECTED[0]);
+    });
+
+    it('the links inside child folders have the child categories', () => {
+      const childAlbums = responseBody.filter((album) => album.category === CHILD_HEADER);
+
+      expect(childAlbums).toHaveLength(3);
+      expect(childAlbums).toContainEqual(EXPECTED[1]);
+      expect(childAlbums).toContainEqual(EXPECTED[2]);
+      expect(childAlbums).toContainEqual(EXPECTED[5]);
+
+      const subAlbums = responseBody.filter((album) => album.category === SUB_HEADER);
+      expect(subAlbums).toHaveLength(2);
+      expect(subAlbums).toContainEqual(EXPECTED[3]);
+      expect(subAlbums).toContainEqual(EXPECTED[4]);
+    });
+  });
+
+  describe('child folder', () => {
+    let responseBody: AlbumResponse[];
+
+    beforeAll(async () => {
+      responseBody = await postBookmarks(CHILD_HEADER, FILEPATH);
+    });
+
+    it('finds exactly all links inside the folder', () => {
+      expect(responseBody).toHaveLength(5);
+      expect(responseBody).not.toContainEqual(EXPECTED[0]);
+    });
+
+    it('finds the links before sub folder', () => {
+      const childAlbums = responseBody.filter((album) => album.category === CHILD_HEADER);
+      expect(childAlbums).toContainEqual(EXPECTED[1]);
+      expect(childAlbums).toContainEqual(EXPECTED[2]);
+    });
+
+    it('finds the links after sub folder', () => {
+      const childAlbums = responseBody.filter((album) => album.category === CHILD_HEADER);
+      expect(childAlbums).toContainEqual(EXPECTED[5]);
+    });
+
+    it('the links inside child folders have the child categories', () => {
+      const subAlbums = responseBody.filter((album) => album.category === SUB_HEADER);
+      expect(subAlbums).toHaveLength(2);
+      expect(subAlbums).toContainEqual(EXPECTED[3]);
+      expect(subAlbums).toContainEqual(EXPECTED[4]);
+    });
   });
 });
