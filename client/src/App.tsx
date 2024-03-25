@@ -5,7 +5,7 @@ import * as bookmarksService from './util/bookmarksService';
 import VideoPlayer from './components/video/VideoPlayer';
 
 // sidebars
-import SidebarOpener from './components/sidebars/SidebarOpener';
+import SidebarOpener from './components/sidebars/opener/SidebarOpener';
 import Sidebar from './components/sidebars/Sidebar';
 
 interface MainProps {

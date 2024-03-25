@@ -1,4 +1,4 @@
-import { SidebarType } from '../../types';
+import { SidebarType } from '../../../types';
 import AlbumsButton from './AlbumsButton';
 import SettingsButton from './SettingsButton';
 
