@@ -13,10 +13,14 @@ const AlbumRow = ({ album, isPlaying, isViewing, view }: AlbumRowProps) => {
   const playing = isPlaying ? 'playing' : '';
   const viewing = isViewing ? 'viewing': '';
 
+  const toggleView = () => {
+    isViewing ? view(null) : view(album);
+  };
+
   return (
     <tr
       className={`album-row ${playing} ${viewing}`}
-      onClick={() => view(album)}
+      onClick={toggleView}
     >
       <td>{album.artist}</td>
       <td>{album.title}</td>
