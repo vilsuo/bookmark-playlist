@@ -36,8 +36,21 @@ h1, h2, h3 {
   gap: 2px;
   width: 44px;
 }
+.container .main {
+  flex: 1;
+  overflow-y: auto;
 
-/* Sidebar */
+  background-color: var(--ma-selected);
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.container .main > * {
+  margin: 10px
+}
+
+/* Sidebars */
 .sidebar .sidebar-toolbar {
   position: sticky;
   top: 0;
@@ -64,11 +77,10 @@ h1, h2, h3 {
   gap: 10px;
 }
 
-/* Albums bar */
+/* Album sidebar */
 .albums-bar #start-ref,
 .albums-bar #end-ref {
-  /* to fix the flex gaps */
-  margin-top: -10px;
+  margin-top: -10px; /* to fix the flex gaps */
 }
 .albums-bar .sidebar-container.album-viewed {
   height: calc(100% - 150px);
@@ -79,34 +91,18 @@ h1, h2, h3 {
   display: flex;
   background-color: black;
   border: 1px solid white;
-
   width: 500px;
   height: 100px;
 }
 
-/* Sidebar toggle button */
-#albums-button {
+/* Sidebar opener */
+.sidebar-opener button {
   width: 44px;
   height: 44px;
 }
-#albums-button:hover {
+.sidebar-opener button:hover {
   cursor: pointer;
   background-color: darkgrey;
-}
-
-/* Main content */
-.container .main {
-  flex: 1;
-  overflow-y: auto;
-
-  background-color: var(--ma-selected);
-  border-left: 2px solid white;
-  border-right: 2px solid white;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.container .main > * {
-  margin: 10px
 }
 
 /* Videos */
@@ -320,9 +316,6 @@ table thead th.sortable:hover {
 }
 .album-table th:nth-child(2) {
   width: 52%;
-}
-.album-table td:nth-child(3) {
-  /*text-align: center;*/
 }
 /* Playing row */
 .album-table tbody .album-row.playing {

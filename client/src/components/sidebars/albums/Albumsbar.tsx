@@ -38,7 +38,7 @@ const AlbumsBar = ({
   const toggleUpload = () => setShowUpload(!showUpload);
 
   return (
-    <div className="albums-bar sidebar">
+    <div className="sidebar albums-bar">
       <div className="sidebar-toolbar">
         <button onClick={() => scrollTo(startRef)}>Up</button>
         <button onClick={() => scrollTo(endRef)}>Down</button>
