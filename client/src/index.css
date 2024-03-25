@@ -229,7 +229,7 @@ table tbody >:last-child {
 table td, table th {
   border-left: 2px solid black;
   border-right: 2px solid black;
-  padding: 2px;
+  padding: 2px 4px;
 }
 
 /* Table sorting */
@@ -262,7 +262,7 @@ table td, table th {
   border-top: 4px solid white;
 }
 table thead th.sortable {
-  padding-right: 10px; /* ~ center with icon */
+  padding-right: 13px; /* ~ center with icon */
   cursor: pointer;
 }
 table thead th.sortable:hover {
@@ -292,7 +292,10 @@ table thead th.sortable:hover {
   width: 36%;
 }
 .album-table th:nth-child(2) {
-  width: 51%;
+  width: 52%;
+}
+.album-table td:nth-child(3) {
+  text-align: center;
 }
 /* Playing row */
 .album-table tbody .album-row.playing {
@@ -302,6 +305,21 @@ table thead th.sortable:hover {
 }
 .album-table tbody .album-row.playing:hover {
   color: white;
+}
+
+/* Switch year column data to play button on hover */
+.album-table tbody .album-row:hover .published,
+.album-table tbody .album-row .play {
+  display: none;
+}
+.album-table tbody .album-row:hover .play {
+  display: table-cell;
+  margin: 0;
+  padding: 0;
+}
+.album-table tbody .album-row:hover .play button {
+  width: 100%;
+  height: 100%;
 }
 
 /* Extra row */

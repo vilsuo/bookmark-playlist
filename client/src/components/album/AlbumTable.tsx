@@ -160,6 +160,7 @@ const AlbumTable = ({
               album={album}
               isPlaying={isPlaying(album)}
               setViewingAlbum={setViewingAlbum}
+              setPlayingAlbum={setPlayingAlbum}
             />
           ) : (
             <ExtraRow
