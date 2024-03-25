@@ -8,19 +8,22 @@ interface AlbumsViewProps {
 
 const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
 
-  const text = `${album.artist} - ${album.title} (${album.published})`;
+  // const text = `${album.artist} - ${album.title} (${album.published})`;
 
   return (
     <div className="albums-view">
-      <div className="extra-row-container">
-        <div className="title">
-        <span>{text}</span>
+      <div className='header'>
+        <h3>Selected Album</h3>
         <button onClick={close}>&#x2715;</button>
       </div>
 
-        <div className="actions">
-          <button>Queue</button>
+      <div className="content">
+        <div className='actions'>
           <button onClick={play}>Play</button>
+        </div>
+        <div className="details">
+          <span className='artist'>{album.artist}</span>
+          <span className='title'>{album.title}</span>
         </div>
       </div>
     </div>
