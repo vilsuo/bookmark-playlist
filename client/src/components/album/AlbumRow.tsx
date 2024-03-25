@@ -4,36 +4,17 @@ interface AlbumRowProps {
   album: Album;
   isPlaying: boolean;
   setViewingAlbum: (album: Album | null) => void;
-  setPlayingAlbum: (album: Album | null) => void;
 }
 
-const AlbumRow = ({ album, isPlaying, setViewingAlbum, setPlayingAlbum }: AlbumRowProps) => {
+const AlbumRow = ({ album, isPlaying, setViewingAlbum }: AlbumRowProps) => {
   return (
     <tr
       className={`album-row ${isPlaying ? 'playing' : ''}`}
-      onClick={() => {
-        setPlayingAlbum(isPlaying ? null : album);
-        setViewingAlbum(null);
-      }}
+      onClick={() => setViewingAlbum(album)}
     >
-      <td className='info-row'>
-        <button
-          onClick={(event) => {
-            event.stopPropagation();
-            setViewingAlbum(album)
-          }}
-        >
-          i
-        </button>
-
-        {album.artist}
-      </td>
-
+      <td>{album.artist}</td>
       <td>{album.title}</td>
-
-      <td className='published'>
-        {album.published}
-      </td>
+      <td>{album.published}</td>
     </tr>
   );
 };

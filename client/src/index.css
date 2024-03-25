@@ -14,6 +14,7 @@ h1, h2, h3 {
   text-align: center;
 }
 
+/* Container */
 .container {
   display: flex;
   height: 100vh;
@@ -21,49 +22,66 @@ h1, h2, h3 {
   color: white;
   text-shadow: 1px 1px 1px black;
 }
-
-/* Sidebar */
 .container .sidebar {
-  position: sticky;
-  overflow-y: auto;
-  max-height: 100vh;
-  top: 0;
+  overflow: hidden;
+  width: 500px;
+  
   background-color: var(--ma-selected);
   border-right: 2px solid black;
-  width: 500px;
   border-right: 2px solid white;
 }
-.container .sidebar .sidebar-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  background-color: black;
-  border: 1px solid white;
-}
-.container .sidebar .sidebar-toolbar button {
-  padding: 2px 6px;
-}
-.container .sidebar .sidebar-toolbar h2 {
-  margin: 0 auto;
-}
-.container .sidebar .sidebar-container {
-  margin: 10px;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 10px;
-}
-.container .sidebar #start-ref {
-  /* to fix the scrolling to top */
-  position: absolute;
-  top: -10px;
-}
-
 .container .open-sidebar {
   display: flex;
   flex-flow: column nowrap;
   gap: 2px;
   width: 44px;
+}
+
+/* Sidebar */
+.sidebar .sidebar-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: black;
+  border: 1px solid white;
+
+  height: 30px;
+}
+.sidebar .sidebar-toolbar button {
+  padding: 2px 6px;
+}
+.sidebar .sidebar-toolbar h2 {
+  margin: 0 auto;
+}
+.sidebar .sidebar-container {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  margin: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}
+
+/* Albums bar */
+.albums-bar #start-ref,
+.albums-bar #end-ref {
+  /* to fix the flex gaps */
+  margin-top: -10px;
+}
+.albums-bar .sidebar-container.album-viewed {
+  height: calc(100% - 150px);
+}
+.albums-bar .albums-view {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  background-color: black;
+  border: 1px solid white;
+
+  width: 500px;
+  height: 100px;
 }
 
 /* Sidebar toggle button */
@@ -91,7 +109,7 @@ h1, h2, h3 {
   margin: 10px
 }
 
-/* Video */
+/* Videos */
 .video-player .header {
   display: flex;
   padding: 4px;
@@ -104,13 +122,13 @@ h1, h2, h3 {
 .video-player .header button {
   font-size: larger;
 }
-.video-player .video {
+.video {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
   padding-top: 25px;
   height: 0;
 }
-.video-player .video iframe {
+.video iframe {
   display: block;
   margin: auto;
 
@@ -119,6 +137,17 @@ h1, h2, h3 {
   left: 0;
   width: 100%;
   height: 100%;
+}
+.video-details .content {
+  display: flex;
+  justify-content: space-between;
+}
+.video-details .content .links a {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-top: 2px;
+  color: white;
 }
 
 /* Bookmark upload form */
@@ -278,9 +307,7 @@ table thead th.sortable:hover {
   cursor: pointer;
 }
 .album-table tbody .album-row:hover {
-  color: var(--ma-selected);
-  text-shadow: none;
-  background-color: white;
+  background-color: var(--ma-selected);
 }
 .album-table tbody .album-row td:first-child,
 .album-table tbody .album-row td:nth-child(2) {
@@ -295,36 +322,16 @@ table thead th.sortable:hover {
   width: 52%;
 }
 .album-table td:nth-child(3) {
-  text-align: center;
+  /*text-align: center;*/
 }
 /* Playing row */
 .album-table tbody .album-row.playing {
   color: black;
   text-shadow: none;
-  background-color: orange;
+  background-color: white;
 }
 .album-table tbody .album-row.playing:hover {
-  color: white;
-}
-
-
-.album-table tbody .album-row .info-row {
-  flex-flow: row nowrap;
-  justify-content: space-between;
-}
-/* Show quick play button on hover */
-.album-table tbody .album-row:not(:hover) .info-row button {
-  display: none;
-}
-.album-table tbody .album-row button {
-  padding: 0 6px;
-  margin: 0;
-  margin-right: 4px;
-  border-radius: 50%;
-  height: 18px;
-}
-.album-table tbody .album-row button:hover {
-  background-color: grey;
+  color: var(--ma-selected);
 }
 
 /* Extra row */
@@ -332,11 +339,14 @@ table thead th.sortable:hover {
   border: 2px solid black;
   cursor: initial;
 }
-#extra-row .extra-row-container {
-  background-color: var(--ma-selected);
-  border: 1px solid white;
+#extra-row td {
   padding: 4px;
-
+  background-color: var(--ma-selected);
+}
+#extra-row td.playing {
+  background-color: white;
+}
+#extra-row .extra-row-container {
   display: flex;
   flex-flow: column nowrap;
   gap: 4px;
@@ -355,23 +365,10 @@ table thead th.sortable:hover {
 #extra-row .extra-row-container .title button {
   width: 20px;
 }
-#extra-row .extra-row-container .content {
+#extra-row .extra-row-container .actions {
   display: flex;
-  justify-content: space-between;
-}
-#extra-row .extra-row-container .content .links a {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding-top: 2px;
-  color: white;
-}
-#extra-row .extra-row-container .content .actions {
-  display: flex;
-  flex-flow: column nowrap;
+  justify-content: end;
   gap: 4px;
-
-  justify-content: center;
 }
 
 /* Album chips */

@@ -21,7 +21,7 @@ const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
   return (
     <div className="main">
       {playingAlbum && (
-        <VideoPlayer playingAlbum={playingAlbum} closeVideo={closeVideo} />
+        <VideoPlayer album={playingAlbum} closeVideo={closeVideo} />
       )}
       <ul>
         {[...Array(5).keys()].map((k) => (

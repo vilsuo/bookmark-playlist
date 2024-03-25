@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Album, AlbumColumn, Order } from '../../types';
 import AlbumRow from './AlbumRow';
-import ExtraRow from './ExtraRow';
 import SortableColumn from '../general/SortableColumn';
 import { useAppSelector } from '../../redux/hooks';
 import { FilterState, selectFilters } from '../../redux/reducers/filterSlice';
@@ -98,16 +97,16 @@ const getFilterFn = (filterState: FilterState) => (album: Album) => {
 interface AlbumTableProps {
   albums: Album[];
   playingAlbum: Album | null;
-  setPlayingAlbum: (album: Album | null) => void;
+  viewingAlbum: Album | null;
+  setViewingAlbum: (album: Album | null) => void;
 }
 
 const AlbumTable = ({
   albums,
   playingAlbum,
-  setPlayingAlbum,
+  viewingAlbum,
+  setViewingAlbum,
 }: AlbumTableProps) => {
-  const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
-
   // filters
   const filterState = useAppSelector(selectFilters);
 
@@ -154,23 +153,12 @@ const AlbumTable = ({
       </thead>
       <tbody>
         {sortedAlbums.map((album) =>
-          !isViewed(album) ? (
-            <AlbumRow
-              key={album.videoId}
-              album={album}
-              isPlaying={isPlaying(album)}
-              setViewingAlbum={setViewingAlbum}
-              setPlayingAlbum={setPlayingAlbum}
-            />
-          ) : (
-            <ExtraRow
-              key={album.videoId}
-              album={album}
-              isPlaying={isPlaying(album)}
-              setPlayingAlbum={setPlayingAlbum}
-              close={() => setViewingAlbum(null)}
-            />
-          ),
+          <AlbumRow
+            key={album.videoId}
+            album={album}
+            isPlaying={isPlaying(album)}
+            setViewingAlbum={setViewingAlbum}
+          />
         )}
       </tbody>
     </table>
