@@ -19,6 +19,11 @@ export enum Order {
   ASC = 1, // smallest to largest
 }
 
+export enum SidebarType {
+  ALBUMS,
+  SETTINGS,
+}
+
 export type LinkBase = {
   text: string;
   href: string;

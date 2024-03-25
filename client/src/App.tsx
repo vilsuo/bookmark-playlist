@@ -1,14 +1,12 @@
 import { useState } from 'react';
 
-import { Album } from './types';
+import { Album, SidebarType,  } from './types';
 import * as bookmarksService from './util/bookmarksService';
 import VideoPlayer from './components/video/VideoPlayer';
 
 // sidebars
-import AlbumsBar from './components/sidebars/albums/Albumsbar';
-import AlbumsButton from './components/sidebars/albums/AlbumsButton';
-import SettingsButton from './components/sidebars/settings/SettingsButton';
-import SettingsBar from './components/sidebars/settings/SettingsBar';
+import SidebarOpener from './components/sidebars/SidebarOpener';
+import Sidebar from './components/sidebars/Sidebar';
 
 interface MainProps {
   playingAlbum: Album | null;
@@ -36,8 +34,8 @@ const App = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [playingAlbum, setPlayingAlbum] = useState<Album | null>(null);
 
-  const [showSideBar, setShowSidebar] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  // the current opened sidebar
+  const [sidebar, setSidebar] = useState<SidebarType | null>(null);
 
   const handleUpload = async (formData: FormData) => {
     const responseData = await bookmarksService.createAlbums(formData);
@@ -46,23 +44,20 @@ const App = () => {
 
   return (
     <div className="container">
-      {showSideBar && (
-        <AlbumsBar
+      { (sidebar !== null)? (
+        <Sidebar 
+          type={sidebar}
+          setType={setSidebar}
+
           handleUpload={handleUpload}
           albums={albums}
           playingAlbum={playingAlbum}
           setPlayingAlbum={setPlayingAlbum}
-          close={() => setShowSidebar(false)}
         />
-      )}
-
-      {showSettings && <SettingsBar close={() => setShowSettings(false)} />}
-
-      {!(showSideBar || showSettings) && (
-        <div className="open-sidebar">
-          <AlbumsButton show={() => setShowSidebar(true)} />
-          <SettingsButton show={() => setShowSettings(true)} />
-        </div>
+      ) : (
+        <SidebarOpener 
+          show={setSidebar}
+        />
       )}
 
       <Main playingAlbum={playingAlbum} setPlayingAlbum={setPlayingAlbum} />
