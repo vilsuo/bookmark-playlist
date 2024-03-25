@@ -1,5 +1,6 @@
 import { Album } from '../../types';
 import Video from './Video';
+import VideoDetails from './VideoDetails';
 
 const formatVideoTitle = (album: Album) => {
   const { artist, title, published } = album;
@@ -8,19 +9,21 @@ const formatVideoTitle = (album: Album) => {
 };
 
 interface VideoPlayerProps {
-  playingAlbum: Album;
+  album: Album;
   closeVideo: () => void;
 }
 
-const VideoPlayer = ({ playingAlbum, closeVideo }: VideoPlayerProps) => {
+const VideoPlayer = ({ album, closeVideo }: VideoPlayerProps) => {
   return (
     <div className="video-player">
       <div className="header">
-        <h1>{formatVideoTitle(playingAlbum)}</h1>
+        <h1>{formatVideoTitle(album)}</h1>
         <button onClick={closeVideo}>&#x2715;</button>
       </div>
 
-      <Video videoId={playingAlbum.videoId} />
+      <Video videoId={album.videoId} />
+
+      <VideoDetails album={album} />
     </div>
   );
 };

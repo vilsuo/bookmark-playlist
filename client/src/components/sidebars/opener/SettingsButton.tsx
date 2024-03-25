@@ -23,7 +23,7 @@ interface SettingsButtonProps {
 
 const SettingsButton = ({ show }: SettingsButtonProps) => {
   return (
-    <button id="albums-button" onClick={show}>
+    <button onClick={show}>
       <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
         <circle
           cx="20"
