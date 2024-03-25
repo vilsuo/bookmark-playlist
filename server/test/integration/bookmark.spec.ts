@@ -2,6 +2,8 @@ import supertest from 'supertest';
 import app from '../../src/app';
 import { Album } from '../../src/types';
 import { convertEpoch } from '../../src/util/albumService';
+import { FIELD_NAME, FILE_FIELD } from '../../src/util/fileUpload';
+import { MessageBody } from '../util/types';
 
 const api = supertest(app);
 
@@ -9,7 +11,7 @@ const ROOT_HEADER = 'Bookmarks bar';
 const CHILD_HEADER = 'Example';
 const SUB_HEADER = 'Sub';
 
-const FILEPATH = './test/bookmarks-example.html';
+const FILEPATH = './test/samples/bookmarks-example.html';
 
 const EXPECTED = [
   {
@@ -64,12 +66,12 @@ const EXPECTED = [
 
 type AlbumResponse = Album & { addDate: string };
 
-const postBookmarks = async (foldername: string, filename: string): Promise<AlbumResponse[]> => {
+const postBookmarks = async (foldername: string, filename: string, statusCode = 201): Promise<AlbumResponse[] | MessageBody> => {
   const response = await api
     .post('/api/bookmark')
-    .field('name', foldername)
-    .attach('file', filename)
-    .expect(201)
+    .field(FIELD_NAME, foldername)
+    .attach(FILE_FIELD, filename)
+    .expect(statusCode)
     .expect('Content-Type', /application\/json/);
   
   return response.body;
@@ -80,7 +82,7 @@ describe('post bookmarks', () => {
     let responseBody: AlbumResponse[];
 
     beforeAll(async () => {
-      responseBody = await postBookmarks(ROOT_HEADER, FILEPATH);
+      responseBody = await postBookmarks(ROOT_HEADER, FILEPATH) as AlbumResponse[];
     });
 
     it('finds all links', () => {
@@ -113,7 +115,7 @@ describe('post bookmarks', () => {
     let responseBody: AlbumResponse[];
 
     beforeAll(async () => {
-      responseBody = await postBookmarks(CHILD_HEADER, FILEPATH);
+      responseBody = await postBookmarks(CHILD_HEADER, FILEPATH) as AlbumResponse[];
     });
 
     it('finds exactly all links inside the folder', () => {
@@ -139,4 +141,33 @@ describe('post bookmarks', () => {
       expect(subAlbums).toContainEqual(EXPECTED[4]);
     });
   });
+
+  it('if folder is not found is bad request', async () => {
+    const badHeader = 'Private';
+    const responseBody = await postBookmarks(badHeader, FILEPATH, 400) as MessageBody;
+
+    expect(responseBody.message).toMatch(`Header '${badHeader}' was not found`);
+  });
+
+  it('can not post a txt file', async () => {
+    const badFilepath = './test/samples/text.txt';
+    const responseBody = await postBookmarks(ROOT_HEADER, badFilepath, 400) as MessageBody;
+
+    expect(responseBody.message).toMatch(/html/i);
+  });
+
+  /*
+  it('can not post without a file', async () => {
+
+  });
+
+  it('can not post without a header field', async () => {
+
+  });
+  */
+
+  // TODO test invalid 
+  // - link text
+  // - link add_date
+  // - link href
 });
