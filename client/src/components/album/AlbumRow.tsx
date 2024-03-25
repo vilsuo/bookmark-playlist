@@ -3,14 +3,20 @@ import { Album } from '../../types';
 interface AlbumRowProps {
   album: Album;
   isPlaying: boolean;
-  setViewingAlbum: (album: Album | null) => void;
+  isViewing: boolean;
+  view: (album: Album | null) => void;
 }
 
-const AlbumRow = ({ album, isPlaying, setViewingAlbum }: AlbumRowProps) => {
+const AlbumRow = ({ album, isPlaying, isViewing, view }: AlbumRowProps) => {
+
+  // class names
+  const playing = isPlaying ? 'playing' : '';
+  const viewing = isViewing ? 'viewing': '';
+
   return (
     <tr
-      className={`album-row ${isPlaying ? 'playing' : ''}`}
-      onClick={() => setViewingAlbum(album)}
+      className={`album-row ${playing} ${viewing}`}
+      onClick={() => view(album)}
     >
       <td>{album.artist}</td>
       <td>{album.title}</td>

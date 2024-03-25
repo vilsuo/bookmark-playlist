@@ -157,7 +157,8 @@ const AlbumTable = ({
             key={album.videoId}
             album={album}
             isPlaying={isPlaying(album)}
-            setViewingAlbum={setViewingAlbum}
+            isViewing={isViewed(album)}
+            view={setViewingAlbum}
           />
         )}
       </tbody>
