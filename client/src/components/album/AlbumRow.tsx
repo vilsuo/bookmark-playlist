@@ -11,22 +11,28 @@ const AlbumRow = ({ album, isPlaying, setViewingAlbum, setPlayingAlbum }: AlbumR
   return (
     <tr
       className={`album-row ${isPlaying ? 'playing' : ''}`}
-      onClick={() => setViewingAlbum(album)}
+      onClick={() => {
+        setPlayingAlbum(isPlaying ? null : album);
+        setViewingAlbum(null);
+      }}
     >
-      <td>{album.artist}</td>
-      <td>{album.title}</td>
-      <td className='published'>
-        {album.published}
+      <td className='info-row'>
+        <button
+          onClick={(event) => {
+            event.stopPropagation();
+            setViewingAlbum(album)
+          }}
+        >
+          i
+        </button>
+
+        {album.artist}
       </td>
 
-      <td className='play'>
-        <button onClick={(event) => {
-          event.stopPropagation();
-          setPlayingAlbum(isPlaying ? null : album);
-          setViewingAlbum(null);
-        }}>
-          {isPlaying ? 'Close' : 'Play'}
-        </button>
+      <td>{album.title}</td>
+
+      <td className='published'>
+        {album.published}
       </td>
     </tr>
   );
