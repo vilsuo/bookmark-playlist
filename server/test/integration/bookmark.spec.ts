@@ -13,6 +13,11 @@ const SUB_HEADER = 'Sub';
 
 const FILEPATH = './test/samples/bookmarks-example.html';
 
+// first link in ROOT is not youtube
+// first link in CHILD has a title without a year
+// first link in SUB has a missing add_date attribute
+const BAD_FILEPATH = './test/samples/bookmarks-bad-example.html';
+
 const EXPECTED = [
   {
     videoId: 'IdRn9IYWuaQ',
@@ -78,7 +83,7 @@ const postBookmarks = async (foldername: string, filename: string, statusCode = 
 };
 
 describe('post bookmarks', () => {
-  describe('root folder', () => {
+  describe('getting links from root folder', () => {
     let responseBody: AlbumResponse[];
 
     beforeAll(async () => {
@@ -111,7 +116,7 @@ describe('post bookmarks', () => {
     });
   });
 
-  describe('child folder', () => {
+  describe('gettings links from child folder', () => {
     let responseBody: AlbumResponse[];
 
     beforeAll(async () => {
@@ -142,13 +147,15 @@ describe('post bookmarks', () => {
     });
   });
 
-  it('if folder is not found is bad request', async () => {
+  // bad field
+  it('folder specified by field name must exist', async () => {
     const badHeader = 'Private';
     const responseBody = await postBookmarks(badHeader, FILEPATH, 400) as MessageBody;
 
     expect(responseBody.message).toMatch(`Header '${badHeader}' was not found`);
   });
 
+  // bad file
   it('can not post a txt file', async () => {
     const badFilepath = './test/samples/text.txt';
     const responseBody = await postBookmarks(ROOT_HEADER, badFilepath, 400) as MessageBody;
@@ -156,18 +163,45 @@ describe('post bookmarks', () => {
     expect(responseBody.message).toMatch(/html/i);
   });
 
-  /*
-  it('can not post without a file', async () => {
+  // missing values
+  describe('can not post without a', () => {
+    it('header field', async () => {
+      const response = await api
+        .post('/api/bookmark')
+        .attach(FILE_FIELD, FILEPATH)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
 
+      const responseBody = response.body as MessageBody;
+      expect(responseBody.message).toMatch(/Field is missing/i);
+    });
+
+    it('file', async () => {
+      const response = await api
+        .post('/api/bookmark')
+        .field(FIELD_NAME, ROOT_HEADER)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+
+      const responseBody = response.body as MessageBody;
+      expect(responseBody.message).toMatch(/File is missing/i);
+    });
   });
 
-  it('can not post without a header field', async () => {
+  describe('bad link details', () => {
+    it('link is not a youtube link', async () => {
+      const responseBody = await postBookmarks(ROOT_HEADER, BAD_FILEPATH, 400) as MessageBody;
+      expect(responseBody.message).toMatch(/href attribute/i);
+    });
 
+    it('missing publish year', async () => {
+      const responseBody = await postBookmarks(CHILD_HEADER, BAD_FILEPATH, 400) as MessageBody;
+      expect(responseBody.message).toMatch(/year/i);
+    });
+
+    it('missing add_date', async () => {
+      const responseBody = await postBookmarks(SUB_HEADER, BAD_FILEPATH, 400) as MessageBody;
+      expect(responseBody.message).toMatch(/add_date attribute/i);
+    });
   });
-  */
-
-  // TODO test invalid 
-  // - link text
-  // - link add_date
-  // - link href
 });
