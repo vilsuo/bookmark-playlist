@@ -26,15 +26,13 @@ const albumsSlice = createSlice({
       const album = action.payload;
       state.playing = album;
     },
-    queuePush: (state, action: PayloadAction<Album>) => {
+    queueAdd: (state, action: PayloadAction<Album>) => {
       const albumToAdd = action.payload;
-
-      const found = state.queue.find(
-        (album) => album.videoId === albumToAdd.videoId
+      const filtered = state.queue.filter(
+        (album) => album.videoId !== albumToAdd.videoId
       );
-      if (!found) {
-        state.queue.push(albumToAdd);
-      }
+
+      state.queue = [...filtered, albumToAdd];
     },
     queueRemove: (state, action: PayloadAction<Album>) => {
       const albumToRemove = action.payload;
@@ -51,23 +49,26 @@ const albumsSlice = createSlice({
 
       state.queue = [albumToAdd, ...filtered];
     },
+    queuePop: (state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [first, ...others] = state.queue;
+      state.queue = others;
+    },
   },
 });
 
-export const { view, play, queuePush, queueRemove, queuePrepend } = albumsSlice.actions;
+export const { view, play, queueAdd, queueRemove, queuePrepend, queuePop } = albumsSlice.actions;
 
 export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
 export const selectQueue = (state: RootState) => state.albums.queue;
 
 export const selectQueueFirst = (state: RootState) => {
-  if (state.albums.queue.length > 0) {
-    return state.albums.queue[0];
-  }
-  return null;
+  const queue = selectQueue(state);
+  return (queue.length > 0) ? queue[0]: null;
 };
 
-export const selectExistsInQueue = createSelector(
+export const isQueued = createSelector(
   [selectQueue, (_state, album) => album],
   (queue, album) => queue.find((q) => q.videoId === album.videoId) !== undefined,
 );

@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch } from '../../../redux/hooks';
 import { Album } from '../../../types';
-import { queuePush, selectExistsInQueue } from '../../../redux/reducers/albumsSlice';
+import { queueAdd } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsViewProps {
   album: Album;
@@ -10,9 +10,7 @@ interface AlbumsViewProps {
 
 const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
   const dispatch = useAppDispatch();
-  const inQueue = useAppSelector((state) => selectExistsInQueue(state, album));
-
-  const addToQueue = () => dispatch(queuePush(album));
+  const addToQueue = () => dispatch(queueAdd(album));
 
   return (
     <div className="albums-view">
@@ -24,7 +22,7 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
       <div className="content">
         <div className="actions">
           <button onClick={play}>Play</button>
-          <button disabled={inQueue} onClick={addToQueue}>Queue</button>
+          <button onClick={addToQueue}>Queue</button>
         </div>
         <div className="details">
           <span className="artist">{album.artist}</span>
