@@ -8,11 +8,9 @@ interface SidebarProps {
 
   handleUpload: (formData: FormData) => Promise<void>;
   albums: Album[];
-  playingAlbum: Album | null;
-  setPlayingAlbum: (album: Album | null) => void;
 };
 
-const Sidebar = ({ type, setType, handleUpload, albums, playingAlbum, setPlayingAlbum }: SidebarProps) => {
+const Sidebar = ({ type, setType, handleUpload, albums }: SidebarProps) => {
 
   const close = () => setType(null);
 
@@ -22,8 +20,6 @@ const Sidebar = ({ type, setType, handleUpload, albums, playingAlbum, setPlaying
         <AlbumsBar
           handleUpload={handleUpload}
           albums={albums}
-          playingAlbum={playingAlbum}
-          setPlayingAlbum={setPlayingAlbum}
           close={close}
         />
       );

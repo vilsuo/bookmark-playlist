@@ -7,14 +7,14 @@ import VideoPlayer from './components/video/VideoPlayer';
 // sidebars
 import SidebarOpener from './components/sidebars/opener/SidebarOpener';
 import Sidebar from './components/sidebars/Sidebar';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
+import { play, selectPlaying } from './redux/reducers/albumsSlice';
 
-interface MainProps {
-  playingAlbum: Album | null;
-  setPlayingAlbum: (album: Album | null) => void;
-}
+const Main = () => {
+  const dispatch = useAppDispatch();
+  const playingAlbum = useAppSelector(selectPlaying)
 
-const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
-  const closeVideo = () => setPlayingAlbum(null);
+  const closeVideo = () => dispatch(play(null));
 
   return (
     <div className="main">
@@ -32,7 +32,6 @@ const Main = ({ playingAlbum, setPlayingAlbum }: MainProps) => {
 
 const App = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
-  const [playingAlbum, setPlayingAlbum] = useState<Album | null>(null);
 
   // the current opened sidebar
   const [sidebar, setSidebar] = useState<SidebarType | null>(null);
@@ -48,11 +47,8 @@ const App = () => {
         <Sidebar 
           type={sidebar}
           setType={setSidebar}
-
           handleUpload={handleUpload}
           albums={albums}
-          playingAlbum={playingAlbum}
-          setPlayingAlbum={setPlayingAlbum}
         />
       ) : (
         <SidebarOpener 
@@ -60,7 +56,7 @@ const App = () => {
         />
       )}
 
-      <Main playingAlbum={playingAlbum} setPlayingAlbum={setPlayingAlbum} />
+      <Main />
     </div>
   );
 };

@@ -8,23 +8,25 @@ import AlbumTable from '../../album/AlbumTable';
 
 import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { play, selectPlaying } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsBarProps {
   handleUpload: (formData: FormData) => Promise<void>;
   albums: Album[];
-  playingAlbum: Album | null;
-  setPlayingAlbum: (album: Album | null) => void;
   close: () => void;
 }
 
 const AlbumsBar = ({
   handleUpload,
   albums,
-  playingAlbum,
-  setPlayingAlbum,
   close,
 }: AlbumsBarProps) => {
   const [showUpload, setShowUpload] = useState(albums.length === 0);
+
+  const dispatch = useAppDispatch();
+  const playingAlbum = useAppSelector(selectPlaying);
+  const setPlayingAlbum = (album: Album | null) => dispatch(play(album));
 
   const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
 

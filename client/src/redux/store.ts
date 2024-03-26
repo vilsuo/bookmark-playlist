@@ -5,6 +5,7 @@ import filterReducer from './reducers/filterSlice.ts';
 
 import { loadSettingsState, saveSettingsState } from './localStorage.ts';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware.ts';
+import albumsSlice from './reducers/albumsSlice.ts';
 
 /*
 const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action => {
@@ -29,6 +30,7 @@ const preloadedState = {
 const rootReducer = combineReducers({
   settings: settingsReducer,
   filters: filterReducer,
+  albums: albumsSlice,
 });
 
 export const store = configureStore({
