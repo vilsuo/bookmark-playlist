@@ -1,25 +1,27 @@
 import { Album } from '../../types';
 
+const getExtraClassNames = (isPlayed: boolean, isViewed: boolean) => {
+  const playing = isPlayed ? 'playing' : '';
+  const viewing = isViewed ? 'viewing': '';
+  return `${playing} ${viewing}`;
+};
+
 interface AlbumRowProps {
   album: Album;
-  isPlaying: boolean;
-  isViewing: boolean;
+  isPlayed: boolean;
+  isViewed: boolean;
   view: (album: Album | null) => void;
 }
 
-const AlbumRow = ({ album, isPlaying, isViewing, view }: AlbumRowProps) => {
-
-  // class names
-  const playing = isPlaying ? 'playing' : '';
-  const viewing = isViewing ? 'viewing': '';
-
+const AlbumRow = ({ album, isPlayed, isViewed, view }: AlbumRowProps) => {
+  
   const toggleView = () => {
-    isViewing ? view(null) : view(album);
+    isViewed ? view(null) : view(album);
   };
 
   return (
     <tr
-      className={`album-row ${playing} ${viewing}`}
+      className={`album-row ${getExtraClassNames(isPlayed, isViewed)}`}
       onClick={toggleView}
     >
       <td>{album.artist}</td>

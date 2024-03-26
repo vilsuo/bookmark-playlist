@@ -118,7 +118,7 @@ const AlbumTable = ({
     return playingAlbum !== null && playingAlbum.videoId === album.videoId;
   };
 
-  const isViewed = (album: Album) => {
+  const isViewing = (album: Album) => {
     return viewingAlbum !== null && viewingAlbum.videoId === album.videoId;
   };
 
@@ -156,8 +156,8 @@ const AlbumTable = ({
           <AlbumRow
             key={album.videoId}
             album={album}
-            isPlaying={isPlaying(album)}
-            isViewing={isViewed(album)}
+            isPlayed={isPlaying(album)}
+            isViewed={isViewing(album)}
             view={setViewingAlbum}
           />
         )}
