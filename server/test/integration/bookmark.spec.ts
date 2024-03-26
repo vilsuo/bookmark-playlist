@@ -71,14 +71,18 @@ const EXPECTED = [
 
 type AlbumResponse = Album & { addDate: string };
 
-const postBookmarks = async (foldername: string, filename: string, statusCode = 201): Promise<AlbumResponse[] | MessageBody> => {
+const postBookmarks = async (
+  foldername: string,
+  filename: string,
+  statusCode = 201,
+): Promise<AlbumResponse[] | MessageBody> => {
   const response = await api
     .post('/api/bookmark')
     .field(FIELD_NAME, foldername)
     .attach(FILE_FIELD, filename)
     .expect(statusCode)
     .expect('Content-Type', /application\/json/);
-  
+
   return response.body;
 };
 
@@ -87,7 +91,10 @@ describe('post bookmarks', () => {
     let responseBody: AlbumResponse[];
 
     beforeAll(async () => {
-      responseBody = await postBookmarks(ROOT_HEADER, FILEPATH) as AlbumResponse[];
+      responseBody = (await postBookmarks(
+        ROOT_HEADER,
+        FILEPATH,
+      )) as AlbumResponse[];
     });
 
     it('finds all links', () => {
@@ -95,21 +102,27 @@ describe('post bookmarks', () => {
     });
 
     it('the category is given by root when the link is not in a nested folder', () => {
-      const rootAlbums = responseBody.filter((album) => album.category === ROOT_HEADER);
+      const rootAlbums = responseBody.filter(
+        (album) => album.category === ROOT_HEADER,
+      );
 
       expect(rootAlbums).toHaveLength(1);
       expect(rootAlbums[0]).toStrictEqual(EXPECTED[0]);
     });
 
     it('the links inside child folders have the child categories', () => {
-      const childAlbums = responseBody.filter((album) => album.category === CHILD_HEADER);
+      const childAlbums = responseBody.filter(
+        (album) => album.category === CHILD_HEADER,
+      );
 
       expect(childAlbums).toHaveLength(3);
       expect(childAlbums).toContainEqual(EXPECTED[1]);
       expect(childAlbums).toContainEqual(EXPECTED[2]);
       expect(childAlbums).toContainEqual(EXPECTED[5]);
 
-      const subAlbums = responseBody.filter((album) => album.category === SUB_HEADER);
+      const subAlbums = responseBody.filter(
+        (album) => album.category === SUB_HEADER,
+      );
       expect(subAlbums).toHaveLength(2);
       expect(subAlbums).toContainEqual(EXPECTED[3]);
       expect(subAlbums).toContainEqual(EXPECTED[4]);
@@ -120,7 +133,10 @@ describe('post bookmarks', () => {
     let responseBody: AlbumResponse[];
 
     beforeAll(async () => {
-      responseBody = await postBookmarks(CHILD_HEADER, FILEPATH) as AlbumResponse[];
+      responseBody = (await postBookmarks(
+        CHILD_HEADER,
+        FILEPATH,
+      )) as AlbumResponse[];
     });
 
     it('finds exactly all links inside the folder', () => {
@@ -129,18 +145,24 @@ describe('post bookmarks', () => {
     });
 
     it('finds the links before sub folder', () => {
-      const childAlbums = responseBody.filter((album) => album.category === CHILD_HEADER);
+      const childAlbums = responseBody.filter(
+        (album) => album.category === CHILD_HEADER,
+      );
       expect(childAlbums).toContainEqual(EXPECTED[1]);
       expect(childAlbums).toContainEqual(EXPECTED[2]);
     });
 
     it('finds the links after sub folder', () => {
-      const childAlbums = responseBody.filter((album) => album.category === CHILD_HEADER);
+      const childAlbums = responseBody.filter(
+        (album) => album.category === CHILD_HEADER,
+      );
       expect(childAlbums).toContainEqual(EXPECTED[5]);
     });
 
     it('the links inside child folders have the child categories', () => {
-      const subAlbums = responseBody.filter((album) => album.category === SUB_HEADER);
+      const subAlbums = responseBody.filter(
+        (album) => album.category === SUB_HEADER,
+      );
       expect(subAlbums).toHaveLength(2);
       expect(subAlbums).toContainEqual(EXPECTED[3]);
       expect(subAlbums).toContainEqual(EXPECTED[4]);
@@ -150,7 +172,11 @@ describe('post bookmarks', () => {
   // bad field
   it('folder specified by field name must exist', async () => {
     const badHeader = 'Private';
-    const responseBody = await postBookmarks(badHeader, FILEPATH, 400) as MessageBody;
+    const responseBody = (await postBookmarks(
+      badHeader,
+      FILEPATH,
+      400,
+    )) as MessageBody;
 
     expect(responseBody.message).toMatch(`Header '${badHeader}' was not found`);
   });
@@ -158,7 +184,11 @@ describe('post bookmarks', () => {
   // bad file
   it('can not post a txt file', async () => {
     const badFilepath = './test/samples/text.txt';
-    const responseBody = await postBookmarks(ROOT_HEADER, badFilepath, 400) as MessageBody;
+    const responseBody = (await postBookmarks(
+      ROOT_HEADER,
+      badFilepath,
+      400,
+    )) as MessageBody;
 
     expect(responseBody.message).toMatch(/html/i);
   });
@@ -190,17 +220,29 @@ describe('post bookmarks', () => {
 
   describe('bad link details', () => {
     it('link is not a youtube link', async () => {
-      const responseBody = await postBookmarks(ROOT_HEADER, BAD_FILEPATH, 400) as MessageBody;
+      const responseBody = (await postBookmarks(
+        ROOT_HEADER,
+        BAD_FILEPATH,
+        400,
+      )) as MessageBody;
       expect(responseBody.message).toMatch(/href attribute/i);
     });
 
     it('missing publish year', async () => {
-      const responseBody = await postBookmarks(CHILD_HEADER, BAD_FILEPATH, 400) as MessageBody;
+      const responseBody = (await postBookmarks(
+        CHILD_HEADER,
+        BAD_FILEPATH,
+        400,
+      )) as MessageBody;
       expect(responseBody.message).toMatch(/year/i);
     });
 
     it('missing add_date', async () => {
-      const responseBody = await postBookmarks(SUB_HEADER, BAD_FILEPATH, 400) as MessageBody;
+      const responseBody = (await postBookmarks(
+        SUB_HEADER,
+        BAD_FILEPATH,
+        400,
+      )) as MessageBody;
       expect(responseBody.message).toMatch(/add_date attribute/i);
     });
   });
