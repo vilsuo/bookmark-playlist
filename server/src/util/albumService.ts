@@ -17,7 +17,7 @@ const getVideoId = (href: string | undefined): string => {
   }
 
   if (!href.startsWith(VIDEO_PREFIX)) {
-    throw new Error('Link href attibute is not youtube');
+    throw new Error('Link href attribute is not youtube');
   }
 
   if (href.length < VIDEO_PREFIX.length + VIDEO_ID_LENGTH) {

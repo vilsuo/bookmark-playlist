@@ -13,12 +13,12 @@ router.post('/', singleUpload, async (req: Request, res: Response) => {
   console.log('fields:  ', fields);
 
   if (!file) {
-    return res.status(400).send({ message: 'file is missing' });
+    return res.status(400).send({ message: 'File is missing' });
   }
 
   const field = fields[FIELD_NAME];
   if (!field) {
-    return res.status(400).send({ message: 'field is missing' });
+    return res.status(400).send({ message: 'Field is missing' });
   }
 
   // convert file to string
