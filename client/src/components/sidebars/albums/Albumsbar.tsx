@@ -9,7 +9,7 @@ import AlbumTable from '../../album/AlbumTable';
 import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { play, selectPlaying } from '../../../redux/reducers/albumsSlice';
+import { play, selectPlaying, selectViewing, view } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsBarProps {
   handleUpload: (formData: FormData) => Promise<void>;
@@ -26,9 +26,9 @@ const AlbumsBar = ({
 
   const dispatch = useAppDispatch();
   const playingAlbum = useAppSelector(selectPlaying);
+  const viewingAlbum = useAppSelector(selectViewing);
   const setPlayingAlbum = (album: Album | null) => dispatch(play(album));
-
-  const [viewingAlbum, setViewingAlbum] = useState<Album | null>(null);
+  const setViewingAlbum = (album: Album | null) => dispatch(view(album));
 
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
