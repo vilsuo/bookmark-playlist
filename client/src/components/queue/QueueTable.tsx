@@ -10,22 +10,30 @@ const QueueTable = () => {
   const remove = (album: Album) => dispatch(removeQueue(album));
 
   return (
-    <table>
+    <table className="queue-table">
       <thead>
         <tr>
-          <th>Entry</th>
+          <th>#</th>
+          <th>Artist</th>
+          <th>Album</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {queue.map((album) => (
-          <tr key={album.videoId}>
+        {queue.map((album, idx) => (
+          <tr className="queue-row "key={album.videoId}>
+            <td>{idx + 1}</td>
             <td>
-              {album.artist} - {album.title} {`(${album.published})`}
+              {album.artist}
             </td>
             <td>
-              <button onClick={() => remove(album)}>&#x2715;</button>
-              <button>&#x2B06;</button>
+              {album.title}
+            </td>
+            <td>
+              <div className="actions">
+                <button onClick={() => remove(album)}>&#x2715;</button>
+                <button>&#x2B06;</button>
+              </div>
             </td>
           </tr>
         ))}

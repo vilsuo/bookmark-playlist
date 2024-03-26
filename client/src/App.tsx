@@ -22,7 +22,9 @@ const Main = () => {
         <VideoPlayer album={playingAlbum} closeVideo={closeVideo} />
       )}
 
-      <QueueTable />
+      <div>
+        <QueueTable />
+      </div>
     </div>
   );
 };

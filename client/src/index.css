@@ -375,6 +375,47 @@ table thead th.sortable:hover {
   background-color: var(--ma-selected);
 }
 
+/* Queue table */
+.queue-table {
+  table-layout: fixed;
+  width: 100%;
+}
+/*
+.queue-table tbody tr {
+  cursor: pointer;
+}
+.queue-table tbody .queue-row:hover {
+  background-color: white;
+  text-shadow: none;
+  color: black;
+}
+*/
+.queue-table tbody .queue-row td:nth-child(2),
+.queue-table tbody .queue-row td:nth-child(3) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-table th:first-child {
+  width: 20px;
+}
+.queue-table th:nth-child(2) {
+  width: 30%;
+}
+.queue-table th:nth-child(3) {
+
+}
+.queue-table th:last-child {
+  width: 60px;
+}
+.queue-table .queue-row .actions {
+  display: flex;
+  justify-content: space-evenly;
+}
+.queue-table .queue-row .actions button {
+  width: 20px;
+}
+
 /* Album chips */
 .album-chips {
   display: flex;
