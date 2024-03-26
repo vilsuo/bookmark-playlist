@@ -1,3 +1,5 @@
+import { useAppDispatch } from '../../../redux/hooks';
+import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
 
 interface AlbumsViewProps {
@@ -7,6 +9,9 @@ interface AlbumsViewProps {
 }
 
 const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
+  const dispatch = useAppDispatch();
+  const addToQueue = () => dispatch(queueAdd(album));
+
   return (
     <div className="albums-view">
       <div className="header">
@@ -17,6 +22,7 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
       <div className="content">
         <div className="actions">
           <button onClick={play}>Play</button>
+          <button onClick={addToQueue}>Queue</button>
         </div>
         <div className="details">
           <span className="artist">{album.artist}</span>

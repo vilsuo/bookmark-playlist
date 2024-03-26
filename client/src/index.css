@@ -375,6 +375,34 @@ table thead th.sortable:hover {
   background-color: var(--ma-selected);
 }
 
+/* Queue table */
+.queue-table {
+  table-layout: fixed;
+  width: 100%;
+}
+.queue-table tbody .queue-row td:nth-child(2),
+.queue-table tbody .queue-row td:nth-child(3) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-table th:first-child {
+  width: 30px;
+}
+.queue-table th:nth-child(2) {
+  width: 30%;
+}
+.queue-table th:last-child {
+  width: 100px;
+}
+.queue-table .queue-row .actions {
+  display: flex;
+  gap: 4px;
+}
+.queue-table .queue-row .actions button {
+  flex: 1;
+}
+
 /* Album chips */
 .album-chips {
   display: flex;

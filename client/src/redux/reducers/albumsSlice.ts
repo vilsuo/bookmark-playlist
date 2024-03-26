@@ -12,17 +12,15 @@ const initialState: AlbumsState = {
   playing: null,
 };
 
-type AlbumPayloadAction = PayloadAction<Album | null>;
-
 const albumsSlice = createSlice({
   name: 'albums',
   initialState,
   reducers: {
-    view: (state, action: AlbumPayloadAction) => {
+    view: (state, action: PayloadAction<Album | null>) => {
       const album = action.payload;
       state.viewing = album;
     },
-    play: (state, action: AlbumPayloadAction) => {
+    play: (state, action: PayloadAction<Album | null>) => {
       const album = action.payload;
       state.playing = album;
     },
