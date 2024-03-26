@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { play, queuePrepend, queueRemove, selectQueue } from '../../redux/reducers/albumsSlice';
+import { play } from '../../redux/reducers/albumsSlice';
+import { queuePrepend, queueRemove, selectQueue } from '../../redux/reducers/queueSlice';
 import { Album } from '../../types';
 
 const QueueTable = () => {

@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { play, queuePop, selectPlaying, selectQueueFirst } from '../redux/reducers/albumsSlice';
+import { play, selectPlaying } from '../redux/reducers/albumsSlice';
+import { queuePop, selectQueueFirst } from '../redux/reducers/queueSlice';
 import QueueTable from './queue/QueueTable';
 import VideoPlayer from './video/VideoPlayer';
 

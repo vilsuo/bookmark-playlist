@@ -1,6 +1,6 @@
 import { useAppDispatch } from '../../../redux/hooks';
+import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
-import { queueAdd } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsViewProps {
   album: Album;
