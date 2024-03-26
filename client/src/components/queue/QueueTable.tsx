@@ -9,6 +9,10 @@ const QueueTable = () => {
   const queue = useAppSelector(selectQueue);
   const remove = (album: Album) => dispatch(removeQueue(album));
 
+  if (queue.length === 0) {
+    return null;
+  }
+
   return (
     <table className="queue-table">
       <thead>

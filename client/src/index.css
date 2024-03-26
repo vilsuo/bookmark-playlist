@@ -380,16 +380,6 @@ table thead th.sortable:hover {
   table-layout: fixed;
   width: 100%;
 }
-/*
-.queue-table tbody tr {
-  cursor: pointer;
-}
-.queue-table tbody .queue-row:hover {
-  background-color: white;
-  text-shadow: none;
-  color: black;
-}
-*/
 .queue-table tbody .queue-row td:nth-child(2),
 .queue-table tbody .queue-row td:nth-child(3) {
   overflow: hidden;
@@ -397,13 +387,10 @@ table thead th.sortable:hover {
   white-space: nowrap;
 }
 .queue-table th:first-child {
-  width: 20px;
+  width: 30px;
 }
 .queue-table th:nth-child(2) {
   width: 30%;
-}
-.queue-table th:nth-child(3) {
-
 }
 .queue-table th:last-child {
   width: 60px;
