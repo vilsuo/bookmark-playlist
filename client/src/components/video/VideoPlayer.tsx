@@ -4,7 +4,6 @@ import VideoDetails from './VideoDetails';
 
 const formatVideoTitle = (album: Album) => {
   const { artist, title, published } = album;
-
   return `${artist} - ${title} (${published})`;
 };
 

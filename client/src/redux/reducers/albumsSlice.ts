@@ -26,7 +26,7 @@ const albumsSlice = createSlice({
       const album = action.payload;
       state.playing = album;
     },
-    pushQueue: (state, action: PayloadAction<Album>) => {
+    queuePush: (state, action: PayloadAction<Album>) => {
       const albumToAdd = action.payload;
 
       const found = state.queue.find(
@@ -36,13 +36,13 @@ const albumsSlice = createSlice({
         state.queue.push(albumToAdd);
       }
     },
-    removeQueue: (state, action: PayloadAction<Album>) => {
+    queueRemove: (state, action: PayloadAction<Album>) => {
       const albumToRemove = action.payload;
       state.queue = state.queue.filter(
         (album) => album.videoId !== albumToRemove.videoId
       );
     },
-    prependQueue: (state, action: PayloadAction<Album>) => {
+    queuePrepend: (state, action: PayloadAction<Album>) => {
       const albumToAdd = action.payload;
 
       const filtered = state.queue.filter(
@@ -54,7 +54,7 @@ const albumsSlice = createSlice({
   },
 });
 
-export const { view, play, pushQueue, removeQueue, prependQueue } = albumsSlice.actions;
+export const { view, play, queuePush, queueRemove, queuePrepend } = albumsSlice.actions;
 
 export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
