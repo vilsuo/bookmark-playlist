@@ -33,4 +33,7 @@ const fileUpload = multer({
   fileFilter,
 });
 
-export const singleUpload = fileUpload.single('file');
+export const FILE_FIELD = 'file';
+export const FIELD_NAME = 'name';
+
+export const singleUpload = fileUpload.single(FILE_FIELD);
