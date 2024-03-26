@@ -4,15 +4,13 @@ import SettingsBar from "./settings/SettingsBar";
 
 interface SidebarProps {
   type: SidebarType;
-  setType: (type: SidebarType | null) => void;
+  close: () => void;
 
   handleUpload: (formData: FormData) => Promise<void>;
   albums: Album[];
 };
 
-const Sidebar = ({ type, setType, handleUpload, albums }: SidebarProps) => {
-
-  const close = () => setType(null);
+const Sidebar = ({ type, close, handleUpload, albums }: SidebarProps) => {
 
   switch(type) {
     case SidebarType.ALBUMS: {

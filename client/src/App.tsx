@@ -21,11 +21,13 @@ const Main = () => {
       {playingAlbum && (
         <VideoPlayer album={playingAlbum} closeVideo={closeVideo} />
       )}
+      {/*
       <ul>
         {[...Array(5).keys()].map((k) => (
           <li key={k}>Item {k}</li>
         ))}
       </ul>
+      */}
     </div>
   );
 };
@@ -34,7 +36,9 @@ const App = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
 
   // the current opened sidebar
-  const [sidebar, setSidebar] = useState<SidebarType | null>(null);
+  const [sidebarType, setSidebarType] = useState<SidebarType | null>(null);
+
+  const closeSidebar = () => setSidebarType(null);
 
   const handleUpload = async (formData: FormData) => {
     const responseData = await bookmarksService.createAlbums(formData);
@@ -43,16 +47,16 @@ const App = () => {
 
   return (
     <div className="container">
-      { (sidebar !== null)? (
+      { (sidebarType !== null) ? (
         <Sidebar 
-          type={sidebar}
-          setType={setSidebar}
+          type={sidebarType}
+          close={closeSidebar}
           handleUpload={handleUpload}
           albums={albums}
         />
       ) : (
         <SidebarOpener 
-          show={setSidebar}
+          show={setSidebarType}
         />
       )}
 
