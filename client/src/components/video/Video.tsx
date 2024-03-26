@@ -6,7 +6,7 @@ interface VideoProps {
 }
 
 const Video = ({ videoId }: VideoProps) => {
-  const autoPlay = useAppSelector((state) => selectAutoplay(state));
+  const autoPlay = useAppSelector(selectAutoplay);
 
   return (
     <div className="video">

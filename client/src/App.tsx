@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { Album, SidebarType,  } from './types';
 import * as bookmarksService from './util/bookmarksService';
 import VideoPlayer from './components/video/VideoPlayer';
-
-// sidebars
 import SidebarOpener from './components/sidebars/opener/SidebarOpener';
 import Sidebar from './components/sidebars/Sidebar';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -51,7 +49,7 @@ const App = () => {
         <Sidebar 
           type={sidebarType}
           close={closeSidebar}
-          handleUpload={handleUpload}
+          upload={handleUpload}
           albums={albums}
         />
       ) : (

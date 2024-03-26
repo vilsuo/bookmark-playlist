@@ -5,13 +5,11 @@ import { RootState } from '../store';
 export interface AlbumsState {
   viewing: Album | null;
   playing: Album | null;
-  //queue: Album[];
 };
 
 const initialState: AlbumsState = {
   viewing: null,
   playing: null,
-  //queue: [],
 };
 
 type AlbumPayloadAction = PayloadAction<Album | null>;

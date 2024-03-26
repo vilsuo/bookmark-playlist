@@ -1,22 +1,20 @@
-import { Album, SidebarType } from "../../types";
-import AlbumsBar from "./albums/Albumsbar";
-import SettingsBar from "./settings/SettingsBar";
+import { Album, SidebarType } from '../../types';
+import AlbumsBar from './albums/Albumsbar';
+import SettingsBar from './settings/SettingsBar';
 
 interface SidebarProps {
   type: SidebarType;
   close: () => void;
-
-  handleUpload: (formData: FormData) => Promise<void>;
+  upload: (formData: FormData) => Promise<void>;
   albums: Album[];
 };
 
-const Sidebar = ({ type, close, handleUpload, albums }: SidebarProps) => {
-
+const Sidebar = ({ type, close, upload, albums }: SidebarProps) => {
   switch(type) {
     case SidebarType.ALBUMS: {
       return (
         <AlbumsBar
-          handleUpload={handleUpload}
+          upload={upload}
           albums={albums}
           close={close}
         />
