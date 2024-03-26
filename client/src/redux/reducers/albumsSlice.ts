@@ -41,11 +41,20 @@ const albumsSlice = createSlice({
       state.queue = state.queue.filter(
         (album) => album.videoId !== albumToRemove.videoId
       );
-    }
+    },
+    prependQueue: (state, action: PayloadAction<Album>) => {
+      const albumToAdd = action.payload;
+
+      const filtered = state.queue.filter(
+        (album) => album.videoId !== albumToAdd.videoId
+      );
+
+      state.queue = [albumToAdd, ...filtered];
+    },
   },
 });
 
-export const { view, play, pushQueue, removeQueue } = albumsSlice.actions;
+export const { view, play, pushQueue, removeQueue, prependQueue } = albumsSlice.actions;
 
 export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;

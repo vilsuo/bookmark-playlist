@@ -393,14 +393,14 @@ table thead th.sortable:hover {
   width: 30%;
 }
 .queue-table th:last-child {
-  width: 60px;
+  width: 100px;
 }
 .queue-table .queue-row .actions {
   display: flex;
-  justify-content: space-evenly;
+  gap: 4px;
 }
 .queue-table .queue-row .actions button {
-  width: 20px;
+  flex: 1;
 }
 
 /* Album chips */
