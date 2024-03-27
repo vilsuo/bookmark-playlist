@@ -2,6 +2,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSlice';
 import YouTube, { YouTubeProps } from 'react-youtube';
 
+/*
 enum PlayerState {
   UNSTARTED = -1,
   ENDED = 0,
@@ -10,6 +11,7 @@ enum PlayerState {
   BUFFERING = 3,
   VIDEO_CUED = 5,
 };
+*/
 
 const ORIGIN = 'http://localhost:5173';
 
@@ -75,40 +77,13 @@ const Video = ({ videoId, playNext }: VideoProps) => {
   };
 
   /**
-   * This event fires whenever a player has finished loading and is ready
-   * to begin receiving API calls.
-   * {@link https://developers.google.com/youtube/iframe_api_reference#onReady}
-   * 
-   * @param event 
-   */
-  const onReady: YouTubeProps['onReady'] = (event) => {
-    console.log('Ready');
-  };
-
-  /**
    * This event fires if an error occurs in the player.
    * {@link https://developers.google.com/youtube/iframe_api_reference#onError}
    * 
    * @param event 
    */
-  const onError: YouTube['onError'] = (event) => {
-    console.log('Error');
-  };
-
-  /**
-   * This event fires when the layer's state changes to PlayerState.PLAYING.
-   * 
-   * @param event 
-   */
-  const onPlay: YouTubeProps['onPlay'] = (event) => {
-  };
-
-  /**
-   * This event fires when the layer's state changes to PlayerState.PAUSED.
-   * 
-   * @param event 
-   */
-  const onPause: YouTubeProps['onPause'] = (event) => {
+  const onError: YouTubeProps['onError'] = (event) => {
+    console.log('YouTube.onError');
   };
 
   /**
@@ -118,21 +93,8 @@ const Video = ({ videoId, playNext }: VideoProps) => {
    */
   const onEnd: YouTubeProps['onEnd'] = (event) => {
     if (autoqueue) {
-      console.log('Queueing next');
       playNext();
-
-    } else {
-      console.log('Not queueing');
     }
-  };
-
-  /**
-   * This event fires whenever the player's state changes.
-   * {@link https://developers.google.com/youtube/iframe_api_reference#onStateChange}
-   * 
-   * @param event 
-   */
-  const onStateChange: YouTubeProps['onStateChange'] = (event) => {
   };
 
   return (
@@ -140,9 +102,8 @@ const Video = ({ videoId, playNext }: VideoProps) => {
       <YouTube
         videoId={videoId}
         opts={opts}
-        onReady={onReady}
-        onError={onError}
         onEnd={onEnd}
+        onError={onError}
       />
     </div>
   );
