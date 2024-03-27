@@ -4,10 +4,12 @@ import type { RootState } from '../store';
 // Define a type for the slice state
 export interface SettingsState {
   autoplay: boolean;
+  autoqueue: boolean;
 }
 
 const initialState: SettingsState = {
   autoplay: false,
+  autoqueue: true,
 };
 
 const settingsSlice = createSlice({
@@ -17,12 +19,15 @@ const settingsSlice = createSlice({
     toggleAutoplay: (state) => {
       state.autoplay = !state.autoplay;
     },
+    toggleAutoqueue: (state) => {
+      state.autoqueue = !state.autoqueue;
+    },
   },
 });
 
-export const { toggleAutoplay } = settingsSlice.actions;
+export const { toggleAutoplay, toggleAutoqueue } = settingsSlice.actions;
 
-// Other code such as selectors can use the imported `RootState` type
 export const selectAutoplay = (state: RootState) => state.settings.autoplay;
+export const selectAutoqueue = (state: RootState) => state.settings.autoqueue;
 
 export default settingsSlice.reducer;

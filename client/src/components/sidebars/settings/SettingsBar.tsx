@@ -1,7 +1,9 @@
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import {
   selectAutoplay,
+  selectAutoqueue,
   toggleAutoplay,
+  toggleAutoqueue,
 } from '../../../redux/reducers/settingsSlice';
 
 interface SettingsBarProps {
@@ -10,7 +12,12 @@ interface SettingsBarProps {
 
 const SettingsBar = ({ close }: SettingsBarProps) => {
   const dispatch = useAppDispatch();
+
+  // whether playing album is automatically started
   const autoplay = useAppSelector(selectAutoplay);
+
+  // play to the next album in queue after the playing album ends
+  const autoqueue = useAppSelector(selectAutoqueue);
 
   return (
     <div className="sidebar">
@@ -22,6 +29,9 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
       <div className="sidebar-container">
         <button onClick={() => dispatch(toggleAutoplay())}>
           {autoplay ? 'Disable' : 'Enable'} autoplay
+        </button>
+        <button onClick={() => dispatch(toggleAutoqueue())}>
+          {autoqueue ? 'Disable' : 'Enable'} autoqueue
         </button>
       </div>
     </div>
