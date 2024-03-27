@@ -1,7 +1,8 @@
 import { Album } from "../../types";
+import { toDateString } from "../../util/dateConverter";
 import { getAlbumSearchLink, getArtistSearchLink } from "../../util/links";
-import AlbumChips from "../album/AlbumChips";
 import { MaLink } from "../general/Links";
+import Chip from "./Chip";
 
 interface VideoDetailsProps {
   album: Album;
@@ -10,19 +11,20 @@ interface VideoDetailsProps {
 const VideoDetails = ({ album }: VideoDetailsProps) => {
   return (
     <div className="video-details">
-      <AlbumChips album={album} />
+      <Chip 
+        className="category" text="Category" value={album.category}
+      />
 
-      <div className="content">
-        <div className="links">
-          <MaLink
-            link={{ text: album.artist, href: getArtistSearchLink(album) }}
-          />
-          <MaLink
-            link={{ text: album.title, href: getAlbumSearchLink(album) }}
-          />
-        </div>
-        
-      </div>
+      <Chip 
+        className="add-date" text="Added" value={toDateString(album.addDate)}
+      />
+
+      <MaLink
+        link={{ text: album.artist, href: getArtistSearchLink(album) }}
+      />
+      <MaLink
+        link={{ text: album.title, href: getAlbumSearchLink(album) }}
+      />
     </div>
   );
 };
