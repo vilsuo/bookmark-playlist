@@ -1,5 +1,5 @@
 import { useAppSelector } from '../../redux/hooks';
-import { selectAutoplay } from '../../redux/reducers/settingsSlice';
+import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSlice';
 import YouTube, { YouTubeProps } from 'react-youtube';
 
 enum PlayerState {
@@ -54,10 +54,12 @@ const BASE_PLAYER_VARS = {
 
 interface VideoProps {
   videoId: string;
+  playNext: () => void;
 }
 
-const Video = ({ videoId }: VideoProps) => {
+const Video = ({ videoId, playNext }: VideoProps) => {
   const autoPlay = useAppSelector(selectAutoplay);
+  const autoqueue = useAppSelector(selectAutoqueue);
 
   const opts: YouTubeProps['opts'] = {
     // width
@@ -115,7 +117,13 @@ const Video = ({ videoId }: VideoProps) => {
    * @param event 
    */
   const onEnd: YouTubeProps['onEnd'] = (event) => {
-    console.log('End');
+    if (autoqueue) {
+      console.log('Queueing next');
+      playNext();
+
+    } else {
+      console.log('Not queueing');
+    }
   };
 
   /**

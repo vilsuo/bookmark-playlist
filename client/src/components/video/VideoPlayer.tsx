@@ -10,9 +10,10 @@ const formatVideoTitle = (album: Album) => {
 interface VideoPlayerProps {
   album: Album;
   closeVideo: () => void;
+  playNext: () => void;
 }
 
-const VideoPlayer = ({ album, closeVideo }: VideoPlayerProps) => {
+const VideoPlayer = ({ album, closeVideo, playNext }: VideoPlayerProps) => {
   return (
     <div className="video-player">
       <div className="header">
@@ -20,7 +21,7 @@ const VideoPlayer = ({ album, closeVideo }: VideoPlayerProps) => {
         <button onClick={closeVideo}>&#x2715;</button>
       </div>
 
-      <Video videoId={album.videoId} />
+      <Video videoId={album.videoId} playNext={playNext} />
 
       <VideoDetails album={album} />
     </div>
