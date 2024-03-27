@@ -2,8 +2,10 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import {
   selectAutoplay,
   selectAutoqueue,
+  selectShowVideoDetails,
   toggleAutoplay,
   toggleAutoqueue,
+  toggleShowVideoDetails,
 } from '../../../redux/reducers/settingsSlice';
 
 interface SettingsBarProps {
@@ -19,6 +21,8 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
   // play to the next album in queue after the playing album ends
   const autoqueue = useAppSelector(selectAutoqueue);
 
+  const showVideoDetails = useAppSelector(selectShowVideoDetails);
+
   return (
     <div className="sidebar">
       <div className="sidebar-toolbar">
@@ -32,6 +36,9 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
         </button>
         <button onClick={() => dispatch(toggleAutoqueue())}>
           {autoqueue ? 'Disable' : 'Enable'} autoqueue
+        </button>
+        <button onClick={() => dispatch(toggleShowVideoDetails())}>
+          {showVideoDetails ? 'Hide' : 'Show'} video details
         </button>
       </div>
     </div>

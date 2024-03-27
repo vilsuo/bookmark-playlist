@@ -1,12 +1,13 @@
 import { combineReducers, configureStore, isAnyOf } from '@reduxjs/toolkit';
 
-import settingsReducer, { toggleAutoplay, toggleAutoqueue } from './reducers/settingsSlice.ts';
+import settingsReducer, { toggleAutoplay, toggleAutoqueue, toggleShowVideoDetails } from './reducers/settingsSlice.ts';
 import filterReducer from './reducers/filterSlice.ts';
 
 import { loadSettingsState, saveSettingsState } from './localStorage.ts';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware.ts';
 import albumsSlice from './reducers/albumsSlice.ts';
 import queueSlice from './reducers/queueSlice.ts';
+import { initialState as initialSettingsState } from './reducers/settingsSlice.ts';
 
 /*
 const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action => {
@@ -19,14 +20,20 @@ const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action =
 
 // save settings to local storage
 startAppListening({
-  matcher: isAnyOf(toggleAutoplay, toggleAutoqueue),
+  matcher: isAnyOf(toggleAutoplay, toggleAutoqueue, toggleShowVideoDetails),
   effect: (_action, listenerApi) => {
     saveSettingsState(listenerApi.getState().settings);
   },
 });
 
 const preloadedState = {
-  settings: loadSettingsState(),
+  settings: {
+    // load defaults (only relevant if a new setting has been defined)
+    ...initialSettingsState,
+
+    // load saved settings
+    ...loadSettingsState(),
+  },
 };
 
 const rootReducer = combineReducers({

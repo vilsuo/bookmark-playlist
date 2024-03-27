@@ -1,6 +1,8 @@
 import { Album } from '../../types';
 import Video from './Video';
 import VideoDetails from './VideoDetails';
+import { useAppSelector } from '../../redux/hooks';
+import { selectShowVideoDetails } from '../../redux/reducers/settingsSlice';
 
 const formatVideoTitle = (album: Album) => {
   const { artist, title, published } = album;
@@ -14,6 +16,8 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer = ({ album, closeVideo, playNext }: VideoPlayerProps) => {
+  const showVideoDetails = useAppSelector(selectShowVideoDetails);
+
   return (
     <div className="video-player">
       <div className="header">
@@ -23,7 +27,7 @@ const VideoPlayer = ({ album, closeVideo, playNext }: VideoPlayerProps) => {
 
       <Video videoId={album.videoId} playNext={playNext} />
 
-      <VideoDetails album={album} />
+      { showVideoDetails && <VideoDetails album={album} /> }
     </div>
   );
 };

@@ -5,11 +5,13 @@ import type { RootState } from '../store';
 export interface SettingsState {
   autoplay: boolean;
   autoqueue: boolean;
+  showVideoDetails: boolean;
 }
 
-const initialState: SettingsState = {
+export const initialState: SettingsState = {
   autoplay: false,
   autoqueue: true,
+  showVideoDetails: true,
 };
 
 const settingsSlice = createSlice({
@@ -22,12 +24,16 @@ const settingsSlice = createSlice({
     toggleAutoqueue: (state) => {
       state.autoqueue = !state.autoqueue;
     },
+    toggleShowVideoDetails: (state) => {
+      state.showVideoDetails = !state.showVideoDetails;
+    },
   },
 });
 
-export const { toggleAutoplay, toggleAutoqueue } = settingsSlice.actions;
+export const { toggleAutoplay, toggleAutoqueue, toggleShowVideoDetails } = settingsSlice.actions;
 
 export const selectAutoplay = (state: RootState) => state.settings.autoplay;
 export const selectAutoqueue = (state: RootState) => state.settings.autoqueue;
+export const selectShowVideoDetails = (state: RootState) => state.settings.showVideoDetails;
 
 export default settingsSlice.reducer;
