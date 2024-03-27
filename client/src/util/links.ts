@@ -1,14 +1,37 @@
 import { Album } from '../types';
 
-const toSearchString = (value: string) => value.replace(' ', '+');
+type Attributes = Record<string, string | number | boolean>;
+
+const toQueryString = (value: string) => value.replace(' ', '+');
+
+const createQueryString = (attributes: Attributes) => {
+  return Object.keys(attributes)
+    .map((attr) => `${attr}=${attributes[attr]}`)
+    .join('&');
+};
 
 export const getArtistSearchLink = (album: Album) => {
-  const artistSearchString = toSearchString(album.artist);
-  return `https://www.metal-archives.com/search?searchString=${artistSearchString}&type=band_name`;
+  const attributes = {
+    searchString: toQueryString(album.artist),
+    type: 'band_name',
+  };
+
+  const query = createQueryString(attributes);
+
+  return `https://www.metal-archives.com/search?${query}`;
 };
 
 export const getAlbumSearchLink = (album: Album) => {
-  const artistSearchString = toSearchString(album.artist);
-  const titleSearchString = toSearchString(album.title);
-  return `https://www.metal-archives.com/search/advanced/searching/albums?bandName=${artistSearchString}&releaseTitle=${titleSearchString}`;
+  const attributes = {
+    bandName: toQueryString(album.artist),
+    releaseTitle: toQueryString(album.title),
+  };
+
+  const query = createQueryString(attributes);
+
+  return `https://www.metal-archives.com/search/advanced/searching/albums?${query}`;
+};
+
+export const getYoutubeEmbedLink = (videoId: Album['videoId'], attributes: Attributes) => {
+  return `https://www.youtube.com/embed/${videoId}?${createQueryString(attributes)}`
 };

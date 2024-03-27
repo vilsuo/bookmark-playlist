@@ -1,6 +1,6 @@
 import { combineReducers, configureStore, isAnyOf } from '@reduxjs/toolkit';
 
-import settingsReducer, { toggleAutoplay } from './reducers/settingsSlice.ts';
+import settingsReducer, { toggleAutoplay, toggleAutoqueue } from './reducers/settingsSlice.ts';
 import filterReducer from './reducers/filterSlice.ts';
 
 import { loadSettingsState, saveSettingsState } from './localStorage.ts';
@@ -17,8 +17,9 @@ const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action =
 };
 */
 
+// save settings to local storage
 startAppListening({
-  matcher: isAnyOf(toggleAutoplay),
+  matcher: isAnyOf(toggleAutoplay, toggleAutoqueue),
   effect: (_action, listenerApi) => {
     saveSettingsState(listenerApi.getState().settings);
   },
