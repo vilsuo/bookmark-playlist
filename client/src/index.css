@@ -157,6 +157,11 @@ h1, h2, h3 {
   font-style: italic;
 }
 
+/* Settings sidebar */
+#settings-bar {
+  width: 400px;
+}
+
 /* Sidebar opener */
 .sidebar-opener button {
   width: 44px;

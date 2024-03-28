@@ -24,7 +24,7 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
   const showVideoDetails = useAppSelector(selectShowVideoDetails);
 
   return (
-    <div className="sidebar">
+    <div id="settings-bar" className="sidebar">
       <div className="sidebar-toolbar">
         <h2>Settings</h2>
         <button onClick={close}>&#x2715;</button>
