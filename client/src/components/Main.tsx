@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { play, selectPlaying } from '../redux/reducers/albumsSlice';
 import { queuePop, selectQueueFirst } from '../redux/reducers/queueSlice';
 import QueueTable from './queue/QueueTable';
-import VideoPlayer from './video/VideoPlayer';
+import VideoContainer from './video/VideoContainer';
 
 const Main = () => {
   const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ const Main = () => {
   return (
     <div className="main">
       {playingAlbum && (
-        <VideoPlayer album={playingAlbum} closeVideo={playNextFromQueue} playNext={playNextFromQueue} />
+        <VideoContainer album={playingAlbum} closeVideo={playNextFromQueue} playNext={playNextFromQueue} />
       )}
 
       <div>

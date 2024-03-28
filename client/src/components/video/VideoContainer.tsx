@@ -9,17 +9,17 @@ const formatVideoTitle = (album: Album) => {
   return `${artist} - ${title} (${published})`;
 };
 
-interface VideoPlayerProps {
+interface VideoContainerProps {
   album: Album;
   closeVideo: () => void;
   playNext: () => void;
 }
 
-const VideoPlayer = ({ album, closeVideo, playNext }: VideoPlayerProps) => {
+const VideoContainer = ({ album, closeVideo, playNext }: VideoContainerProps) => {
   const showVideoDetails = useAppSelector(selectShowVideoDetails);
 
   return (
-    <div className="video-player">
+    <div className="video-container">
       <div className="header">
         <h1>{formatVideoTitle(album)}</h1>
         <button onClick={closeVideo}>&#x2715;</button>
@@ -32,4 +32,4 @@ const VideoPlayer = ({ album, closeVideo, playNext }: VideoPlayerProps) => {
   );
 };
 
-export default VideoPlayer;
+export default VideoContainer;

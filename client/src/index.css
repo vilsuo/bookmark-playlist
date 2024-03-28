@@ -168,18 +168,18 @@ h1, h2, h3 {
 }
 
 /* Video player */
-.video-player {
+.video-container {
   border: 2px solid black;
 }
-.video-player .header {
+.video-container .header {
   display: flex;
   padding: 4px;
   background-color: var(--ma);
 }
-.video-player .header h1 {
+.video-container .header h1 {
   flex: 1;
 }
-.video-player .header button {
+.video-container .header button {
   font-size: larger;
 }
 
