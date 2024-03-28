@@ -7,6 +7,7 @@ import {
   toggleAutoqueue,
   toggleShowVideoDetails,
 } from '../../../redux/reducers/settingsSlice';
+import SettingsCheckbox from './SettingsCheckbox';
 
 interface SettingsBarProps {
   close: () => void;
@@ -31,15 +32,25 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
       </div>
 
       <div className="sidebar-container">
-        <button onClick={() => dispatch(toggleAutoplay())}>
-          {autoplay ? 'Disable' : 'Enable'} autoplay
-        </button>
-        <button onClick={() => dispatch(toggleAutoqueue())}>
-          {autoqueue ? 'Disable' : 'Enable'} autoqueue
-        </button>
-        <button onClick={() => dispatch(toggleShowVideoDetails())}>
-          {showVideoDetails ? 'Hide' : 'Show'} video details
-        </button>
+        <div className="settings">
+          <SettingsCheckbox
+            value={autoplay}
+            toggle={() => dispatch(toggleAutoplay())}
+            label='Autoplay'
+            details='When an album is played, the video will autoplay'
+          />
+          <SettingsCheckbox
+            value={autoqueue}
+            toggle={() => dispatch(toggleAutoqueue())}
+            label='Autoqueue'
+            details='Autoselect next album from queue when a video ends'
+          />
+          <SettingsCheckbox
+            value={showVideoDetails}
+            toggle={() => dispatch(toggleShowVideoDetails())}
+            label='Show playing album details'
+          />
+        </div>
       </div>
     </div>
   );

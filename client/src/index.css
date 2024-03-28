@@ -161,6 +161,26 @@ h1, h2, h3 {
 #settings-bar {
   width: 400px;
 }
+#settings-bar .settings {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+}
+/* Settings checbox */
+.settings-checbox {
+  padding: 4px;
+  border: 2px solid black;
+  background-color: var(--ma);
+}
+.settings-checbox label {
+  font-size: larger;
+}
+.settings-checbox input {
+  margin-right: 4px;
+}
+.settings-checbox p {
+  font-style: italic;
+}
 
 /* Sidebar opener */
 .sidebar-opener button {
