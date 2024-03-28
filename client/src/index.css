@@ -84,24 +84,26 @@ h1, h2, h3 {
   margin-top: -10px; /* to fix the flex gaps */
 }
 .albums-bar .sidebar-container.album-viewed {
-  height: calc(100% - 130px);
+  height: calc(100% - 150px);
 }
+/* Albums view */
+.albums-view {
+  display: flex;
+  flex-flow: column nowrap;
 
-.albums-bar .albums-view {
   position: fixed;
   bottom: 0;
-  background-color: black;
   width: 500px;
-  height: 100px;
+  height: 120px;
 
   border-right: 1px solid white;
 }
-
 .albums-view .header {
   display: flex;
   justify-content: end;
   border-top: 1px solid white;
   border-bottom: 1px solid white;
+  background-color: black;
 }
 .albums-view .header h3 {
   margin: 0 auto;
@@ -109,37 +111,55 @@ h1, h2, h3 {
 .albums-view .header button {
   width: 20px;
 }
+
 .albums-view .content {
+  flex: 1;
+
   display: flex;
   flex-flow: row nowrap;
 
-  height: 80px;
-
+  margin: 10px;
+  border: 2px solid black;
   background-color: var(--ma-selected);
 }
-.albums-view .content > * {
+
+.albums-view .actions {
   display: flex;
-  flex-flow: column nowrap;
-}
-.albums-view .content .actions button {
-  width: 80px;
-  height: 100%;
-}
-.albums-view .content .details {
-  flex: 1;
   justify-content: center;
-  padding: 4px;
-  margin: 10px;
+  align-items: center;
+  gap: 10px;
 
-  height: 57px;
-
-  border: 2px solid black;
+  padding: 10px;
   background-color: var(--ma);
 }
-.albums-view .content .details .artist {
-  font-size: larger;
+.albums-view .actions button {
+  height: 30px;
+  width: 30px;
 }
-.albums-view .content .details .title {
+.albums-view .actions .play-button {
+  height: 50px;
+  width: 50px;
+}
+
+.albums-view .details {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-flow: column nowrap;
+  overflow: hidden;
+
+  padding: 10px;
+  background-color: var(--ma);
+}
+.albums-view .details span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.albums-view .details .artist {
+  font-size: x-large;
+}
+.albums-view .details .title {
   font-style: italic;
 }
 
@@ -153,19 +173,21 @@ h1, h2, h3 {
   background-color: darkgrey;
 }
 
-/* Videos */
+/* Video player */
 .video-player .header {
   display: flex;
   padding: 4px;
   border: 2px solid white;
   background-color: var(--ma);
-}
+  }
 .video-player h1 {
   flex: 1;
 }
 .video-player .header button {
   font-size: larger;
 }
+
+/* Video */
 .video {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
@@ -175,7 +197,6 @@ h1, h2, h3 {
 .video iframe {
   display: block;
   margin: auto;
-
   position: absolute;
   top: 0;
   left: 0;
@@ -188,7 +209,6 @@ h1, h2, h3 {
   border: 2px solid black;
   padding: 4px;
   background-color: var(--ma);
-
   display: flex;
   flex-flow: row wrap;
   gap: 10px;
