@@ -111,24 +111,19 @@ h1, h2, h3 {
 .albums-view .header button {
   width: 20px;
 }
-
 .albums-view .content {
   flex: 1;
-
   display: flex;
   flex-flow: row nowrap;
-
   margin: 10px;
   border: 2px solid black;
   background-color: var(--ma-selected);
 }
-
 .albums-view .actions {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-
   padding: 10px;
   background-color: var(--ma);
 }
@@ -140,7 +135,6 @@ h1, h2, h3 {
   height: 50px;
   width: 50px;
 }
-
 .albums-view .details {
   flex: 1;
   display: flex;
@@ -174,13 +168,15 @@ h1, h2, h3 {
 }
 
 /* Video player */
+.video-player {
+  border: 2px solid black;
+}
 .video-player .header {
   display: flex;
   padding: 4px;
-  border: 2px solid white;
   background-color: var(--ma);
-  }
-.video-player h1 {
+}
+.video-player .header h1 {
   flex: 1;
 }
 .video-player .header button {
@@ -206,7 +202,6 @@ h1, h2, h3 {
 
 /* Video details */
 .video-details {
-  border: 2px solid black;
   padding: 4px;
   background-color: var(--ma);
   display: flex;
