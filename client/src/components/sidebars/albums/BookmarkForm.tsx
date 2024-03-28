@@ -52,12 +52,12 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
       <h3>Import bookmarks</h3>
 
       <p className="info">
-        Upload your exported bookmarks and select the folder where to look for
-        videos. Each entry in the folder must either be a youtube video link or
-        a folder with youtube videos links. Each link name must be exactly in
-        the format:
-        <span className="format">artist - album title (year)</span>. The closest
-        folder name will be the category of the album.
+        Upload your bookmarks file and select the folder where to look for
+        videos. Each entry in the folder must either be a link to a youtube
+        video or a folder with youtube videos links. Each link name must be
+        exactly in the format:
+        <span className="format">artist - album title (year)</span>. The 
+        category of a album will be its parent folder name.
       </p>
 
       {messageType && (
@@ -81,7 +81,6 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
             type="text"
             value={name}
             onChange={({ target }) => setName(target.value)}
-            placeholder="Look inside..."
           />
         </div>
 
@@ -95,7 +94,6 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
       </div>
 
       <div className="actions">
-        <button onClick={handleReset}>Clear</button>
         <button disabled={!(name && file)} onClick={handleFileUpload}>
           Send
         </button>
