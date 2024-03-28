@@ -265,6 +265,7 @@ h1, h2, h3 {
 }
 .bookmark-form .info {
   text-align: justify;
+  font-style: italic;
   margin: 10px 0;
 }
 .bookmark-form .info .format {

@@ -49,7 +49,7 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
 
   return (
     <div className="bookmark-form">
-      <h3>Import bookmarks</h3>
+      <h3>Import albums from bookmarks</h3>
 
       <p className="info">
         Upload your bookmarks file and select the folder where to look for
