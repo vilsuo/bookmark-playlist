@@ -20,7 +20,7 @@ router.post('/', singleUpload, async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Field is missing' });
   }
 
-  const albums = bookmarkService.convert(file, field);
+  const albums = bookmarkService.getAlbums(file, field);
 
   return res
     .setHeader(

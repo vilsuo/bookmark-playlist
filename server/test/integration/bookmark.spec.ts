@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import app from '../../src/app';
 import { Album } from '../../src/types';
-import { convertEpoch } from '../../src/services/albumService';
+import { convertEpoch } from '../../src/util/linkParser';
 import { FIELD_NAME, FILE_FIELD } from '../../src/util/fileUpload';
 import { MessageBody } from '../util/types';
 

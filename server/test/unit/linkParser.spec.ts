@@ -2,7 +2,7 @@ import { Album, CategoryLink } from '../../src/types';
 import {
   convertEpoch,
   createAlbumsFromLinks,
-} from '../../src/services/albumService';
+} from '../../src/util/linkParser';
 
 const link: CategoryLink = {
   title: 'Annihilator - Alice In Hell (1989)',
