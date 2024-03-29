@@ -1,5 +1,4 @@
-import React, { useRef, useState } from 'react';
-import BookmarkForm from './BookmarkForm';
+import React, { useRef } from 'react';
 import AlbumFilter from '../../album/AlbumFilter';
 import AlbumTable from '../../album/AlbumTable';
 import { Album } from '../../../types';
@@ -8,18 +7,14 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { play, selectPlaying, selectViewing, view } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsBarProps {
-  upload: (formData: FormData) => Promise<void>;
   albums: Album[];
   close: () => void;
 }
 
 const AlbumsBar = ({
-  upload,
   albums,
   close,
 }: AlbumsBarProps) => {
-  const [showUploadForm, setShowUploadForm] = useState(albums.length === 0);
-
   const dispatch = useAppDispatch();
   const playingAlbum = useAppSelector(selectPlaying);
   const viewingAlbum = useAppSelector(selectViewing);
@@ -33,22 +28,17 @@ const AlbumsBar = ({
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const toggleUpload = () => setShowUploadForm(!showUploadForm);
-
   return (
     <div className="sidebar albums-bar">
       <div className="sidebar-toolbar">
         <button onClick={() => scrollTo(startRef)}>Up</button>
         <button onClick={() => scrollTo(endRef)}>Down</button>
         <h2>Albums</h2>
-        <button onClick={toggleUpload}>Toggle import</button>
         <button onClick={close}>&#x2715;</button>
       </div>
 
       <div className={`sidebar-container ${viewingAlbum ? 'album-viewed' : ''}`}>
         <div id="start-ref" ref={startRef} />
-
-        {showUploadForm && <BookmarkForm upload={upload} />}
 
         {albums.length > 0 && (
           <React.Fragment>

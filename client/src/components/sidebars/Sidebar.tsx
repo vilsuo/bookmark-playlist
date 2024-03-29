@@ -14,7 +14,6 @@ const Sidebar = ({ type, close, upload, albums }: SidebarProps) => {
     case SidebarType.ALBUMS: {
       return (
         <AlbumsBar
-          upload={upload}
           albums={albums}
           close={close}
         />
@@ -23,6 +22,7 @@ const Sidebar = ({ type, close, upload, albums }: SidebarProps) => {
     case SidebarType.SETTINGS: {
       return (
         <SettingsBar 
+          upload={upload}
           close={close}
         />
       );

@@ -7,13 +7,15 @@ import {
   toggleAutoqueue,
   toggleShowVideoDetails,
 } from '../../../redux/reducers/settingsSlice';
+import BookmarkForm from './BookmarkForm';
 import SettingsCheckbox from './SettingsCheckbox';
 
 interface SettingsBarProps {
+  upload: (formData: FormData) => Promise<void>;
   close: () => void;
 }
 
-const SettingsBar = ({ close }: SettingsBarProps) => {
+const SettingsBar = ({ close, upload }: SettingsBarProps) => {
   const dispatch = useAppDispatch();
 
   // whether playing album is automatically started
@@ -51,6 +53,8 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
             label='Show playing album details'
           />
         </div>
+
+        <BookmarkForm upload={upload} />
       </div>
     </div>
   );
