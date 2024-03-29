@@ -30,7 +30,9 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
     }
   };
 
-  const handleFileUpload = async () => {
+  const handleFileUpload = async (event: React.FormEvent) => {
+    event.preventDefault();
+
     const formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('name', name);
@@ -75,31 +77,34 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
         />
       )}
 
-      <div className="inputs">
-        <div className="folder-name">
-          <label htmlFor="folder-name-input">Folder:</label>
+      <form method='POST' onSubmit={handleFileUpload}>
+        <label>
+          Root folder:
           <input
-            id="folder-name-input"
             type="text"
             value={name}
             onChange={({ target }) => setName(target.value)}
           />
+        </label>
+
+        <div>
+          <label>
+            Attachment:
+            <input
+              type="file"
+              ref={inputRef}
+              onChange={handleFileChange}
+              accept=".html"
+              required
+            />
+          </label>
+          <span>Accepted filetypes: .html</span>
         </div>
 
-        <input
-          type="file"
-          ref={inputRef}
-          onChange={handleFileChange}
-          accept=".html"
-          required
-        />
-      </div>
-
-      <div className="actions">
-        <button disabled={!(name && file)} onClick={handleFileUpload}>
+        <button disabled={!(name && file)}>
           Send
         </button>
-      </div>
+      </form>
     </div>
   );
 };
