@@ -276,7 +276,6 @@ h1, h2, h3 {
   text-align: center;
   margin: 4px;
 }
-
 .bookmark-converter form {
   display: flex;
   flex-flow: column nowrap;
@@ -288,10 +287,12 @@ h1, h2, h3 {
 }
 .bookmark-converter form label + span {
   font-size: smaller;
+  font-style: italic;
 }
 .bookmark-converter form input {
   width: 100%;
   margin-top: 4px;
+  color: black;
 }
 
 .bookmark-converter form input[type='file'] {
