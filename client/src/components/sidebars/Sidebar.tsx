@@ -1,5 +1,6 @@
 import { Album, SidebarType } from '../../types';
-import AlbumsBar from './albums/Albumsbar';
+import AlbumsBar from './albums/AlbumsBar';
+import ToolsBar from './tools/ToolsBar';
 import SettingsBar from './settings/SettingsBar';
 
 interface SidebarProps {
@@ -14,6 +15,13 @@ const Sidebar = ({ type, close, albums }: SidebarProps) => {
       return (
         <AlbumsBar
           albums={albums}
+          close={close}
+        />
+      );
+    }
+    case SidebarType.TOOLS: {
+      return (
+        <ToolsBar
           close={close}
         />
       );

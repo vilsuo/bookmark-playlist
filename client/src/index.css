@@ -79,11 +79,11 @@ h1, h2, h3 {
 }
 
 /* Album sidebar */
-.albums-bar #start-ref,
-.albums-bar #end-ref {
+#albums-bar #start-ref,
+#albums-bar #end-ref {
   margin-top: -10px; /* to fix the flex gaps */
 }
-.albums-bar .sidebar-container.album-viewed {
+#albums-bar .sidebar-container.album-viewed {
   height: calc(100% - 150px);
 }
 /* Albums view */

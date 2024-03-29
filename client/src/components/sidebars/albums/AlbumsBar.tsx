@@ -29,7 +29,7 @@ const AlbumsBar = ({
   };
 
   return (
-    <div className="sidebar albums-bar">
+    <div id="albums-bar" className="sidebar">
       <div className="sidebar-toolbar">
         <button onClick={() => scrollTo(startRef)}>Up</button>
         <button onClick={() => scrollTo(endRef)}>Down</button>

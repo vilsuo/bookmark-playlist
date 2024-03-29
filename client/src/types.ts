@@ -21,6 +21,7 @@ export enum Order {
 
 export enum SidebarType {
   ALBUMS,
+  TOOLS,
   SETTINGS,
 }
 

@@ -1,7 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import fileDownload from 'js-file-download';
 
-import * as converterService from '../../../util/converterService';
 import {
   selectAutoplay,
   selectAutoqueue,
@@ -10,7 +8,6 @@ import {
   toggleAutoqueue,
   toggleShowVideoDetails,
 } from '../../../redux/reducers/settingsSlice';
-import BookmarkConverter from './BookmarkConverter';
 import SettingsCheckbox from './SettingsCheckbox';
 
 interface SettingsBarProps {
@@ -27,10 +24,6 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
   const autoqueue = useAppSelector(selectAutoqueue);
 
   const showVideoDetails = useAppSelector(selectShowVideoDetails);
-
-  const handleConvert = async (formData: FormData) => {
-    await converterService.downloadBookmarks(formData);
-  };
 
   return (
     <div id="settings-bar" className="sidebar">
@@ -59,8 +52,6 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
             label='Show playing album details'
           />
         </div>
-
-        <BookmarkConverter upload={handleConvert} />
       </div>
     </div>
   );
