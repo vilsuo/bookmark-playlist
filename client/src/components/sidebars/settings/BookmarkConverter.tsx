@@ -30,7 +30,7 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
     }
   };
 
-  const handleFileUpload = async (event: React.FormEvent) => {
+  const handleUpload = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const formData = new FormData();
@@ -77,7 +77,7 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
         />
       )}
 
-      <form method='POST' onSubmit={handleFileUpload}>
+      <form method='POST' onSubmit={handleUpload}>
         <label>
           Root folder:
           <input
@@ -102,7 +102,7 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
         </div>
 
         <button disabled={!(name && file)}>
-          Send
+          Convert & Download
         </button>
       </form>
     </div>

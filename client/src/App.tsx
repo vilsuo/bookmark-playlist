@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Album, SidebarType,  } from './types';
-import * as bookmarksService from './util/bookmarksService';
 import SidebarOpener from './components/sidebars/opener/SidebarOpener';
 import Sidebar from './components/sidebars/Sidebar';
 import Main from './components/Main';
@@ -13,18 +12,12 @@ const App = () => {
 
   const closeSidebar = () => setSidebarType(null);
 
-  const handleUpload = async (formData: FormData) => {
-    const responseData = await bookmarksService.createAlbums(formData);
-    setAlbums(responseData);
-  };
-
   return (
     <div className="container">
       { (sidebarType !== null) ? (
         <Sidebar 
           type={sidebarType}
           close={closeSidebar}
-          upload={handleUpload}
           albums={albums}
         />
       ) : (

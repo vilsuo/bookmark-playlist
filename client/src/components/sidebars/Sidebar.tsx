@@ -5,11 +5,10 @@ import SettingsBar from './settings/SettingsBar';
 interface SidebarProps {
   type: SidebarType;
   close: () => void;
-  upload: (formData: FormData) => Promise<void>;
   albums: Album[];
 };
 
-const Sidebar = ({ type, close, upload, albums }: SidebarProps) => {
+const Sidebar = ({ type, close, albums }: SidebarProps) => {
   switch(type) {
     case SidebarType.ALBUMS: {
       return (
@@ -22,7 +21,6 @@ const Sidebar = ({ type, close, upload, albums }: SidebarProps) => {
     case SidebarType.SETTINGS: {
       return (
         <SettingsBar 
-          upload={upload}
           close={close}
         />
       );

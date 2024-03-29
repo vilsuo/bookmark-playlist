@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express';
 
 import { FIELD_NAME, singleUpload } from '../util/fileUpload';
-import * as htmlParser from '../util/htmlParser';
-import * as albumService from '../util/albumService';
+import * as bookmarkService from '../services/bookmarkService';
 
 const router = express();
 
@@ -21,16 +20,15 @@ router.post('/', singleUpload, async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Field is missing' });
   }
 
-  // convert file to string
-  const fileString = file.buffer.toString();
+  const albums = bookmarkService.convert(file, field);
 
-  // convert file string to links
-  const links = htmlParser.getHeaderNextDlSiblingLinks(fileString, field);
-
-  // convert links to albums
-  const albums = albumService.createAlbumsFromLinks(links);
-
-  return res.status(201).send(albums);
+  return res
+    .setHeader(
+      'Content-Disposition',
+      `attachment; filename="${bookmarkService.createFilename()}"`
+    )
+    .status(201)
+    .send(albums);
 });
 
 export default router;

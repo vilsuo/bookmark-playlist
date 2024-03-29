@@ -1,4 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import fileDownload from 'js-file-download';
+
+import * as converterService from '../../../util/converterService';
 import {
   selectAutoplay,
   selectAutoqueue,
@@ -11,11 +14,10 @@ import BookmarkConverter from './BookmarkConverter';
 import SettingsCheckbox from './SettingsCheckbox';
 
 interface SettingsBarProps {
-  upload: (formData: FormData) => Promise<void>;
   close: () => void;
 }
 
-const SettingsBar = ({ close, upload }: SettingsBarProps) => {
+const SettingsBar = ({ close }: SettingsBarProps) => {
   const dispatch = useAppDispatch();
 
   // whether playing album is automatically started
@@ -25,6 +27,10 @@ const SettingsBar = ({ close, upload }: SettingsBarProps) => {
   const autoqueue = useAppSelector(selectAutoqueue);
 
   const showVideoDetails = useAppSelector(selectShowVideoDetails);
+
+  const handleConvert = async (formData: FormData) => {
+    await converterService.downloadBookmarks(formData);
+  };
 
   return (
     <div id="settings-bar" className="sidebar">
@@ -54,7 +60,7 @@ const SettingsBar = ({ close, upload }: SettingsBarProps) => {
           />
         </div>
 
-        <BookmarkConverter upload={upload} />
+        <BookmarkConverter upload={handleConvert} />
       </div>
     </div>
   );
