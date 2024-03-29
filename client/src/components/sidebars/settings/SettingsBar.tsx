@@ -7,7 +7,7 @@ import {
   toggleAutoqueue,
   toggleShowVideoDetails,
 } from '../../../redux/reducers/settingsSlice';
-import BookmarkForm from './BookmarkForm';
+import BookmarkConverter from './BookmarkConverter';
 import SettingsCheckbox from './SettingsCheckbox';
 
 interface SettingsBarProps {
@@ -54,7 +54,7 @@ const SettingsBar = ({ close, upload }: SettingsBarProps) => {
           />
         </div>
 
-        <BookmarkForm upload={upload} />
+        <BookmarkConverter upload={upload} />
       </div>
     </div>
   );

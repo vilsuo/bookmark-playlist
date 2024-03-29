@@ -7,7 +7,7 @@ interface FileFormProps {
   upload: (formdata: FormData) => Promise<void>;
 }
 
-const BookmarkForm = ({ upload }: FileFormProps) => {
+const BookmarkConverter = ({ upload }: FileFormProps) => {
   const [file, setFile] = useState<File | null>();
   const [name, setName] = useState('');
 
@@ -48,16 +48,18 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
   };
 
   return (
-    <div className="bookmark-form">
-      <h3>Import albums from bookmarks</h3>
+    <div className="bookmark-converter">
+      <h3>Bookmarks converter</h3>
 
       <p className="info">
-        Upload your bookmarks file and select the folder where to look for
-        videos. Each entry in the folder must either be a link to a youtube
-        video or a folder with youtube videos links. Each link name must be
-        exactly in the format:
-        <span className="format">artist - album title (year)</span>. The 
-        category of a album will be its parent folder name.
+        Converts bookmarks HTML-file to JSON. Select the root folder where
+        to look for links. Each link in a folder must be a youtube video.
+        A folder can have child folders. Each link is converted into an album
+        given by the link name:
+        
+        <span className="format">artist - album title (year)</span>
+
+        The category of an album will be its parents folder name.
       </p>
 
       {messageType && (
@@ -102,4 +104,4 @@ const BookmarkForm = ({ upload }: FileFormProps) => {
   );
 };
 
-export default BookmarkForm;
+export default BookmarkConverter;

@@ -255,38 +255,37 @@ h1, h2, h3 {
   color: lightgreen;
 }
 
-/* Bookmark upload form */
-.bookmark-form {
+/* Bookmark converter */
+.bookmark-converter {
   display: flex;
   flex-flow: column;
   padding: 4px;
   border: 2px solid black;
   background-color: var(--ma);
 }
-.bookmark-form .info {
+.bookmark-converter .info {
   text-align: justify;
   font-style: italic;
-  margin: 10px 0;
 }
-.bookmark-form .info .format {
+.bookmark-converter .info .format {
+  display: block;
   color: orange;
   text-transform: uppercase;
-  font-style: oblique;
-  margin-left: 4px;
+  text-align: center;
+  margin: 4px;
 }
-.bookmark-form .inputs {
+.bookmark-converter .inputs {
   flex: 1;
   display: flex;
   gap: 4px;
-  
   margin: 4px 0;
 }
-.bookmark-form .inputs .folder-name {
+.bookmark-converter .inputs .folder-name {
   display: flex;
   flex-direction: row;
   gap: 4px;
 }
-.bookmark-form .actions {
+.bookmark-converter .actions {
   display: flex;
   justify-content: flex-end;
   gap: 4px;
