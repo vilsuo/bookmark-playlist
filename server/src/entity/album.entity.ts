@@ -1,19 +1,27 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, Repository } from 'typeorm';
 
 @Entity({ name: 'albums' })
 export class Album {
   @PrimaryColumn()
-  videoId: string; // video id from the link
+  id!: number;
 
   @Column()
-  artist: string;
+  videoId!: string; // video id from the link
 
   @Column()
-  title: string;
+  artist!: string;
 
   @Column()
-  published: number;
+  title!: string;
 
   @Column()
-  category: string;
+  published!: number;
+
+  @Column()
+  category!: string;
+
+  @Column()
+  addDate!: Date;
 }
+
+export type AlbumRepository = Repository<Album>;

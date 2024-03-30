@@ -8,7 +8,8 @@
     "compose:down": "docker compose down",
     "compose:build": "docker compose up --build",
     "compose:rebuild": "npm run compose:down && npm run compose:build",
-    "test:server": "docker exec playlist-server-dev npm run test"
+    "test:server": "docker exec playlist-server-dev npm run test",
+    "psql": "docker exec -it playlist-db-dev psql --username=username --dbname=dev"
   },
   "author": "",
   "license": "ISC"

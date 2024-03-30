@@ -3,13 +3,9 @@ import { Album } from '../entity/album.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5555,
-  username: 'username',
-  password: 'password',
-  database: 'dbname',
+  url: process.env.DATABASE_URL,
   entities: [Album],
-  synchronize: true,
+  synchronize: process.env.NODE_ENV !== 'production',
   logging: true,
 });
 

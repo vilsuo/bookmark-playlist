@@ -1,10 +1,10 @@
 import app from './app';
-//import { connectToDatabase } from './util/dataSource';
+import { connectToDatabase } from './util/dataSource';
 
 const PORT = process.env.PORT || 3000;
 
 const start = async () => {
-  //await connectToDatabase();
+  await connectToDatabase();
 
   app.listen(PORT, () => {
     console.log(
