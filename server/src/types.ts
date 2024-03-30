@@ -1,18 +1,13 @@
-export type RawLink = {
-  title: string;
+import { Album } from './entity/album.entity';
+
+export type Link = {
+  text: string;
   href: string | undefined;
   addDate: string | undefined;
 };
 
-export type CategoryLink = RawLink & {
-  category: string;
+export type FolderLink = Link & {
+  folder: string;
 };
 
-export type Album = {
-  videoId: string;
-  artist: string;
-  title: string;
-  published: number;
-  category: string;
-  addDate: Date;
-};
+export type AlbumBase = Omit<Album, 'id'>;

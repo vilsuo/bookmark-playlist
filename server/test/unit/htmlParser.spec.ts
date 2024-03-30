@@ -1,4 +1,4 @@
-import { getHeaderNextDlSiblingLinks } from '../../src/util/htmlParser';
+import { createFolderLinks } from '../../src/util/htmlParser';
 
 type Attributes = Record<string, string>;
 
@@ -276,87 +276,91 @@ const parsedBody = parseElement(body);
 // console.log('parsed', parsedBody);
 
 describe('htmlParser', () => {
-  describe('single link', () => {
-    const links = getHeaderNextDlSiblingLinks(parsedBody, SINGLE_LINK_HEADER);
+  describe('folder in root with a single link', () => {
+    const links = createFolderLinks(parsedBody, SINGLE_LINK_HEADER);
 
-    it('finds a single link', () => {
+    it('one link is found', () => {
       expect(links).toHaveLength(1);
     });
 
-    it('link href attribute is correct', () => {
-      expect(links[0].href).toBe(linkHrefTemplate + 0);
-    });
+    describe('attributes', () => {
+      it('href is the link href attribute', () => {
+        expect(links[0].href).toBe(linkHrefTemplate + 0);
+      });
 
-    it('link add_date attribute is correct', () => {
-      expect(links[0].addDate).toBe(linkAddDateTemplate.toString());
-    });
+      it('add_date is the link add_date attribute', () => {
+        expect(links[0].addDate).toBe(linkAddDateTemplate.toString());
+      });
 
-    it('link text content is correct', () => {
-      expect(links[0].title.trim()).toBe(linkTextTemplate + 0);
-    });
+      it('text is the link text content', () => {
+        expect(links[0].text.trim()).toBe(linkTextTemplate + 0);
+      });
 
-    it('link category is the header', () => {
-      expect(links[0].category).toBe(SINGLE_LINK_HEADER);
+      it('folder is the link parent folder header', () => {
+        expect(links[0].folder).toBe(SINGLE_LINK_HEADER);
+      });
     });
   });
 
-  describe('two links', () => {
-    const links = getHeaderNextDlSiblingLinks(parsedBody, DOUBLE_LINK_HEADER);
+  describe('folder in root with two links', () => {
+    const links = createFolderLinks(parsedBody, DOUBLE_LINK_HEADER);
 
-    it('finds both links', () => {
+    it('finds two links', () => {
       expect(links).toHaveLength(2);
     });
   });
 
-  describe('sub folder', () => {
-    const links = getHeaderNextDlSiblingLinks(parsedBody, CHILD_FOLDER_HEADER);
+  describe('nested folder', () => {
+    const links = createFolderLinks(parsedBody, CHILD_FOLDER_HEADER);
 
-    it('finds sub folder links', () => {
+    it('finds only links inside the nested folder', () => {
       expect(links).toHaveLength(2);
     });
 
-    it('sub folder links have sub folder category', () => {
+    it('folder attribute is the nested folder name', () => {
       for (const link of links) {
-        expect(link.category).toBe(CHILD_FOLDER_HEADER);
+        expect(link.folder).toBe(CHILD_FOLDER_HEADER);
       }
     });
   });
 
-  describe('parent folder', () => {
-    const links = getHeaderNextDlSiblingLinks(parsedBody, PARENT_FOLDER_HEADER);
+  describe('folder in root with a sub folder', () => {
+    const links = createFolderLinks(parsedBody, PARENT_FOLDER_HEADER);
 
-    it('finds parent folder and sub folder links', () => {
+    it('finds links inside the folder and the nested folder', () => {
       expect(links).toHaveLength(3);
     });
 
-    it('parent folder links have parent folder category', () => {
-      expect(links[2].category).toBe(PARENT_FOLDER_HEADER);
-    });
-
-    it('sub folder links have sub folder category', () => {
-      expect(links[0].category).toBe(CHILD_FOLDER_HEADER);
-      expect(links[1].category).toBe(CHILD_FOLDER_HEADER);
+    describe('folder attribute of the links', () => {
+      it('not inside of the nested folder is the folder name', () => {
+        expect(links[2].folder).toBe(PARENT_FOLDER_HEADER);
+      });
+  
+      it('inside of the nested folder is the nested folder name', () => {
+        expect(links[0].folder).toBe(CHILD_FOLDER_HEADER);
+        expect(links[1].folder).toBe(CHILD_FOLDER_HEADER);
+      });
     });
   });
 
   describe('root folder', () => {
-    const links = getHeaderNextDlSiblingLinks(parsedBody, ROOT_HEADER);
+    const links = createFolderLinks(parsedBody, ROOT_HEADER);
 
     it('finds all links', () => {
       expect(links).toHaveLength(10);
     });
 
-    it('link category is the closest containing folder header name', () => {
-      expect(links[0].category).toBe(SINGLE_LINK_HEADER);
-      expect(links[1].category).toBe(ROOT_HEADER);
-      expect(links[2].category).toBe(DOUBLE_LINK_HEADER);
-      expect(links[3].category).toBe(DOUBLE_LINK_HEADER);
-      expect(links[4].category).toBe(ROOT_HEADER);
-      expect(links[5].category).toBe(CHILD_FOLDER_HEADER);
-      expect(links[6].category).toBe(CHILD_FOLDER_HEADER);
-      expect(links[7].category).toBe(PARENT_FOLDER_HEADER);
-      expect(links[8].category).toBe(ROOT_HEADER);
-      expect(links[9].category).toBe(ROOT_HEADER);
+    it('the folder attribute of each link is the containing folder header name', () => {
+      expect(links[0].folder).toBe(SINGLE_LINK_HEADER);
+      expect(links[1].folder).toBe(ROOT_HEADER);
+      expect(links[2].folder).toBe(DOUBLE_LINK_HEADER);
+      expect(links[3].folder).toBe(DOUBLE_LINK_HEADER);
+      expect(links[4].folder).toBe(ROOT_HEADER);
+      expect(links[5].folder).toBe(CHILD_FOLDER_HEADER);
+      expect(links[6].folder).toBe(CHILD_FOLDER_HEADER);
+      expect(links[7].folder).toBe(PARENT_FOLDER_HEADER);
+      expect(links[8].folder).toBe(ROOT_HEADER);
+      expect(links[9].folder).toBe(ROOT_HEADER);
     });
   });
 
@@ -364,16 +368,16 @@ describe('htmlParser', () => {
     const missingHeader = 'This does not exist';
 
     expect(() =>
-      getHeaderNextDlSiblingLinks(parsedBody, missingHeader),
+      createFolderLinks(parsedBody, missingHeader),
     ).toThrow(Error);
   });
 
-  it('error is thrown if parent dl tag is not closed', () => {
+  it('error is thrown if parent tag is not closed', () => {
     const header = 'My header';
     const badString =
       '<body><h3>' + header + '</h3><dl><a href="link">txt</a></body>';
 
-    expect(() => getHeaderNextDlSiblingLinks(badString, header)).toThrow(
+    expect(() => createFolderLinks(badString, header)).toThrow(
       /tag 'dl' was not/i,
     );
   });

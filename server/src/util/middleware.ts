@@ -1,12 +1,12 @@
 import { ErrorRequestHandler, RequestHandler } from 'express';
-import { RawLinkError } from '../errors';
-import { RawLink } from '../types';
+import { FolderLinkError } from '../errors';
+import { FolderLink } from '../types';
 
-const rawLinkToString = (rawLink: RawLink) => {
-  const { href, title, addDate } = rawLink;
+const folderLinkToString = (folderLink: FolderLink) => {
+  const { href, text, addDate } = folderLink;
   return (
-    '{ title: ' +
-    title +
+    '{ text: ' +
+    text +
     ', attr: { href: ' +
     href +
     ', add_date: ' +
@@ -35,9 +35,9 @@ export const errorHandler: ErrorRequestHandler = (
 
   const { message } = error;
 
-  if (error instanceof RawLinkError) {
+  if (error instanceof FolderLinkError) {
     return res.status(400).send({
-      message: message + ': ' + rawLinkToString(error.rawLink),
+      message: message + ': ' + folderLinkToString(error.folderLink),
     });
   }
 

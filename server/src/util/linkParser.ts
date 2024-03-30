@@ -1,5 +1,5 @@
-import { RawLinkError } from '../errors';
-import { Album, CategoryLink } from '../types';
+import { FolderLinkError } from '../errors';
+import { AlbumBase, FolderLink } from '../types';
 
 /**
  *
@@ -46,30 +46,30 @@ const getAddDate = (addDate: string | undefined): Date => {
 /**
  * /^(artist) - (title) \((published)\)$/
  *
- * @param linkTitle
+ * @param text
  * @returns
  */
-const getTitleDetails = (linkTitle: string) => {
+const getTextContentDetails = (text: string) => {
   const ARTIST_TITLE_SEPARATOR = ' - ';
   const PUBLISHED_PATTERN = / \((\d{4})\)$/g;
 
-  const first = linkTitle.split(ARTIST_TITLE_SEPARATOR);
+  const first = text.split(ARTIST_TITLE_SEPARATOR);
   if (first.length !== 2) {
     throw new Error(
-      `The artist and album must be separated with a single '${ARTIST_TITLE_SEPARATOR}' in the title`,
+      `The artist and album must be separated with a single '${ARTIST_TITLE_SEPARATOR}' in the text content`,
     );
   }
 
   const second = first[1].split(PUBLISHED_PATTERN);
   if (second.length !== 3) {
     throw new Error(
-      `The title must end to four figure publish year in parenthesis`,
+      `The text content must end to four figure publish year in parenthesis`,
     );
   }
 
   const published = Number(second[1]);
   if (isNaN(published)) {
-    throw new Error('The publish year in the title is not a number');
+    throw new Error('The publish year in the text content is not a number');
   }
 
   return {
@@ -79,23 +79,24 @@ const getTitleDetails = (linkTitle: string) => {
   };
 };
 
-export const createAlbumsFromLinks = (links: CategoryLink[]): Album[] => {
-  return links.map((link) => {
-    const { title, href, category, addDate } = link;
+export const createAlbumBases = (folderLinks: FolderLink[]): AlbumBase[] => {
+  return folderLinks.map((folderLink) => {
+    const { text, href, folder, addDate } = folderLink;
 
     try {
       return {
-        category,
         videoId: getVideoId(href),
+        ...getTextContentDetails(text.trim()),
+        category: folder,
         addDate: getAddDate(addDate),
-        ...getTitleDetails(title.trim()),
       };
+
     } catch (error: unknown) {
       let message = 'Unknown error happened';
       if (error instanceof Error) {
         message = error.message;
       }
-      throw new RawLinkError(message, link);
+      throw new FolderLinkError(message, folderLink);
     }
   });
 };

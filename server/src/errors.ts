@@ -1,11 +1,11 @@
-import { RawLink } from './types';
+import { FolderLink } from './types';
 
-export class RawLinkError extends Error {
-  rawLink: RawLink;
+export class FolderLinkError extends Error {
+  folderLink: FolderLink;
 
-  constructor(message: string, rawLink: RawLink) {
+  constructor(message: string, folderLink: FolderLink) {
     super(message);
     this.name = 'LinkError';
-    this.rawLink = rawLink;
+    this.folderLink = folderLink;
   }
 }

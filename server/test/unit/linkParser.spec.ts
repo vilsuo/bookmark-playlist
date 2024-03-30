@@ -1,23 +1,20 @@
-import { Album, CategoryLink } from '../../src/types';
-import {
-  convertEpoch,
-  createAlbumsFromLinks,
-} from '../../src/util/linkParser';
+import { AlbumBase, FolderLink } from '../../src/types';
+import { convertEpoch, createAlbumBases } from '../../src/util/linkParser';
 
-const link: CategoryLink = {
-  title: 'Annihilator - Alice In Hell (1989)',
+const link: FolderLink = {
+  text: 'Annihilator - Alice In Hell (1989)',
   href: 'https://www.youtube.com/watch?v=IdRn9IYWuaQ',
   addDate: '1711022745',
-  category: 'Thrash',
+  folder: 'Thrash',
 };
 
-const expectToThrow = (invalidLink: CategoryLink) => {
-  expect(() => createAlbumsFromLinks([invalidLink])).toThrow(Error);
+const expectToThrow = (invalidLink: FolderLink) => {
+  expect(() => createAlbumBases([invalidLink])).toThrow(Error);
 };
 
-describe('createAlbumsFromLinks', () => {
+describe('createAlbumBases', () => {
   describe('with valid link syntax', () => {
-    const expected: Album = {
+    const expected: AlbumBase = {
       videoId: 'IdRn9IYWuaQ',
       artist: 'Annihilator',
       title: 'Alice In Hell',
@@ -26,7 +23,7 @@ describe('createAlbumsFromLinks', () => {
       addDate: convertEpoch(1711022745),
     };
 
-    const albums = createAlbumsFromLinks([link]);
+    const albums = createAlbumBases([link]);
     const album = albums[0];
 
     it('a single album is returned', () => {
@@ -62,73 +59,57 @@ describe('createAlbumsFromLinks', () => {
 
   describe('invalid href throws an Error', () => {
     it('missing href', () => {
-      const invalidLink = { ...link, href: undefined };
-
-      expectToThrow(invalidLink);
+      expectToThrow({ ...link, href: undefined });
     });
 
     it('invalid href prefix', () => {
-      const invalidLink = {
+      expectToThrow({
         ...link,
         href: 'https://www.youtub.com/watch?v=IdRn9IYWuaQ',
-      };
-
-      expectToThrow(invalidLink);
+      });
     });
 
     it('too short href', () => {
-      const invalidLink = {
+      expectToThrow({
         ...link,
         href: 'https://www.youtube.com/watch?v=IdRn9IYWua',
-      };
-
-      expectToThrow(invalidLink);
+      });
     });
   });
 
   describe('invalid add_date throws an Error', () => {
     it('missing add_date', () => {
-      const invalidLink = { ...link, addDate: undefined };
-
-      expectToThrow(invalidLink);
+      expectToThrow({ ...link, addDate: undefined });
     });
 
     it('NaN add_date', () => {
-      const invalidLink = {
+      expectToThrow({
         ...link,
         addDate: 'Thursday, March 21, 2024 12:05:45 PM',
-      };
-
-      expectToThrow(invalidLink);
+      });
     });
   });
 
   describe('invalid title throws an Error', () => {
     it('title without artist - album separator', () => {
-      const invalidLink = {
+      expectToThrow({
         ...link,
-        title: 'Annihilator Alice In Hell (1989)',
-      };
-
-      expectToThrow(invalidLink);
+        text: 'Annihilator Alice In Hell (1989)',
+      });
     });
 
     it('title with too small year', () => {
-      const invalidLink = {
+      expectToThrow({
         ...link,
-        title: 'Annihilator - Alice In Hell (198)',
-      };
-
-      expectToThrow(invalidLink);
+        text: 'Annihilator - Alice In Hell (198)',
+      });
     });
 
     it('title with extra letters', () => {
-      const invalidLink = {
+      expectToThrow({
         ...link,
-        title: 'Annihilator - Alice In Hell (1989) full album',
-      };
-
-      expectToThrow(invalidLink);
+        text: 'Annihilator - Alice In Hell (1989) full album',
+      });
     });
   });
 });
