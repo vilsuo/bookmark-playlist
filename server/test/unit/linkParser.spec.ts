@@ -1,5 +1,5 @@
 import { AlbumBase, FolderLink } from '../../src/types';
-import { convertEpoch, createAlbumBases } from '../../src/util/linkParser';
+import { convertEpoch, createAlbumBases } from '../../src/bookmark/linkParser';
 
 const link: FolderLink = {
   text: 'Annihilator - Alice In Hell (1989)',

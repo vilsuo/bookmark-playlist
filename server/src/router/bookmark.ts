@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 
 import { FIELD_NAME, singleUpload } from '../util/fileUpload';
-import * as bookmarkService from '../services/bookmarkService';
+import * as bookmark from '../bookmark';
 
 const router = express();
 
@@ -20,12 +20,12 @@ router.post('/', singleUpload, async (req: Request, res: Response) => {
     return res.status(400).send({ message: 'Field is missing' });
   }
 
-  const albums = bookmarkService.getAlbums(file, field);
+  const albums = bookmark.getAlbums(file, field);
 
   return res
     .setHeader(
       'Content-Disposition',
-      `attachment; filename="${bookmarkService.createFilename()}"`
+      `attachment; filename="${bookmark.createFilename()}"`
     )
     .status(201)
     .send(albums);

@@ -1,4 +1,4 @@
-import { createFolderLinks } from '../../src/util/htmlParser';
+import { createFolderLinks } from '../../src/bookmark/htmlParser';
 
 type Attributes = Record<string, string>;
 
