@@ -1,12 +1,12 @@
-import { Column, Entity, PrimaryColumn, Repository } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'albums' })
 export class Album {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  videoId!: string; // video id from the link
+  videoId!: string;
 
   @Column()
   artist!: string;
@@ -23,5 +23,3 @@ export class Album {
   @Column()
   addDate!: Date;
 }
-
-export type AlbumRepository = Repository<Album>;
