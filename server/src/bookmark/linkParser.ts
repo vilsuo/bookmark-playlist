@@ -9,24 +9,24 @@ import { AlbumBase, FolderLink } from '../types';
 export const convertEpoch = (epoch: number) => new Date(epoch * 1000);
 
 const getVideoId = (href: string | undefined): string => {
-  const VIDEO_PREFIX = 'https://www.youtube.com/watch?v=';
+  const HREF_PREFIX = 'https://www.youtube.com/watch?v=';
   const VIDEO_ID_LENGTH = 11;
 
   if (!href) {
     throw new Error('Link href attribute is missing');
   }
 
-  if (!href.startsWith(VIDEO_PREFIX)) {
+  if (!href.startsWith(HREF_PREFIX)) {
     throw new Error('Link href attribute is not youtube');
   }
 
-  if (href.length < VIDEO_PREFIX.length + VIDEO_ID_LENGTH) {
+  if (href.length < HREF_PREFIX.length + VIDEO_ID_LENGTH) {
     throw new Error('Link href attribute is too short');
   }
 
   return href.substring(
-    VIDEO_PREFIX.length,
-    VIDEO_PREFIX.length + VIDEO_ID_LENGTH,
+    HREF_PREFIX.length,
+    HREF_PREFIX.length + VIDEO_ID_LENGTH,
   );
 };
 
@@ -87,7 +87,7 @@ export const createAlbumBases = (folderLinks: FolderLink[]): AlbumBase[] => {
       return {
         videoId: getVideoId(href),
         ...getTextContentDetails(text.trim()),
-        category: folder,
+        category: folder.trim(),
         addDate: getAddDate(addDate),
       };
 

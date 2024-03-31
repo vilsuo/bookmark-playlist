@@ -1,4 +1,5 @@
 import { createFolderLinks } from '../../src/bookmark/htmlParser';
+import { FolderLink } from '../../src/types';
 
 type Attributes = Record<string, string>;
 
@@ -275,6 +276,10 @@ const parsedBody = parseElement(body);
 // console.log('body element', body);
 // console.log('parsed', parsedBody);
 
+const expectFolder = (folderLink: FolderLink, expected: string) => {
+  expect(folderLink.folder.trim()).toBe(expected);
+};
+
 describe('htmlParser', () => {
   describe('folder in root with a single link', () => {
     const links = createFolderLinks(parsedBody, SINGLE_LINK_HEADER);
@@ -297,7 +302,7 @@ describe('htmlParser', () => {
       });
 
       it('folder is the link parent folder header', () => {
-        expect(links[0].folder).toBe(SINGLE_LINK_HEADER);
+        expectFolder(links[0], SINGLE_LINK_HEADER);
       });
     });
   });
@@ -319,7 +324,7 @@ describe('htmlParser', () => {
 
     it('folder attribute is the nested folder name', () => {
       for (const link of links) {
-        expect(link.folder).toBe(CHILD_FOLDER_HEADER);
+        expectFolder(link, CHILD_FOLDER_HEADER);
       }
     });
   });
@@ -333,12 +338,12 @@ describe('htmlParser', () => {
 
     describe('folder attribute of the links', () => {
       it('not inside of the nested folder is the folder name', () => {
-        expect(links[2].folder).toBe(PARENT_FOLDER_HEADER);
+        expectFolder(links[2], PARENT_FOLDER_HEADER);
       });
   
       it('inside of the nested folder is the nested folder name', () => {
-        expect(links[0].folder).toBe(CHILD_FOLDER_HEADER);
-        expect(links[1].folder).toBe(CHILD_FOLDER_HEADER);
+        expectFolder(links[0], CHILD_FOLDER_HEADER);
+        expectFolder(links[1], CHILD_FOLDER_HEADER);
       });
     });
   });
@@ -351,25 +356,25 @@ describe('htmlParser', () => {
     });
 
     it('the folder attribute of each link is the containing folder header name', () => {
-      expect(links[0].folder).toBe(SINGLE_LINK_HEADER);
-      expect(links[1].folder).toBe(ROOT_HEADER);
-      expect(links[2].folder).toBe(DOUBLE_LINK_HEADER);
-      expect(links[3].folder).toBe(DOUBLE_LINK_HEADER);
-      expect(links[4].folder).toBe(ROOT_HEADER);
-      expect(links[5].folder).toBe(CHILD_FOLDER_HEADER);
-      expect(links[6].folder).toBe(CHILD_FOLDER_HEADER);
-      expect(links[7].folder).toBe(PARENT_FOLDER_HEADER);
-      expect(links[8].folder).toBe(ROOT_HEADER);
-      expect(links[9].folder).toBe(ROOT_HEADER);
+      expectFolder(links[0], SINGLE_LINK_HEADER);
+      expectFolder(links[1], ROOT_HEADER);
+      expectFolder(links[2], DOUBLE_LINK_HEADER);
+      expectFolder(links[3], DOUBLE_LINK_HEADER);
+      expectFolder(links[4], ROOT_HEADER);
+      expectFolder(links[5], CHILD_FOLDER_HEADER);
+      expectFolder(links[6], CHILD_FOLDER_HEADER);
+      expectFolder(links[7], PARENT_FOLDER_HEADER);
+      expectFolder(links[8], ROOT_HEADER);
+      expectFolder(links[9], ROOT_HEADER);
     });
   });
 
   it('error is thrown when header is not found', () => {
     const missingHeader = 'This does not exist';
 
-    expect(() =>
-      createFolderLinks(parsedBody, missingHeader),
-    ).toThrow(Error);
+    expect(() => createFolderLinks(parsedBody, missingHeader)).toThrow(
+      /was not found/i,
+    );
   });
 
   it('error is thrown if parent tag is not closed', () => {

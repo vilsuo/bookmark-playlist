@@ -8,8 +8,8 @@ const TAG_OPEN = `<${TAG}>`;
 const TAG_CLOSE = `</${TAG}>`;
 
 type HeaderTextContentInfo = {
-  startingIndex: number;      // header text content start index
-  trimmedTextContent: string; // TRIMMED header text content
+  startingIndex: number;  // header text content start index
+  textContent: string;    // header text content
 };
 
 /**
@@ -25,8 +25,8 @@ type HeaderTextContentInfo = {
 const getHeaderTextContentInfo = (html: string, index: number): HeaderTextContentInfo => {
   for (let i = index; i >= 0; i--) {
     if (html.at(i) === '>') {
-      const trimmedTextContent = html.substring(i + 1, index).trim();
-      return { startingIndex: i, trimmedTextContent };
+      const textContent = html.substring(i + 1, index);
+      return { startingIndex: i, textContent };
     }
   }
   throw new Error('Header was not found');
@@ -153,10 +153,10 @@ export const createFolderLinks = (html: string, header: string): FolderLink[] =>
   const { headerInfoes } = getFolderStructure(html, header);
 
   // nested folders are calculted multiple times, each time overriding the link category
-  for (const { startingIndex, trimmedTextContent } of headerInfoes) {
+  for (const { startingIndex, textContent } of headerInfoes) {
     const searchString = html.substring(startingIndex);
 
-    const { openedIndexes, closedIndexes } = getFolderStructure(searchString, trimmedTextContent);
+    const { openedIndexes, closedIndexes } = getFolderStructure(searchString, textContent);
 
     const blockStart = openedIndexes[0];
     const blockEnd = closedIndexes[closedIndexes.length - 1];
@@ -168,7 +168,7 @@ export const createFolderLinks = (html: string, header: string): FolderLink[] =>
     for (const link of links) {
       map.set(
         link.text, // is link text a valid key?
-        { ...link, folder: trimmedTextContent },    // trim only here!!!!
+        { ...link, folder: textContent }, 
       );
     }
   }
