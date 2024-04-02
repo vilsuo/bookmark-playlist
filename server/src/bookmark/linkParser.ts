@@ -1,3 +1,4 @@
+import { VIDEO_ID_LENGTH } from '../album/album.decorators';
 import { FolderLinkError } from '../errors';
 import { AlbumBase, FolderLink } from '../types';
 
@@ -10,7 +11,6 @@ export const convertEpoch = (epoch: number) => new Date(epoch * 1000);
 
 const getVideoId = (href: string | undefined): string => {
   const HREF_PREFIX = 'https://www.youtube.com/watch?v=';
-  const VIDEO_ID_LENGTH = 11;
 
   if (!href) {
     throw new Error('Link href attribute is missing');
@@ -51,7 +51,7 @@ const getAddDate = (addDate: string | undefined): Date => {
  */
 const getTextContentDetails = (text: string) => {
   const ARTIST_TITLE_SEPARATOR = ' - ';
-  const PUBLISHED_PATTERN = / \((\d{4})\)$/g;
+  const PUBLISHED_PATTERN = / \((\d+)\)$/g;
 
   const first = text.split(ARTIST_TITLE_SEPARATOR);
   if (first.length !== 2) {
@@ -63,7 +63,7 @@ const getTextContentDetails = (text: string) => {
   const second = first[1].split(PUBLISHED_PATTERN);
   if (second.length !== 3) {
     throw new Error(
-      `The text content must end to four figure publish year in parenthesis`,
+      `The text content must end to publish year in parenthesis`,
     );
   }
 
