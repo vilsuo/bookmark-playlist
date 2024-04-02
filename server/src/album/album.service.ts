@@ -11,15 +11,21 @@ export const findAll = async (queryOptions: AlbumQueryOptions = {}) => {
   return await AlbumRepository.find({ where: queryOptions });
 };
 
-export const createAndSave = async (base: AlbumBase): Promise<Album> => {
+export const createAndSave = async (base: AlbumBase): Promise<Album | undefined> => {
   return await AlbumRepository.createAndSave(base);
+};
+
+const notNull = (value: Album | undefined): value is Album => {
+  return value != undefined;
 };
 
 export const createAndSaveMany = async (bases: AlbumBase[]): Promise<Album[]> => {
   return AppDataSource.transaction(async (manager) => {
     const albumsRepository = manager.withRepository(AlbumRepository);
-    return await Promise.all(bases.map(
+    const nullable = await Promise.all(bases.map(
       async (base) => await albumsRepository.createAndSave(base)
     ));
+
+    return nullable.filter(notNull);
   });
 };

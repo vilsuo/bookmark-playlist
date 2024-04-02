@@ -9,12 +9,22 @@ export const AlbumRepository = AppDataSource.getRepository(Album).extend({
     return await this.existsBy({ artist, title });
   },
 
-  async createAndSave(base: AlbumBase) {
-    const album = this.create(base);
-
+  /**
+   * Creates an {@link Album} if the album with  given artist and title does not
+   * already exist
+   * 
+   * @param base album to be created
+   * @returns 
+   */
+  async createAndSave(base: AlbumBase): Promise<Album | undefined> {
     try {
-      await validateOrReject(album);
-      return await this.save(album);
+      const exists = await this.existsByArtistAndTitle(base.artist, base.title);
+      if (!exists) {
+        const album = this.create(base);
+        await validateOrReject(album);
+        return await this.save(album);
+      }
+      return undefined;
   
     } catch (error: unknown) {
       if (isValidationErrorArray(error)) {
