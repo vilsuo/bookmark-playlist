@@ -1,7 +1,7 @@
 import { parse as parseHtml, HTMLElement } from 'node-html-parser';
 import { FolderLink, Link } from '../types';
 
-const HEADER_END = /^<\/h[1-6]>/g;
+const HEADER_END = /^<\/h[1-6]>/;
 
 const TAG = 'dl';
 const TAG_OPEN = `<${TAG}>`;
@@ -26,16 +26,21 @@ const getHeaderTextContentInfo = (html: string, index: number): HeaderTextConten
   for (let i = index; i >= 0; i--) {
     if (html.at(i) === '>') {
       const textContent = html.substring(i + 1, index);
-      return { startingIndex: i, textContent };
+      return { startingIndex: i + 1, textContent };
     }
   }
   throw new Error('Header was not found');
 };
 
+// https://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript/3561711#3561711
+const escapeRegex = (string: string) => {
+  return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
 type FolderStructure = {
-  openedIndexes: number[];  // starting indexes of TAG_OPEN
+  openedIndexes: number[]; // starting indexes of TAG_OPEN
   closedIndexes: number[]; // ending indexes of TAG_CLOSE
-  headerInfoes: HeaderTextContentInfo[]; // 
+  headerInfoes: HeaderTextContentInfo[];
 };
 
 /**
@@ -72,7 +77,7 @@ const getFolderStructure = (html: string, header: string): FolderStructure => {
   const searchString = html.toLowerCase();
 
   // important to contain opening '>' so the header can be found
-  const startRegex = new RegExp(`>\\s*${header.toLowerCase()}\\s*</h[1-6]>`);
+  const startRegex = new RegExp(`>\\s*${escapeRegex(header.toLowerCase())}\\s*</h[1-6]>`);
   const startIdx = searchString.search(startRegex);
 
   if (startIdx === -1) throw new Error(`Header '${header}' was not found`);
@@ -115,6 +120,8 @@ const getFolderStructure = (html: string, header: string): FolderStructure => {
     currentIdx++;
   }
 
+  // console.log('headerInfoes', headerInfoes);
+
   return {
     openedIndexes: openedTags,
     closedIndexes: closedTags,
@@ -154,7 +161,8 @@ export const createFolderLinks = (html: string, header: string): FolderLink[] =>
 
   // nested folders are calculted multiple times, each time overriding the link category
   for (const { startingIndex, textContent } of headerInfoes) {
-    const searchString = html.substring(startingIndex);
+    // back off one to contain the opening header tags '>' so root header can be found
+    const searchString = html.substring(startingIndex - 1);
 
     const { openedIndexes, closedIndexes } = getFolderStructure(searchString, textContent);
 
