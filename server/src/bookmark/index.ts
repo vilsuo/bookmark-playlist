@@ -10,7 +10,7 @@ export const createFilename = () => `bookmarks-${new Date().valueOf()}.json`;
  * @param field 
  * @returns 
  */
-export const getAlbums = (file: Express.Multer.File, field: string): AlbumBase[] => {
+export const getAlbumBases = (file: Express.Multer.File, field: string): AlbumBase[] => {
   // convert file to string
   const fileString = file.buffer.toString();
 
