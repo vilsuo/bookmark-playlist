@@ -1,19 +1,5 @@
 import { ErrorRequestHandler, RequestHandler } from 'express';
-import { FolderLinkError } from '../errors';
-import { FolderLink } from '../types';
-
-const folderLinkToString = (folderLink: FolderLink) => {
-  const { href, text, addDate } = folderLink;
-  return (
-    '{ text: ' +
-    text +
-    ', attr: { href: ' +
-    href +
-    ', add_date: ' +
-    addDate +
-    '} }'
-  );
-};
+import { AlbumValidationError, FolderLinkError } from '../errors';
 
 export const requestLogger: RequestHandler = (req, _res, next) => {
   console.log('Method:', req.method);
@@ -25,20 +11,21 @@ export const requestLogger: RequestHandler = (req, _res, next) => {
   return next();
 };
 
-export const errorHandler: ErrorRequestHandler = (
-  error: Error,
-  _req,
-  res,
-  _next,
-) => {
+export const errorHandler: ErrorRequestHandler = (error: Error, _req, res, _next) => {
   console.log('Error handler', error);
 
   const { message } = error;
 
   if (error instanceof FolderLinkError) {
+    console.log('folder link error handler');
     return res.status(400).send({
-      message: message + ': ' + folderLinkToString(error.folderLink),
+      message: `${message}: ${error.getDetails()}`,
     });
+  } else if (error instanceof AlbumValidationError) {
+    console.log('entity validation error middleware');
+    return res.status(400).send({
+      message: `${message}: ${error.getDetails()}`,
+    })
   }
 
   return res.status(400).send({ message });
