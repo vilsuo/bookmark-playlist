@@ -91,17 +91,17 @@ describe('createAlbumBases', () => {
   });
 
   describe('invalid title throws an Error', () => {
-    it('title without artist - album separator', () => {
+    it('title without artist & album separator', () => {
       expectToThrow({
         ...link,
         text: 'Annihilator Alice In Hell (1989)',
       });
     });
 
-    it('title with too small year', () => {
+    it('title without a publishing year', () => {
       expectToThrow({
         ...link,
-        text: 'Annihilator - Alice In Hell (198)',
+        text: 'Annihilator - Alice In Hell',
       });
     });
 
