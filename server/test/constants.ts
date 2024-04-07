@@ -1,3 +1,4 @@
+import { DeepPartial } from 'typeorm';
 import { Album } from '../src/album/album.entity';
 import { convertEpoch } from '../src/bookmark/linkParser';
 import { AlbumBase, FolderLink } from '../src/types';
@@ -18,21 +19,18 @@ export const ALBUM_BASE: AlbumBase = {
   addDate: convertEpoch(Number(FOLDER_LINK.addDate)),
 };
 
-export const createAlbum = (base: AlbumBase) => {
+export const createAlbum = (obj: DeepPartial<Album>) => {
+  const { id, videoId, artist, title, published, category, addDate } = obj;
   const album = new Album();
-  album.videoId = base.videoId;
-  album.artist = base.artist;
-  album.title = base.title;
-  album.published = base.published;
-  album.category = base.category;
-  album.addDate = base.addDate;
+
+  if (id !== undefined) album.id = id;
+  if (videoId !== undefined) album.videoId = videoId;
+  if (artist !== undefined) album.artist = artist;
+  if (title !== undefined) album.title = title;
+  if (published !== undefined) album.published = published;
+  if (category !== undefined) album.category = category;
+  if (addDate !== undefined && typeof addDate.toString === 'function') {
+    album.addDate = new Date(addDate.toString());
+  }
   return album;
 };
-
-//export const ALBUM_CREATED = new Album();
-//ALBUM_CREATED.videoId = ALBUM_BASE.videoId;
-//ALBUM_CREATED.artist = ALBUM_BASE.artist;
-//ALBUM_CREATED.title = ALBUM_BASE.title;
-//ALBUM_CREATED.published = ALBUM_BASE.published;
-//ALBUM_CREATED.category = ALBUM_BASE.category;
-//ALBUM_CREATED.addDate = ALBUM_BASE.addDate;

@@ -1,26 +1,9 @@
 import { Album } from './album.entity';
 import { AlbumRepository } from './album.repository';
-import { ALBUM_BASE } from '../../test/constants';
+import { ALBUM_BASE, createAlbum } from '../../test/constants';
 import { AppDataSource } from '../util/dataSource';
-import { DeepPartial } from 'typeorm';
 import * as validator from 'class-validator';
 import { AlbumValidationError } from '../errors';
-
-// TODO: handle this better
-const assignAll = (obj: DeepPartial<Album>, album: Album) => {
-  const { id, videoId, artist, title, published, category, addDate } = obj;
-
-  if (id !== undefined) album.id = id;
-  if (videoId !== undefined) album.videoId = videoId;
-  if (artist !== undefined) album.artist = artist;
-  if (title !== undefined) album.title = title;
-  if (published !== undefined) album.published = published;
-  if (category !== undefined) album.category = category;
-  if (addDate !== undefined && typeof addDate.toString === 'function') {
-    album.addDate = new Date(addDate.toString());
-  }
-  return album;
-};
 
 const existsSpy = jest
   .spyOn(AlbumRepository, 'existsBy')
@@ -72,7 +55,7 @@ describe('createAndSave', () => {
   describe('when album does not exist', () => {
     let value: Album | undefined;
 
-    const createdAlbum = assignAll(ALBUM_BASE, new Album());
+    const createdAlbum = createAlbum(ALBUM_BASE);
 
     beforeEach(async () => {
       existsSpy.mockResolvedValueOnce(false);
@@ -80,21 +63,21 @@ describe('createAndSave', () => {
     });
 
     describe('without validation errors', () => {
+      const id = 123;
       beforeEach(async () => {
         validateSpy.mockImplementationOnce(async () => { console.log('Mocked!'); });
 
-        const album = new Album();
-        album.id = 1;
-        saveSpy.mockResolvedValueOnce(assignAll(ALBUM_BASE, album));
+        saveSpy.mockImplementationOnce(async () => {
+          const album = createAlbum(ALBUM_BASE);
+          album.id = id;
+          return album;
+        });
         value = await AlbumRepository.createAndSave(ALBUM_BASE);
       });
 
       it('created album is returned', () => {
         expect(value).toStrictEqual(
-          expect.objectContaining({
-            id: expect.any(Number),
-            ...ALBUM_BASE,
-          }),
+          expect.objectContaining({ id, ...ALBUM_BASE }),
         );
       });
   
