@@ -1,27 +1,16 @@
-import { AlbumBase, FolderLink } from '../../src/types';
-import { convertEpoch, createAlbumBases } from '../../src/bookmark/linkParser';
-
-const link: FolderLink = {
-  text: 'Annihilator - Alice In Hell (1989)',
-  href: 'https://www.youtube.com/watch?v=IdRn9IYWuaQ',
-  addDate: '1711022745',
-  folder: 'Thrash',
-};
+import { ALBUM_BASE, FOLDER_LINK } from '../../test/constants';
+import { FolderLink } from '../types';
+import { createAlbumBases } from './linkParser';
 
 const expectToThrow = (invalidLink: FolderLink) => {
   expect(() => createAlbumBases([invalidLink])).toThrow(Error);
 };
 
 describe('createAlbumBases', () => {
+  const link = FOLDER_LINK;
+
   describe('with valid link syntax', () => {
-    const expected: AlbumBase = {
-      videoId: 'IdRn9IYWuaQ',
-      artist: 'Annihilator',
-      title: 'Alice In Hell',
-      published: 1989,
-      category: 'Thrash',
-      addDate: convertEpoch(1711022745),
-    };
+    const expected = ALBUM_BASE;
 
     const albums = createAlbumBases([link]);
     const album = albums[0];

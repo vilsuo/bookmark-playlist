@@ -1,5 +1,5 @@
-import { createFolderLinks } from '../../src/bookmark/htmlParser';
-import { FolderLink } from '../../src/types';
+import { createFolderLinks } from './htmlParser';
+import { FolderLink } from '../types';
 
 type Attributes = Record<string, string>;
 
