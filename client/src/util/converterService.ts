@@ -1,10 +1,10 @@
 import axios from 'axios';
 import fileDownload from 'js-file-download';
 
-const BASE_URL = '/api';
+const BASE_URL = '/api/bookmark';
 
 const convertBookmarks = async (formData: FormData) => {
-  return await axios.post(`${BASE_URL}/bookmark`, formData, 
+  return await axios.post(BASE_URL, formData, 
     { responseType: 'blob' }
   );
 };
