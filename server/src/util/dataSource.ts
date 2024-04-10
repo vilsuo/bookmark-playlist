@@ -6,7 +6,7 @@ export const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL,
   entities: [Album],
   synchronize: process.env.NODE_ENV !== 'production',
-  logging: true,
+  logging: false,
 });
 
 export const connectToDatabase = async () => {
