@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Album, SidebarType,  } from './types';
 import SidebarOpener from './components/sidebars/opener/SidebarOpener';
 import Sidebar from './components/sidebars/Sidebar';
 import Main from './components/Main';
+import * as albumService from './util/albumService';
 
 const App = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const responseData = await albumService.getAlbums();
+      setAlbums(responseData);
+    };
+
+    fetch();
+  }, []);
 
   // the current opened sidebar
   const [sidebarType, setSidebarType] = useState<SidebarType | null>(null);
