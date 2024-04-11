@@ -3,13 +3,7 @@ import { AlbumRepository } from './album.repository';
 import { Album } from './album.entity';
 import { AppDataSource } from '../util/dataSource';
 
-type AlbumQueryOptions = {
-  category?: string;
-};
-
-export const findAll = async (queryOptions: AlbumQueryOptions = {}) => {
-  return await AlbumRepository.find({ where: queryOptions });
-};
+export const findAll = async () => await AlbumRepository.find();
 
 export const createIfNotExists = async (base: AlbumBase): Promise<Album | undefined> => {
   const exists = await AlbumRepository.existsByArtistAndTitle(
@@ -49,20 +43,24 @@ export const createIfNotExistsMany = async (bases: AlbumBase[]): Promise<Album[]
     return nullable.filter(notNull);
   });
 };
-/*
-export const update = async (id: number, values: AlbumUpdate) => {
+
+export const update = async (id: number, values: AlbumBase) => {
   const album = await AlbumRepository.findOneBy({ id });
   if (!album) {
     throw new Error('Album does not exist');
   }
 
-  const { videoId, artist, title, published, category } = values;
-  if (videoId !== undefined) { album.videoId = videoId; }
-  if (artist !== undefined) { album.artist = artist; }
-  if (title !== undefined) { album.title = title; }
-  if (published !== undefined) { album.published = published; }
-  if (category !== undefined) { album.category = category; }
+  const { videoId, artist, title, published, category, addDate } = values;
+  album.videoId = videoId;
+  album.artist = artist;
+  album.title = title;
+  album.published = published;
+  album.category = category;
+  album.addDate = addDate;
 
-  return AlbumRepository.validateAndSave(album);
+  return await AlbumRepository.validateAndSave(album);
 };
-*/
+
+export const remove = async (id: number) => {
+  await AlbumRepository.delete({ id });
+};

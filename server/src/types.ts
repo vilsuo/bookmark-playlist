@@ -10,4 +10,7 @@ export type FolderLink = Link & {
   folder: string;
 };
 
+/**
+ * type for creating a new {@link Album}
+ */
 export type AlbumBase = Omit<Album, 'id'>;

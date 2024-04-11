@@ -12,6 +12,7 @@
     "test:up": "docker compose -f compose.yml -f compose-test.yml up",
     "test:down": "docker compose -f compose.yml -f compose-test.yml down",
     "test:rebuild": "docker compose -f compose.yml -f compose-test.yml up --build",
+    "test:psql": "docker exec -it playlist-db-test psql --username=username --dbname=test",
     "psql": "docker exec -it playlist-db-dev psql --username=username --dbname=dev"
   },
   "author": "",

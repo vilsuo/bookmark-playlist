@@ -3,6 +3,7 @@ import { AlbumBase } from '../types';
 import { AppDataSource } from '../util/dataSource';
 import { AlbumRepository } from './album.repository';
 import { AlbumValidationError } from '../errors';
+import { Album } from './album.entity';
 
 const bases: AlbumBase[] = [
   {
@@ -28,7 +29,6 @@ describe('albumService', () => {
   const badBase = { ...bases[1], videoId: '42' };
 
   beforeAll(async () => {
-    console.log('NODE_ENV:', process.env.NODE_ENV);
     await AppDataSource.initialize();
   });
   
@@ -120,5 +120,44 @@ describe('albumService', () => {
         expect.objectContaining(bases[1])
       );
     });
+  });
+
+  describe('update', () => {
+    let album: Album | undefined;
+
+    beforeEach(async () => {
+      album = await albumService.createIfNotExists(base);
+    });
+
+    it('can update album', async () => {
+      const result = await albumService.update(album!.id, bases[1]);
+      expect(result).toStrictEqual(
+        expect.objectContaining({
+          id: album!.id,  // old id
+          ...bases[1],  // new values
+        })
+      );
+
+      const albums = await albumService.findAll();
+      expect(albums).toHaveLength(1);
+      expect(albums[0]).toStrictEqual(result);
+    });
+
+    it('can not update album with bad values', async () => {
+      await expect(async () => await albumService.update(album!.id, badBase))
+        .rejects.toThrow(AlbumValidationError);
+
+      const albums = await albumService.findAll();
+      expect(albums).toHaveLength(1);
+      expect(albums[0]).toStrictEqual(album);
+    });
+  });
+
+  it('can remove an album', async () => {
+    const album = await albumService.createIfNotExists(base);
+
+    await albumService.remove(album!.id);
+
+    expect(await albumService.findAll()).toHaveLength(0);
   });
 });
