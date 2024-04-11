@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+
+  server:
+    container_name: playlist-server-test
+    ports:
+      - 3001:3000
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgres://username:password@db-test:5432/test
+    command: npm run dev
+    depends_on:
+      db-test:
+        condition: service_healthy
+
+  client:
+    build:
+      args:
+        VITE_BACKEND_URL: http://server:3000
+    container_name: playlist-client-test
+    ports:
+      - 5174:5173
+    command: npm run dev -- --host
+
+  db-test:
+    image: postgres
+    container_name: playlist-db-test
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: username
+      POSTGRES_DB: test
+    ports:
+      - 6666:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username username --dbname test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

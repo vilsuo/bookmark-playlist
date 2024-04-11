@@ -5,48 +5,16 @@ services:
   server:
     build:
       context: server
-      dockerfile: dev.Dockerfile
-    container_name: playlist-server-dev
+      dockerfile: Dockerfile
     volumes:
       - ./server:/usr/src/app
       - /usr/src/app/node_modules
-    ports:
-      - 3000:3000
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgres://username:password@db:5432/dev
-    command: npm run dev
-    depends_on:
-      db:
-        condition: service_healthy
 
   client:
     build:
       context: client
-      dockerfile: dev.Dockerfile
-      args:
-        VITE_BACKEND_URL: http://server:3000
-    container_name: playlist-client-dev
+      dockerfile: Dockerfile
     volumes:
       - ./client:/usr/src/app
       - /usr/src/app/node_modules
-    ports:
-      - 5173:5173
-    command: npm run dev -- --host
 
-  db:
-    container_name: playlist-db-dev
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: username
-      POSTGRES_DB: dev
-    ports:
-      - 5555:5432
-    volumes:
-      - ./pd_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready --username username --dbname dev"]
-      interval: 5s
-      timeout: 5s
-      retries: 5

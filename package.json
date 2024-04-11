@@ -4,11 +4,14 @@
   "description": "Import your bookmark html file and view it as a playlist",
   "main": "index.js",
   "scripts": {
-    "compose:up": "docker compose up",
-    "compose:down": "docker compose down",
-    "compose:build": "docker compose up --build",
+    "compose:up": "docker compose -f compose.yml -f compose-dev.yml up",
+    "compose:down": "docker compose -f compose.yml -f compose-dev.yml down",
+    "compose:build": "docker compose -f compose.yml -f compose-dev.yml up --build",
     "compose:rebuild": "npm run compose:down && npm run compose:build",
-    "test:server": "docker exec playlist-server-dev npm run test",
+    "test:server": "docker exec playlist-server-test npm run test",
+    "test:up": "docker compose -f compose.yml -f compose-test.yml up",
+    "test:down": "docker compose -f compose.yml -f compose-test.yml down",
+    "test:rebuild": "docker compose -f compose.yml -f compose-test.yml up --build",
     "psql": "docker exec -it playlist-db-dev psql --username=username --dbname=dev"
   },
   "author": "",
