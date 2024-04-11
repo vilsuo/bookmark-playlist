@@ -1,14 +1,15 @@
 import axios from 'axios';
-import fileDownload from 'js-file-download';
+//import fileDownload from 'js-file-download';
 
 const BASE_URL = '/api/bookmark';
 
-const convertBookmarks = async (formData: FormData) => {
-  return await axios.post(BASE_URL, formData, 
+export const convertBookmarks = async (formData: FormData) => {
+  return await axios.post(BASE_URL, formData);/*, 
     { responseType: 'blob' }
-  );
+  );*/
 };
 
+/*
 export const downloadBookmarks = async (formData: FormData) => {
   const response = await convertBookmarks(formData);
 
@@ -18,3 +19,4 @@ export const downloadBookmarks = async (formData: FormData) => {
 
   fileDownload(response.data, filename);
 };
+*/

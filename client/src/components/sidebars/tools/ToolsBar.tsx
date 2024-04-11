@@ -1,4 +1,4 @@
-import BookmarkConverter from '../settings/BookmarkConverter';
+import BookmarkConverter from './BookmarkConverter';
 import * as converterService from '../../../util/converterService';
 
 interface ToolsBar {
@@ -7,7 +7,7 @@ interface ToolsBar {
 
 const ToolsBar = ({ close }: ToolsBar) => {
   const handleConvert = async (formData: FormData) => {
-    await converterService.downloadBookmarks(formData);
+    await converterService.convertBookmarks(formData);
   };
 
   return (
