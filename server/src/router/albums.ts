@@ -15,8 +15,19 @@ router.post('/', async (req, res) => {
 
   body = body.map((base: AlbumBase) => ({ ...base, addDate: new Date(base.addDate) }));
 
-  const album = await albumService.createAndSaveMany(body);
+  const album = await albumService.createIfNotExistsMany(body);
   return res.status(201).send(album);
 });
+
+/*
+router.put('/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).send({ message: 'Invalid path variable' });
+  }
+
+  return albumService.update(id, req.body);
+});
+*/
 
 export default router;

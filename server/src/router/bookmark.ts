@@ -22,7 +22,7 @@ router.post('/', singleUpload, async (req: Request, res: Response) => {
   }
 
   const albumBases = bookmark.getAlbumBases(file, field);
-  const albums = await albumService.createAndSaveMany(albumBases);
+  const albums = await albumService.createIfNotExistsMany(albumBases);
 
   return res
     //.setHeader(

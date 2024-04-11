@@ -41,10 +41,10 @@ describe('albumService', () => {
     await AlbumRepository.clear();
   });
 
-  describe('createAndSave', () => {
+  describe('createIfNotExists', () => {
     describe('successful', () => {
       it('can create an album when it does not exist', async () => {
-        const album = await albumService.createAndSave(base);
+        const album = await albumService.createIfNotExists(base);
         expect(album).toStrictEqual(
           expect.objectContaining({
             id: expect.any(Number), // any number is assigned as id
@@ -57,7 +57,7 @@ describe('albumService', () => {
         const before = await albumService.findAll();
         expect(before).toHaveLength(0);
 
-        await albumService.createAndSave(base);
+        await albumService.createIfNotExists(base);
         const after = await albumService.findAll();
         expect(after).toHaveLength(1);
       });
@@ -65,9 +65,9 @@ describe('albumService', () => {
 
     describe('unsucceful', () => {
       it('undefined is returned when creating already existing album', async () => {
-        await albumService.createAndSave(base);
+        await albumService.createIfNotExists(base);
 
-        const album = await albumService.createAndSave(base);
+        const album = await albumService.createIfNotExists(base);
         expect(album).toBe(undefined);
 
         const count = await albumService.findAll();
@@ -75,7 +75,7 @@ describe('albumService', () => {
       });
 
       it('bad properties will throw validation error', async () => {
-        await expect(async () => await albumService.createAndSave(badBase))
+        await expect(async () => await albumService.createIfNotExists(badBase))
           .rejects.toThrow(AlbumValidationError);
 
         const count = await albumService.findAll();
@@ -86,7 +86,7 @@ describe('albumService', () => {
 
   describe('createAndSaveMany', () => {
     it('can create multiple albums', async () => {
-      const createdMany = await albumService.createAndSaveMany(bases);
+      const createdMany = await albumService.createIfNotExistsMany(bases);
 
       expect(await albumService.findAll())
         .toHaveLength(bases.length);
@@ -99,16 +99,16 @@ describe('albumService', () => {
     });
 
     it('when an album validation fails, no albums are created', async () => {
-      await expect(async () => await albumService.createAndSaveMany([base, badBase]))
+      await expect(async () => await albumService.createIfNotExistsMany([base, badBase]))
         .rejects.toThrow(AlbumValidationError);
 
       expect(await albumService.findAll()).toHaveLength(0);
     });
 
     it('when an album exists, it is not recreated', async () => {
-      await albumService.createAndSave(base);
+      await albumService.createIfNotExists(base);
 
-      const createdMany = await albumService.createAndSaveMany(bases);
+      const createdMany = await albumService.createIfNotExistsMany(bases);
 
       expect(createdMany).toHaveLength(bases.length - 1);
 

@@ -128,7 +128,7 @@ describe('post bookmarks', () => {
   describe('getting links from root folder', () => {
     let responseBody: AlbumResponse[];
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       responseBody = (await postBookmarks(
         ROOT_HEADER,
         FILEPATH,
@@ -170,7 +170,7 @@ describe('post bookmarks', () => {
   describe('gettings links from child folder', () => {
     let responseBody: AlbumResponse[];
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       responseBody = (await postBookmarks(
         CHILD_HEADER,
         FILEPATH,
