@@ -2,7 +2,7 @@ import * as albumService from './album.service';
 import { AlbumBase } from '../types';
 import { AppDataSource } from '../util/dataSource';
 import { AlbumRepository } from './album.repository';
-import { AlbumValidationError } from '../errors';
+import { AlbumValidationError } from '../util/errors';
 import { Album } from './album.entity';
 
 const bases: AlbumBase[] = [

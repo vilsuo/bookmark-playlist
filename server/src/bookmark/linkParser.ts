@@ -1,5 +1,5 @@
 import { VIDEO_ID_LENGTH } from '../album/album.decorators';
-import { FolderLinkError } from '../errors';
+import { FolderLinkError } from '../util/errors';
 import { AlbumBase, FolderLink } from '../types';
 
 /**

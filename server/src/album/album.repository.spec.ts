@@ -3,7 +3,7 @@ import { AlbumRepository } from './album.repository';
 import { ALBUM_BASE, createAlbum } from '../../test/constants';
 import { AppDataSource } from '../util/dataSource';
 import * as validator from 'class-validator';
-import { AlbumValidationError } from '../errors';
+import { AlbumValidationError } from '../util/errors';
 
 const saveSpy = jest
   .spyOn(AlbumRepository, 'save')

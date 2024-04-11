@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
-import { FolderLink } from './types';
-import { Album } from './album/album.entity';
+import { FolderLink } from '../types';
+import { Album } from '../album/album.entity';
 
 export class FolderLinkError extends Error {
   folderLink: FolderLink;

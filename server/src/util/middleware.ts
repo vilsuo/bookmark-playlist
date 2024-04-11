@@ -1,5 +1,5 @@
 import { ErrorRequestHandler, RequestHandler } from 'express';
-import { AlbumValidationError, FolderLinkError } from '../errors';
+import { AlbumValidationError, FolderLinkError } from './errors';
 
 export const requestLogger: RequestHandler = (req, _res, next) => {
   console.log('Method:', req.method);

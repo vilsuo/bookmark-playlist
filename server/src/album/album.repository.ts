@@ -1,7 +1,7 @@
 import { ValidationError, validateOrReject } from 'class-validator';
 import { AppDataSource } from '../util/dataSource';
 import { Album } from './album.entity';
-import { AlbumValidationError } from '../errors';
+import { AlbumValidationError } from '../util/errors';
 
 export const AlbumRepository = AppDataSource.getRepository(Album).extend({
   async existsByArtistAndTitle(artist: string, title: string) {
