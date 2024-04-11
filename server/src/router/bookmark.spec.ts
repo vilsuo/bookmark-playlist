@@ -1,9 +1,11 @@
 import supertest from 'supertest';
-import app from '../../src/app';
-import { AlbumBase } from '../../src/types';
-import { convertEpoch } from '../../src/bookmark/linkParser';
-import { FIELD_NAME, FILE_FIELD } from '../../src/util/fileUpload';
-import { MessageBody } from '../util/types';
+import app from '../app';
+import { AlbumBase } from '../types';
+import { convertEpoch } from '../bookmark/linkParser';
+import { FIELD_NAME, FILE_FIELD } from '../util/fileUpload';
+import { MessageBody } from '../../test/types';
+import { AppDataSource, connectToDatabase } from '../util/dataSource';
+import { AlbumRepository } from '../album/album.repository';
 
 const api = supertest(app);
 
@@ -18,7 +20,7 @@ const FILEPATH = './test/samples/bookmarks-example.html';
 // first link in SUB has a missing add_date attribute
 const BAD_FILEPATH = './test/samples/bookmarks-bad-example.html';
 
-const EXPECTED = [
+const EXPECTED: Omit<AlbumResponse, 'id'>[] = [
   {
     videoId: 'IdRn9IYWuaQ',
     artist: 'Annihilator',
@@ -69,7 +71,7 @@ const EXPECTED = [
   },
 ];
 
-type AlbumResponse = AlbumBase & { addDate: string };
+type AlbumResponse = Omit<AlbumBase, 'addDate'> & { id: number, addDate: string };
 
 const postBookmarks = async (
   foldername: string,
@@ -86,7 +88,43 @@ const postBookmarks = async (
   return response.body;
 };
 
+const expectToContainAlbum = (
+  albums: AlbumResponse[], 
+  album: Omit<AlbumResponse, 'id'>,
+) => {
+  expect(albums).toContainEqual(
+    expect.objectContaining({
+      id: expect.any(Number),
+      ...album,
+    }),
+  );
+};
+
+const expectAlbum = (
+  responseAlbum: AlbumResponse,
+  expectedAlbum: Omit<AlbumResponse, 'id'>,
+) => {
+  expect(responseAlbum).toEqual(
+    expect.objectContaining({
+      id: expect.any(Number),
+      ...expectedAlbum,
+    }),
+  );
+};
+
 describe('post bookmarks', () => {
+  beforeAll(async () => {
+    await connectToDatabase();
+  });
+
+  afterAll(async () => {
+    await AppDataSource.destroy();
+  });
+
+  beforeEach(async () => {
+    await AlbumRepository.clear();
+  });
+
   describe('getting links from root folder', () => {
     let responseBody: AlbumResponse[];
 
@@ -107,7 +145,7 @@ describe('post bookmarks', () => {
       );
 
       expect(rootAlbums).toHaveLength(1);
-      expect(rootAlbums[0]).toStrictEqual(EXPECTED[0]);
+      expectAlbum(rootAlbums[0], EXPECTED[0]);
     });
 
     it('the links inside child folders have the child categories', () => {
@@ -116,16 +154,16 @@ describe('post bookmarks', () => {
       );
 
       expect(childAlbums).toHaveLength(3);
-      expect(childAlbums).toContainEqual(EXPECTED[1]);
-      expect(childAlbums).toContainEqual(EXPECTED[2]);
-      expect(childAlbums).toContainEqual(EXPECTED[5]);
+      expectToContainAlbum(childAlbums, EXPECTED[1]);
+      expectToContainAlbum(childAlbums, EXPECTED[2]);
+      expectToContainAlbum(childAlbums, EXPECTED[5]);
 
       const subAlbums = responseBody.filter(
         (album) => album.category === SUB_HEADER,
       );
       expect(subAlbums).toHaveLength(2);
-      expect(subAlbums).toContainEqual(EXPECTED[3]);
-      expect(subAlbums).toContainEqual(EXPECTED[4]);
+      expectToContainAlbum(subAlbums, EXPECTED[3]);
+      expectToContainAlbum(subAlbums, EXPECTED[4]);
     });
   });
 
@@ -141,22 +179,26 @@ describe('post bookmarks', () => {
 
     it('finds exactly all links inside the folder', () => {
       expect(responseBody).toHaveLength(5);
-      expect(responseBody).not.toContainEqual(EXPECTED[0]);
+
+      expect(responseBody).not.toContainEqual(
+        expect.objectContaining(EXPECTED[0]),
+      );
     });
 
     it('finds the links before sub folder', () => {
       const childAlbums = responseBody.filter(
         (album) => album.category === CHILD_HEADER,
       );
-      expect(childAlbums).toContainEqual(EXPECTED[1]);
-      expect(childAlbums).toContainEqual(EXPECTED[2]);
+
+      expectToContainAlbum(childAlbums, EXPECTED[1]);
+      expectToContainAlbum(childAlbums, EXPECTED[2]);
     });
 
     it('finds the links after sub folder', () => {
       const childAlbums = responseBody.filter(
         (album) => album.category === CHILD_HEADER,
       );
-      expect(childAlbums).toContainEqual(EXPECTED[5]);
+      expectToContainAlbum(childAlbums, EXPECTED[5]);
     });
 
     it('the links inside child folders have the child categories', () => {
@@ -164,8 +206,8 @@ describe('post bookmarks', () => {
         (album) => album.category === SUB_HEADER,
       );
       expect(subAlbums).toHaveLength(2);
-      expect(subAlbums).toContainEqual(EXPECTED[3]);
-      expect(subAlbums).toContainEqual(EXPECTED[4]);
+      expectToContainAlbum(subAlbums, EXPECTED[3]);
+      expectToContainAlbum(subAlbums, EXPECTED[4]);
     });
   });
 
