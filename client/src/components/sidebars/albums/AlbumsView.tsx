@@ -2,23 +2,7 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
-
-interface AlbumEditProps {
-  album: Album;
-  close: () => void;
-}
-
-const AlbumEdit = ({ album, close }: AlbumEditProps) => {
-  return (
-    <div className="editor">
-      <div className="header">
-        <h2>Edit</h2>
-        <button onClick={close}>&#x2715;</button>
-      </div>
-      <p>Editing {album.artist} - {album.title}</p>
-    </div>
-  );
-};
+import AlbumEdit from './AlbumEdit';
 
 interface AlbumsViewProps {
   album: Album;
@@ -39,12 +23,11 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
 
   return (
     <>
-      { editorOpen && (
-        <AlbumEdit
-          album={album}
-          close={() => setEditorOpen(false)}
-        />
-      )}
+      <AlbumEdit
+        album={album}
+        isOpen={editorOpen}
+        close={() => setEditorOpen(false)}
+      />
 
       <div className="albums-view">
         <div className="header">
