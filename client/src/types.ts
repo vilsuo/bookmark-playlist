@@ -37,6 +37,7 @@ export type Link = LinkBase & {
 
 // ENTITIES
 export type Album = {
+  id: number;
   videoId: string;
   artist: string;
   title: string;

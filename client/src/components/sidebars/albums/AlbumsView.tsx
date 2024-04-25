@@ -25,7 +25,6 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
       <AlbumEdit
         album={album}
         isOpen={isEditorOpen}
-        onProceed={() => console.log('proceed')}
         onClose={() => setIsEditorOpen(false)}
       />
 
