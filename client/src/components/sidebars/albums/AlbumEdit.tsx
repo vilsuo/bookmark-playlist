@@ -1,22 +1,23 @@
 import { Album } from '../../../types';
-import DialogModal from '../../general/Dialog';
+import ToggleDialog from '../../general/ToggleDialog';
 
 interface AlbumEditProps {
   album: Album;
   isOpen: boolean;
-  close: () => void;
+  onProceed: () => void;
+  onClose: () => void;
 }
 
-const AlbumEdit = ({ album, isOpen, close }: AlbumEditProps) => {
+const AlbumEdit = ({ album, isOpen, onProceed, onClose }: AlbumEditProps) => {
   return (
-    <DialogModal
+    <ToggleDialog
       title='Edit'
       isOpen={isOpen}
-      onProceed={close}
-      onClose={close}
+      onProceed={onProceed}
+      onClose={onClose}
     >
       <p>{album.artist} - {album.title}</p>
-    </ DialogModal>
+    </ToggleDialog>
   );
 };
 

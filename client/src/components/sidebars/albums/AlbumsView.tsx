@@ -11,22 +11,22 @@ interface AlbumsViewProps {
 }
 
 const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
-  const [editorOpen, setEditorOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const dispatch = useAppDispatch();
   const addToQueue = () => dispatch(queueAdd(album));
 
   const openEdit = () => {
-    console.log('editing', album);
-    setEditorOpen(!editorOpen);
+    setIsEditorOpen(!isEditorOpen);
   };
 
   return (
     <>
       <AlbumEdit
         album={album}
-        isOpen={editorOpen}
-        close={() => setEditorOpen(false)}
+        isOpen={isEditorOpen}
+        onProceed={() => console.log('proceed')}
+        onClose={() => setIsEditorOpen(false)}
       />
 
       <div className="albums-view">

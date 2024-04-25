@@ -14,32 +14,19 @@ h1, h2, h3 {
   text-align: center;
 }
 
+/* Draggable dialog */
 dialog {
-  position: unset;
-  /*
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  */
-  /*width: 50%;*/
-
   border: 1px solid white;
-  background-color: green;
 }
-
 dialog:modal {
-  /* Styles for dialogs that carry modal behavior */
   background-color: orange;
 }
 dialog:not(:modal) {
-  /* Styles for dialogs that carry non-modal behavior */
   background-color: purple;
 }
 dialog::backdrop {
   background: hsl(0 0% 0% / 50%);
 }
-
 dialog .header {
   display: flex;
   flex-flow: row nowrap;
@@ -47,12 +34,19 @@ dialog .header {
   border-top: 1px solid white;
   border-bottom: 1px solid white;
   color: white;
+  cursor: grabbing;
 }
 dialog .header button {
   padding: 2px 6px;
 }
 dialog .header h3 {
   margin: 0 auto;
+}
+dialog .options {
+  display: flex;
+  justify-content: end;
+  gap: 4px;
+  padding: 4px;
 }
 
 /* Container */
