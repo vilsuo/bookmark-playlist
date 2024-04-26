@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Album } from '../../../types';
 import ToggleDialog from '../../general/ToggleDialog';
 import * as albumService from '../../../util/albumService';
+import { getErrorMessage } from '../../../util/axiosErrors';
 
 interface AlbumEditProps {
   album: Album;
@@ -10,17 +11,29 @@ interface AlbumEditProps {
 }
 
 const AlbumEdit = ({ album, isOpen, onClose }: AlbumEditProps) => {
-  // const [artist, setArtist] = useState(album.artist);
-  // const [title, setTitle] = useState(album.title);
-  // const [published, setPublished] = useState(album.published);
+  const [artist, setArtist] = useState(album.artist);
+  const [title, setTitle] = useState(album.title);
+  const [published, setPublished] = useState(album.published);
   const [videoId, setVideoId] = useState(album.videoId);
 
+  useEffect(() => {
+    setArtist(album.artist);
+    setTitle(album.title);
+    setPublished(album.published);
+    setVideoId(album.videoId);
+  }, [album, isOpen]);
+
   const handleSubmit = async () => {
-    console.log('SUBMITTING...', album.videoId);
+    try {
+      const updated = await albumService.update({
+        ...album,
+        artist, title, published, videoId,
+      });
 
-    const updated = await albumService.update({ ...album, videoId: videoId });
-
-    console.log('updated', updated.videoId);
+      console.log('updated', updated.videoId);
+    } catch (error: unknown) {
+      alert(getErrorMessage(error));
+    }
   };
 
   return (
@@ -31,7 +44,32 @@ const AlbumEdit = ({ album, isOpen, onClose }: AlbumEditProps) => {
       onClose={onClose}
     >
       <div className="album-form">
-        <p>{album.artist} - {album.title}</p>
+        <label>
+          <span>Artist:</span>
+          <input
+            type='text'
+            value={artist}
+            onChange={({ target }) => setArtist(target.value)}
+          />
+        </label>
+        <label>
+          <span>Title:</span>
+          <input
+            type='text'
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </label>
+        <label>
+          <span>Published:</span>
+          <input
+            type='number'
+            min={1000}
+            max={9999}
+            value={published}
+            onChange={({ target }) => setPublished(Number(target.value))}
+          />
+        </label>
         <label>
           <span>Video id:</span>
           <input
