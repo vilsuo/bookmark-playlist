@@ -38,7 +38,7 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
           <div className="actions">
             <button className="play-button" onClick={play}>Play</button>
             <button onClick={addToQueue}>Q</button>
-            <button onClick={openEdit}>Edit</button>
+            <button onClick={openEdit}>E</button>
           </div>
 
           <div className="details">

@@ -31,8 +31,8 @@ const AlbumsBar = ({
   return (
     <div id="albums-bar" className="sidebar">
       <div className="sidebar-toolbar">
-        <button onClick={() => scrollTo(startRef)}>Up</button>
-        <button onClick={() => scrollTo(endRef)}>Down</button>
+        <button onClick={() => scrollTo(startRef)}>&#x21D1;</button>
+        <button onClick={() => scrollTo(endRef)}>&#x21D3;</button>
         <h2>Albums</h2>
         <button onClick={close}>&#x2715;</button>
       </div>
@@ -50,7 +50,6 @@ const AlbumsBar = ({
               viewingAlbum={viewingAlbum}
               setViewingAlbum={setViewingAlbum}
             />
-
           </React.Fragment>
         )}
 
