@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Album } from '../../../types';
-import ToggleDialog from '../../general/ToggleDialog';
 import * as albumService from '../../../util/albumService';
 import { getErrorMessage } from '../../../util/axiosErrors';
+import DragDialog from '../../general/DragDialog';
 
 interface AlbumEditProps {
   album: Album;
@@ -37,8 +37,8 @@ const AlbumEdit = ({ album, isOpen, onClose }: AlbumEditProps) => {
   };
 
   return (
-    <ToggleDialog
-      title='Edit'
+    <DragDialog
+      title='Edit album'
       isOpen={isOpen}
       onProceed={handleSubmit}
       onClose={onClose}
@@ -79,7 +79,7 @@ const AlbumEdit = ({ album, isOpen, onClose }: AlbumEditProps) => {
           />
         </label>
       </div>
-    </ToggleDialog>
+    </DragDialog>
   );
 };
 

@@ -8,7 +8,7 @@ type ToggleDialogProps = {
   children: React.ReactNode;
 };
 
-const ToggleDialog = ({
+const DragDialog = ({
   title,
   isOpen,
   onProceed,
@@ -29,7 +29,7 @@ const ToggleDialog = ({
   }, [isOpen]);
 
   const onMouseDown = useCallback(
-    (event) => {
+    () => {
       const onMouseMove = (event: MouseEvent) => {
         position.x += event.movementX;
         position.y += event.movementY;
@@ -71,4 +71,4 @@ const ToggleDialog = ({
   );
 };
 
-export default ToggleDialog;
+export default DragDialog;
