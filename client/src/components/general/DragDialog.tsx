@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type ToggleDialogProps = {
   title: string;
   isOpen: boolean;
-  onProceed: () => void;
   onClose: () => void;
   children: React.ReactNode;
 };
@@ -11,7 +10,6 @@ type ToggleDialogProps = {
 const DragDialog = ({
   title,
   isOpen,
-  onProceed,
   onClose,
   children,
 }: ToggleDialogProps) => {
@@ -49,11 +47,6 @@ const DragDialog = ({
     [position, setPosition, elementRef]
   );
 
-  const proceedAndClose = () => {
-    onProceed();
-    onClose();
-  };
-
   return (
     <dialog className="draggable" ref={elementRef}>
       <div className="header" onMouseDown={onMouseDown}>
@@ -62,11 +55,6 @@ const DragDialog = ({
       </div>
 
       {children}
-
-      <div className="options">
-        <button onClick={proceedAndClose}>Ok</button>
-        <button onClick={onClose}>Cancel</button>
-      </div>
     </dialog>
   );
 };

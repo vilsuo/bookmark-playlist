@@ -4,6 +4,45 @@ import * as albumService from '../../../util/albumService';
 import { getErrorMessage } from '../../../util/axiosErrors';
 import DragDialog from '../../general/DragDialog';
 
+interface DialogOptionsProps {
+  album: Album;
+  onClose: () => void;
+}
+
+const DialogOptions = ({ album, onClose }: DialogOptionsProps) => {
+  const updateAndClose = async () => {
+    try {
+      await albumService.update(album);
+
+      console.log('updated');
+      onClose();
+
+    } catch (error: unknown) {
+      alert(getErrorMessage(error));
+    }
+  };
+
+  const removeAndClose = async () => {
+    try {
+      await albumService.remove(album.id);
+
+      console.log('removed');
+      onClose();
+
+    } catch (error: unknown) {
+      alert(getErrorMessage(error));
+    }
+  };
+
+  return (
+    <div className="options">
+      <button onClick={updateAndClose}>Ok</button>
+      <button onClick={removeAndClose}>Remove</button>
+      <button onClick={onClose}>Cancel</button>
+    </div>
+  );
+};
+
 interface AlbumEditProps {
   album: Album;
   isOpen: boolean;
@@ -23,24 +62,10 @@ const AlbumEdit = ({ album, isOpen, onClose }: AlbumEditProps) => {
     setVideoId(album.videoId);
   }, [album, isOpen]);
 
-  const handleSubmit = async () => {
-    try {
-      const updated = await albumService.update({
-        ...album,
-        artist, title, published, videoId,
-      });
-
-      console.log('updated', updated.videoId);
-    } catch (error: unknown) {
-      alert(getErrorMessage(error));
-    }
-  };
-
   return (
     <DragDialog
       title='Edit album'
       isOpen={isOpen}
-      onProceed={handleSubmit}
       onClose={onClose}
     >
       <div className="album-form">
@@ -79,6 +104,11 @@ const AlbumEdit = ({ album, isOpen, onClose }: AlbumEditProps) => {
           />
         </label>
       </div>
+
+      <DialogOptions
+        album={ { ...album, artist, title, published, videoId } }
+        onClose={onClose}
+      />
     </DragDialog>
   );
 };
