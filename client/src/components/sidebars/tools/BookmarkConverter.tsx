@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Notification } from '../../general/Notification';
+import { Notification } from '../../general/notification/Notification';
 import { NotificationType } from '../../../types';
 import { getErrorMessage } from '../../../util/axiosErrors';
 

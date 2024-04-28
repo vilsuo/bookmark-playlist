@@ -1,4 +1,5 @@
-import { NotificationType } from '../../types';
+import { NotificationType } from '../../../types';
+import SuccessIcon from './SuccessIcon';
 
 interface NotificationProps {
   type: NotificationType;
@@ -18,20 +19,18 @@ export const Notification = ({
   const isSuccess = type === NotificationType.SUCCESS;
   const title = isSuccess ? successTitle : errorTitle;
 
-  // close the success notification after a timeout
-  //setTimeout(() => {
-  //  if (isSuccess) close();
-  //}, 5000);
-
   return (
     <div className={`notification ${type}`}>
-      <p>{title}</p>
-      {message && <p className="message">{message}</p>}
-      <div className="action">
-        <button type="button" onClick={close}>
-          Ok
-        </button>
+      <div className="header">
+        <div className="title">
+          { isSuccess && <SuccessIcon size={0.5} /> }
+          <p>{title}</p>
+        </div>
+
+        <button type="button" onClick={close}>&#x2715;</button>
       </div>
+
+      { message && <p className="message">{message}</p> }
     </div>
   );
 };

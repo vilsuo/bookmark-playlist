@@ -396,21 +396,31 @@ dialog .options {
 
 /* Notification */
 .notification {
-  border: 2px solid black;
-  padding: 4px;
+  padding: 10px;
+  background-color: black;
+  border: 1px solid white;
 }
-.notification.error {
-  background-color: red;
+.notification .header {
+  display: flex;
+  justify-content: space-between;
+  font-size: larger;
 }
-.notification.success {
-  background-color: green;
+.notification .header .title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.notification .header button {
+  background-color: transparent;
+  border: none;
+  font-size: larger;
+  color: white;
+}
+.notification .header button:hover {
+  color: gray;
 }
 .notification .message {
   font-style: italic;
-}
-.notification .action {
-  display: flex;
-  justify-content: end;
 }
 
 /* Table */
