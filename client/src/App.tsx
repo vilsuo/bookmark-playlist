@@ -4,6 +4,7 @@ import SidebarOpener from './components/sidebars/opener/SidebarOpener';
 import Sidebar from './components/sidebars/Sidebar';
 import Main from './components/Main';
 import * as albumService from './util/albumService';
+import NotificationContainer from './components/general/notification/NotificationContainer';
 
 const App = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -35,6 +36,8 @@ const App = () => {
           show={setSidebarType}
         />
       )}
+
+      <NotificationContainer />
 
       <Main />
     </div>
