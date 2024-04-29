@@ -4,10 +4,6 @@ import { getErrorMessage } from '../../../util/axiosErrors';
 import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 
-const genKey = () => {
-  return 1000000 * Math.random();
-};
-
 interface FileFormProps {
   upload: (formdata: FormData) => Promise<void>;
 }
@@ -46,14 +42,12 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
       handleReset();
 
       dispatch(addNotification({
-        id: genKey(),
         type: NotificationType.SUCCESS,
         title: 'Bookmarks imported'
       }));
       
     } catch (error) {
       dispatch(addNotification({
-        id: genKey(),
         type: NotificationType.ERROR,
         title: 'Bookmark import failed',
         message: getErrorMessage(error),
