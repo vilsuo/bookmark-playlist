@@ -8,6 +8,7 @@ import { listenerMiddleware, startAppListening } from './listenerMiddleware.ts';
 import albumsSlice from './reducers/albumsSlice.ts';
 import queueSlice from './reducers/queueSlice.ts';
 import { initialState as initialSettingsState } from './reducers/settingsSlice.ts';
+import notificationSlice from './reducers/notificationSlice.ts';
 
 /*
 const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action => {
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   filters: filterReducer,
   albums: albumsSlice,
   queue: queueSlice,
+  notifications: notificationSlice,
 });
 
 export const store = configureStore({
