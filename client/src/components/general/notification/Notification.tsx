@@ -4,23 +4,16 @@ import NotificationIcon from './icons/NotificationIcon';
 interface NotificationProps {
   type: NotificationType;
   title: string;
-  //successTitle: string;
-  //errorTitle: string;
-  message: string | undefined; // | null;
+  message: string | undefined;
   close: () => void;
 }
 
 export const Notification = ({
   type,
   title,
-  //successTitle,
-  //errorTitle,
   message,
   close,
 }: NotificationProps) => {
-  // const isSuccess = type === NotificationType.SUCCESS;
-  //const title = isSuccess ? successTitle : errorTitle;
-
   return (
     <div className="notification">
       <div className="header">
