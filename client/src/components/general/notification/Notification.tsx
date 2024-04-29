@@ -1,5 +1,5 @@
 import { NotificationType } from '../../../types';
-import SuccessIcon from './SuccessIcon';
+import NotificationIcon from './icons/NotificationIcon';
 
 interface NotificationProps {
   type: NotificationType;
@@ -23,7 +23,7 @@ export const Notification = ({
     <div className={`notification ${type}`}>
       <div className="header">
         <div className="title">
-          { isSuccess && <SuccessIcon size={0.5} /> }
+          <NotificationIcon type={type} size={0.5} />
           <p>{title}</p>
         </div>
 
