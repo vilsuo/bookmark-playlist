@@ -1,18 +1,22 @@
 import { useRef, useState } from 'react';
-import { Notification } from '../../general/notification/Notification';
 import { NotificationType } from '../../../types';
 import { getErrorMessage } from '../../../util/axiosErrors';
+import { useAppDispatch } from '../../../redux/hooks';
+import { addNotification } from '../../../redux/reducers/notificationSlice';
+
+const genKey = () => {
+  return 1000000 * Math.random();
+};
 
 interface FileFormProps {
   upload: (formdata: FormData) => Promise<void>;
 }
 
 const BookmarkConverter = ({ upload }: FileFormProps) => {
+  const dispatch = useAppDispatch();
+
   const [file, setFile] = useState<File | null>();
   const [name, setName] = useState('');
-
-  const [message, setMessage] = useState<string | null>(null);
-  const [messageType, setMessageType] = useState<NotificationType | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -41,11 +45,19 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
       await upload(formData);
       handleReset();
 
-      setMessage(null);
-      setMessageType(NotificationType.SUCCESS);
+      dispatch(addNotification({
+        id: genKey(),
+        type: NotificationType.SUCCESS,
+        title: 'Bookmarks imported'
+      }));
+      
     } catch (error) {
-      setMessage(getErrorMessage(error));
-      setMessageType(NotificationType.ERROR);
+      dispatch(addNotification({
+        id: genKey(),
+        type: NotificationType.ERROR,
+        title: 'Bookmark import failed',
+        message: getErrorMessage(error),
+      }));
     }
   };
 
@@ -63,20 +75,7 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
 
         The category of an album will be its parents folder name.
       </p>
-
-      {messageType && (
-        <Notification
-          type={messageType}
-          successTitle="Bookmarks imported"
-          errorTitle="Bookmark import failed"
-          message={message}
-          close={() => {
-            setMessage(null);
-            setMessageType(null);
-          }}
-        />
-      )}
-
+      
       <form method='POST' onSubmit={handleUpload}>
         <label>
           Root folder:
