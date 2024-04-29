@@ -20,10 +20,12 @@ export const Notification = ({
   const title = isSuccess ? successTitle : errorTitle;
 
   return (
-    <div className={`notification ${type}`}>
+    <div className="notification">
       <div className="header">
         <div className="title">
-          <NotificationIcon type={type} size={0.5} />
+          <div className="icon-container">
+            <NotificationIcon type={type} size={0.5} />
+          </div>
           <p>{title}</p>
         </div>
 

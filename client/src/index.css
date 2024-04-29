@@ -410,6 +410,9 @@ dialog .options {
   align-items: center;
   gap: 8px;
 }
+.notification .icon-container svg {
+  display: block;
+}
 .notification .header button {
   background-color: transparent;
   border: none;
@@ -421,6 +424,10 @@ dialog .options {
 }
 .notification .message {
   font-style: italic;
+  margin-top: 10px;
+  padding: 10px;
+  padding-bottom: 0;
+  border-top: 1px solid white;
 }
 
 /* Table */
