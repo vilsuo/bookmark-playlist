@@ -44,7 +44,7 @@ const toAlbumBase = (body: unknown): AlbumBase => {
     throw new Error("Invalid property 'category'");
   }
 
-  if (typeof addDate !== 'string') {
+  if (typeof addDate !== 'string' && !(addDate instanceof Date)) {
     throw new Error("Invalid property 'addDate'");
   }
 
@@ -52,9 +52,8 @@ const toAlbumBase = (body: unknown): AlbumBase => {
 };
 
 router.post('/', async (req, res) => {
-  let { body } = req;
-
-  const newBase = toAlbumBase(body);
+  const addDate = new Date();
+  const newBase = toAlbumBase({ ...req.body, addDate });
   const created = await albumService.createIfNotExists(newBase);
   return res.status(201).send(created);
 });

@@ -35,7 +35,6 @@ export type Link = LinkBase & {
   className?: string;
 };
 
-// ENTITIES
 export type Album = {
   id: number;
   videoId: string;
@@ -45,3 +44,5 @@ export type Album = {
   category: string;
   addDate: string;
 };
+
+export type AlbumCreation = Omit<Album, 'id' | 'addDate'>;
