@@ -18,12 +18,6 @@ h1, h2, h3 {
 dialog {
   border: 1px solid white;
 }
-dialog:modal {
-  background-color: orange;
-}
-dialog:not(:modal) {
-  background-color: purple;
-}
 dialog::backdrop {
   background: hsl(0 0% 0% / 50%);
 }
@@ -404,6 +398,7 @@ dialog .options {
   flex-flow: column-reverse;
   align-items: flex-end;
   gap: 10px;
+  z-index: 9999;
 }
 .notification {
   max-width: 400px;
