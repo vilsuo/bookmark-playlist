@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Album } from '../../../types';
+import { Album, NotificationType } from '../../../types';
 import * as albumService from '../../../util/albumService';
 import { getErrorMessage } from '../../../util/axiosErrors';
 import DragDialog from '../../general/DragDialog';
+import { useAppDispatch } from '../../../redux/hooks';
+import { addNotification } from '../../../redux/reducers/notificationSlice';
 
 interface DialogOptionsProps {
   album: Album;
@@ -10,27 +12,41 @@ interface DialogOptionsProps {
 }
 
 const DialogOptions = ({ album, onClose }: DialogOptionsProps) => {
+  const dispatch = useAppDispatch();
+
   const updateAndClose = async () => {
     try {
       await albumService.update(album);
-
-      console.log('updated');
+      dispatch(addNotification({
+        title: 'Album edited successfully',
+        type: NotificationType.SUCCESS,
+      }));
       onClose();
 
     } catch (error: unknown) {
-      alert(getErrorMessage(error));
+      dispatch(addNotification({
+        title: 'Album edit failed',
+        message: getErrorMessage(error),
+        type: NotificationType.ERROR,
+      }));
     }
   };
 
   const removeAndClose = async () => {
     try {
       await albumService.remove(album.id);
-
-      console.log('removed');
+      dispatch(addNotification({
+        title: 'Album removed successfully',
+        type: NotificationType.SUCCESS,
+      }));
       onClose();
 
     } catch (error: unknown) {
-      alert(getErrorMessage(error));
+      dispatch(addNotification({
+        title: 'Album deletion failed',
+        message: getErrorMessage(error),
+        type: NotificationType.ERROR,
+      }));
     }
   };
 
