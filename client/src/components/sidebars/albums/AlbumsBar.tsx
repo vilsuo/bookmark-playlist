@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import AlbumFilter from '../../album/AlbumFilter';
 import AlbumTable from '../../album/AlbumTable';
 import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { play, selectPlaying, selectViewing, view } from '../../../redux/reducers/albumsSlice';
+import AlbumAdd from './AlbumAdd';
 
 interface AlbumsBarProps {
   albums: Album[];
@@ -21,6 +22,8 @@ const AlbumsBar = ({
   const setPlayingAlbum = (album: Album | null) => dispatch(play(album));
   const setViewingAlbum = (album: Album | null) => dispatch(view(album));
 
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
 
@@ -34,6 +37,7 @@ const AlbumsBar = ({
         <button onClick={() => scrollTo(startRef)}>&#x21D1;</button>
         <button onClick={() => scrollTo(endRef)}>&#x21D3;</button>
         <h2>Albums</h2>
+        <button onClick={() => setIsAddOpen(true)}>New</button>
         <button onClick={close}>&#x2715;</button>
       </div>
 
@@ -56,11 +60,18 @@ const AlbumsBar = ({
         <div id="end-ref" ref={endRef} />
       </div>
 
-      {viewingAlbum && (
+      { viewingAlbum && (
         <AlbumsView
           album={viewingAlbum}
           close={(() => setViewingAlbum(null))}
           play={() => setPlayingAlbum(viewingAlbum)}
+        />
+      )}
+
+      { isAddOpen && (
+        <AlbumAdd
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
         />
       )}
     </div>
