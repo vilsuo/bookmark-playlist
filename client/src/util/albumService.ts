@@ -4,8 +4,7 @@ import { Album, AlbumCreation } from '../types';
 const BASE_URL = '/api/albums';
 
 export const getAlbums = async () => {
-  const { data } = await axios.get(BASE_URL);
-  return data;
+  return await axios.get(BASE_URL);
 };
 
 export const create = async (values: AlbumCreation) => {
