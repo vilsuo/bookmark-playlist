@@ -1,14 +1,11 @@
 import { useRef, useState } from 'react';
 import { NotificationType } from '../../../types';
-import { getErrorMessage } from '../../../util/axiosErrors';
 import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
+import { createFromBookmarks } from '../../../redux/reducers/albumsSlice';
+import { getThunkError } from '../../../util/errorMessages';
 
-interface FileFormProps {
-  upload: (formdata: FormData) => Promise<void>;
-}
-
-const BookmarkConverter = ({ upload }: FileFormProps) => {
+const BookmarkConverter = () => {
   const dispatch = useAppDispatch();
 
   const [file, setFile] = useState<File | null>();
@@ -38,19 +35,20 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
     formData.append('name', name);
 
     try {
-      await upload(formData);
-      handleReset();
+      await dispatch(createFromBookmarks(formData)).unwrap();
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
-        title: 'Bookmarks imported'
+        title: 'Bookmarks imported',
       }));
       
+      handleReset();
+
     } catch (error) {
       dispatch(addNotification({
         type: NotificationType.ERROR,
         title: 'Bookmark import failed',
-        message: getErrorMessage(error),
+        message: getThunkError(error),
       }));
     }
   };
@@ -77,6 +75,7 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
             type="text"
             value={name}
             onChange={({ target }) => setName(target.value)}
+            required
           />
         </label>
 
@@ -94,9 +93,7 @@ const BookmarkConverter = ({ upload }: FileFormProps) => {
           <span>Accepted filetypes: .html</span>
         </div>
 
-        <button disabled={!(name && file)}>
-          Convert & Download
-        </button>
+        <button>Convert & Download</button>
       </form>
     </div>
   );

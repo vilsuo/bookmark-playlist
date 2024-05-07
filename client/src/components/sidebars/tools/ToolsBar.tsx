@@ -1,15 +1,10 @@
 import BookmarkConverter from './BookmarkConverter';
-import * as converterService from '../../../util/converterService';
 
 interface ToolsBar {
   close: () => void;
 }
 
 const ToolsBar = ({ close }: ToolsBar) => {
-  const handleConvert = async (formData: FormData) => {
-    await converterService.convertBookmarks(formData);
-  };
-
   return (
     <div id="tools-bar" className="sidebar">
       <div className="sidebar-toolbar">
@@ -18,7 +13,7 @@ const ToolsBar = ({ close }: ToolsBar) => {
       </div>
 
       <div className="sidebar-container">
-        <BookmarkConverter upload={handleConvert} />
+        <BookmarkConverter />
       </div>
     </div>
   );
