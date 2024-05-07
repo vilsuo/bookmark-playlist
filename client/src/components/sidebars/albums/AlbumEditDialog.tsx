@@ -61,11 +61,9 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         album={album}
         submit={updateAndClose}
       >
-        <div className="options">
-          <button type='submit'>Save</button>
-          <button type='button' onClick={removeAndClose}>Remove</button>
-          <button type='button' onClick={onClose}>Cancel</button>
-        </div>
+        <button type='submit'>Save</button>
+        <button type='button' onClick={removeAndClose}>Remove</button>
+        <button type='button' onClick={onClose}>Cancel</button>
       </AlbumForm>
     </DragDialog>
   );
