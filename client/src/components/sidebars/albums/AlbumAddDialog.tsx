@@ -6,7 +6,7 @@ import { addNotification } from '../../../redux/reducers/notificationSlice';
 import { getErrorMessage } from '../../../util/axiosErrors';
 import AlbumForm from './AlbumForm';
 
-interface AlbumAddProps {
+interface AlbumAddDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -19,7 +19,7 @@ const defaultValues = {
   videoId: '',
 };
 
-const AlbumAddV2 = ({ isOpen, onClose }: AlbumAddProps) => {
+const AlbumAddDialog = ({ isOpen, onClose }: AlbumAddDialogProps) => {
   const dispatch = useAppDispatch();
 
   const addAndClose = async (albumValues: AlbumCreation) => {
@@ -57,4 +57,4 @@ const AlbumAddV2 = ({ isOpen, onClose }: AlbumAddProps) => {
   );
 };
 
-export default AlbumAddV2;
+export default AlbumAddDialog;

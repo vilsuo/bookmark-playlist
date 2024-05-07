@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
-import AlbumEditV2 from './AlbumEditV2';
+import AlbumEditDialog from './AlbumEditDialog';
 
 interface AlbumsViewProps {
   album: Album;
@@ -22,7 +22,7 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
 
   return (
     <>
-      <AlbumEditV2
+      <AlbumEditDialog
         album={album}
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}

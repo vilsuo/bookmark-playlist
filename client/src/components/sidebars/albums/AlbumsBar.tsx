@@ -5,7 +5,7 @@ import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { play, selectPlaying, selectViewing, view } from '../../../redux/reducers/albumsSlice';
-import AlbumAddV2 from './AlbumAddV2';
+import AlbumAddDialog from './AlbumAddDialog';
 
 interface AlbumsBarProps {
   albums: Album[];
@@ -69,7 +69,7 @@ const AlbumsBar = ({
       )}
 
       { isAddOpen && (
-        <AlbumAddV2
+        <AlbumAddDialog
           isOpen={isAddOpen}
           onClose={() => setIsAddOpen(false)}
         />

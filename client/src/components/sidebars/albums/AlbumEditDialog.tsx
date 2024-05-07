@@ -6,13 +6,13 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
 
-interface AlbumEditProps {
+interface AlbumEditDialogProps {
   album: Album;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const AlbumEditV2 = ({ album, isOpen, onClose }: AlbumEditProps) => {
+const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const dispatch = useAppDispatch();
 
   const updateAndClose = async (albumValues: AlbumCreation) => {
@@ -71,4 +71,4 @@ const AlbumEditV2 = ({ album, isOpen, onClose }: AlbumEditProps) => {
   );
 };
 
-export default AlbumEditV2;
+export default AlbumEditDialog;
