@@ -8,8 +8,7 @@ export const getAlbums = async () => {
 };
 
 export const create = async (values: AlbumCreation) => {
-  const { data } = await axios.post(BASE_URL, values);
-  return data;
+  return await axios.post(BASE_URL, values);
 };
 
 export const update = async (album: Album) => {

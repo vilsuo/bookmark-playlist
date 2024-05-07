@@ -1,5 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Album } from '../../types';
+import { Album, AlbumCreation } from '../../types';
 import { RootState } from '../store';
 import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
@@ -38,9 +38,13 @@ const albumsSlice = createSlice({
         state.albums = albums;
       })
       .addCase(createFromBookmarks.fulfilled, (state, action) => {
-        console.log('Fulfilled!');
         const newAlbums = action.payload;
         state.albums = state.albums.concat(newAlbums);
+      })
+      .addCase(createAlbum.fulfilled, (state, action) => {
+        console.log('Fulfilled!');
+        const newAlbum = action.payload;
+        state.albums.push(newAlbum);
       })
   },
 });
@@ -60,6 +64,7 @@ export const isRejectedResponse = (error: unknown): error is RejectedResponse =>
     ('errorMessage' in error && typeof error.errorMessage === 'string');
 };
 
+// CREATE FROM BOOK MARKS
 export const createFromBookmarks = createAsyncThunk<
   Album[],
   FormData,
@@ -74,6 +79,19 @@ export const createFromBookmarks = createAsyncThunk<
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
     }
   },
+);
+
+// CREATE ONE
+export const createAlbum = createAsyncThunk(
+  'albums/create',
+  async (albumValues: AlbumCreation, { rejectWithValue }) => {
+    try {
+      const response = await albumService.create(albumValues);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+    }
+  }
 );
 
 export const { view, play } = albumsSlice.actions;
