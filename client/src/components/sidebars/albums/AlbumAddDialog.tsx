@@ -3,7 +3,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import * as albumService from '../../../util/albumService';
 import { AlbumCreation, NotificationType } from '../../../types';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
-import { getErrorMessage } from '../../../util/axiosErrors';
+import { getErrorMessage } from '../../../util/errorMessages';
 import AlbumForm from './AlbumForm';
 
 interface AlbumAddDialogProps {

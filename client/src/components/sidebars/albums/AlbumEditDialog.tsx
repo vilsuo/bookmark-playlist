@@ -1,6 +1,6 @@
 import { Album, AlbumCreation, NotificationType } from '../../../types';
 import * as albumService from '../../../util/albumService';
-import { getErrorMessage } from '../../../util/axiosErrors';
+import { getErrorMessage } from '../../../util/errorMessages';
 import DragDialog from '../../general/DragDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
