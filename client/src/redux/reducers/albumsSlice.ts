@@ -49,7 +49,11 @@ const albumsSlice = createSlice({
         state.albums = state.albums.map((album) => 
           (album.id === updatedAlbum.id) ? updatedAlbum : album
         );
-      });
+      })
+      .addCase(deleteAlbum.fulfilled, (state, action) => {
+        const removedAlbumId = action.payload;
+        state.albums = state.albums.filter((album) => album.id !== removedAlbumId);
+      })
   },
 });
 
@@ -85,7 +89,7 @@ export const createFromBookmarks = createAsyncThunk<
   },
 );
 
-// CREATE ONE
+// CREATE
 export const createAlbum = createAsyncThunk(
   'albums/create',
   async (albumValues: AlbumCreation, { rejectWithValue }) => {
@@ -109,6 +113,23 @@ export const updateAlbum = createAsyncThunk<
     try {
       const response = await albumService.update(album);
       return response.data;
+    } catch (error) {
+      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+    }
+  }
+);
+
+// DELETE
+export const deleteAlbum = createAsyncThunk<
+  Album['id'],
+  Album['id'],
+  { rejectValue: RejectedResponse }
+>(
+  'albums/delete',
+  async (id: Album['id'], { rejectWithValue }) => {
+    try {
+      await albumService.remove(id);
+      return id;
     } catch (error) {
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
     }

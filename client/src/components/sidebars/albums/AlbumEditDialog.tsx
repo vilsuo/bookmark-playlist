@@ -1,11 +1,10 @@
 import { Album, AlbumCreation, NotificationType } from '../../../types';
-import * as albumService from '../../../util/albumService';
-import { getErrorMessage, getThunkError } from '../../../util/errorMessages';
+import { getThunkError } from '../../../util/errorMessages';
 import DragDialog from '../../general/DragDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
-import { updateAlbum } from '../../../redux/reducers/albumsSlice';
+import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -38,18 +37,20 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
 
   const removeAndClose = async () => {
     try {
-      await albumService.remove(album.id);
+      await dispatch(deleteAlbum(album.id)).unwrap();
+
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
+
       onClose();
 
     } catch (error: unknown) {
       dispatch(addNotification({
-        title: 'Album deletion failed',
-        message: getErrorMessage(error),
         type: NotificationType.ERROR,
+        title: 'Album deletion failed',
+        message: getThunkError(error),
       }));
     }
   };
