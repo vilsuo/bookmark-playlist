@@ -9,7 +9,6 @@ router.get('/', async (_req, res) => {
   return res.send(albums);
 });
 
-
 const toAlbumBase = (body: unknown): AlbumBase => {
   if (!body || typeof body !== 'object') {
     throw new Error('Body is invalid or missing');
@@ -77,6 +76,20 @@ router.delete('/:id', async (req, res) => {
 
   await albumService.remove(id);
   return res.status(204).end();
+});
+
+const createFilename = () => `albums-${new Date().valueOf()}.json`;
+
+router.get('/download', async (_req, res) => {
+  const albums = await albumService.findAll();
+
+  return res
+    .setHeader(
+      'Content-Disposition',
+      `attachment; filename="${createFilename()}"`
+    )
+    .status(200)
+    .send(albums);
 });
 
 export default router;

@@ -2,8 +2,6 @@ import { AlbumBase } from '../types';
 import * as htmlParser from './htmlParser';
 import * as linkParser from './linkParser';
 
-export const createFilename = () => `bookmarks-${new Date().valueOf()}.json`;
-
 /**
  * 
  * @param file 

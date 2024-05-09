@@ -25,10 +25,6 @@ router.post('/', singleUpload, async (req: Request, res: Response) => {
   const albums = await albumService.createIfNotExistsMany(albumBases);
 
   return res
-    //.setHeader(
-    //  'Content-Disposition',
-    //  `attachment; filename="${bookmark.createFilename()}"`
-    //)
     .status(201)
     .send(albums);
 });
