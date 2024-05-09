@@ -3,16 +3,22 @@ import { Album, AlbumCreation } from '../types';
 
 const BASE_URL = '/api/albums';
 
-export const getAlbums = async () => {
-  return await axios.get(BASE_URL);
+export const getAlbums = async (): Promise<Album[]> => {
+  const { data } = await axios.get(BASE_URL);
+  return data;
 };
 
-export const create = async (values: AlbumCreation) => {
-  return await axios.post(BASE_URL, values);
+export const create = async (values: AlbumCreation): Promise<Album> => {
+  const { data } = await axios.post(BASE_URL, values);
+  return data;
 };
 
-export const update = async (album: Album) => {
-  return await axios.put(`${BASE_URL}/${album.id}`, album);
+export const update = async (album: Album): Promise<Album> => {
+  const { data } = await axios.put(`${BASE_URL}/${album.id}`, album);
+  return data;
 };
 
-export const remove = async (id: Album['id']) => axios.delete(`${BASE_URL}/${id}`);
+export const remove = async (id: Album['id']): Promise<Album['id']> => {
+  await axios.delete(`${BASE_URL}/${id}`);
+  return id;
+};

@@ -1,6 +1,8 @@
 import { AxiosError } from 'axios';
 import { isRejectedResponse } from '../redux/reducers/albumsSlice';
 
+const DEFAULT_MESSAGE = 'Unknown error';
+
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {
     const { response } = error;
@@ -10,12 +12,12 @@ export const getErrorMessage = (error: unknown): string => {
       return 'Unknown axios error';
     }
   } else {
-    return 'Unknown error';
+    return DEFAULT_MESSAGE;
   }
 };
 
 export const getThunkError = (error: unknown) => {
   return isRejectedResponse(error)
     ? error.errorMessage
-    : 'Unknown error';
+    : DEFAULT_MESSAGE;
 };

@@ -59,13 +59,10 @@ const albumsSlice = createSlice({
 
 export const fetchAlbums = createAsyncThunk(
   'albums/fetchAlbums',
-  async () => {
-    const response = await albumService.getAlbums();
-    return response.data;
-  },
+  async () => albumService.getAlbums(),
 );
 
-type RejectedResponse = { /*title: string,*/ errorMessage: string };
+type RejectedResponse = { errorMessage: string };
 
 export const isRejectedResponse = (error: unknown): error is RejectedResponse => {
   return (typeof error === 'object' && error !== null) &&
@@ -94,8 +91,7 @@ export const createAlbum = createAsyncThunk(
   'albums/create',
   async (albumValues: AlbumCreation, { rejectWithValue }) => {
     try {
-      const response = await albumService.create(albumValues);
-      return response.data;
+      return await albumService.create(albumValues);
     } catch (error) {
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
     }
@@ -111,8 +107,7 @@ export const updateAlbum = createAsyncThunk<
   'albums/update',
   async (album: Album, { rejectWithValue }) => {
     try {
-      const response = await albumService.update(album);
-      return response.data;
+      return await albumService.update(album);
     } catch (error) {
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
     }
@@ -128,8 +123,7 @@ export const deleteAlbum = createAsyncThunk<
   'albums/delete',
   async (id: Album['id'], { rejectWithValue }) => {
     try {
-      await albumService.remove(id);
-      return id;
+      return await albumService.remove(id);
     } catch (error) {
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
     }

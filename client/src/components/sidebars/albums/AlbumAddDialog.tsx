@@ -27,15 +27,16 @@ const AlbumAddDialog = ({ isOpen, onClose }: AlbumAddDialogProps) => {
       await dispatch(createAlbum(albumValues)).unwrap();
 
       dispatch(addNotification({
-        title: 'Album added successfully',
         type: NotificationType.SUCCESS,
+        title: 'Album added successfully',
       }));
+      
       onClose();
 
     } catch (error: unknown) {
       dispatch(addNotification({
-        title: 'Album adding failed',
         type: NotificationType.ERROR,
+        title: 'Album adding failed',
         message: getThunkError(error),
       }));
     }
