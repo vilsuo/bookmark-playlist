@@ -1,3 +1,4 @@
+import AlbumDownloader from './AlbumDownloader';
 import BookmarkConverter from './BookmarkConverter';
 
 interface ToolsBar {
@@ -14,6 +15,8 @@ const ToolsBar = ({ close }: ToolsBar) => {
 
       <div className="sidebar-container">
         <BookmarkConverter />
+        
+        <AlbumDownloader />
       </div>
     </div>
   );
