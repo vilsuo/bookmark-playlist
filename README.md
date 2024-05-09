@@ -1,33 +1,56 @@
 # Bookmark playlist
 Import your bookmark html file and view it as a playlist
 
+## Features
+
 ## How to start
-### Starting server
-Inside server folder
+### Installing
+You need to install server and client packages. Execute the command
 ```
 npm install
-npm run dev
 ```
-### Starting cliend
-Inside client folder
+inside the server AND client folder.
+
+### Starting
+After server and client packages are installed, run the following command in the root folder
+#### Development
 ```
-npm install
-npm run dev
+npm run compose:up
 ```
-After server and client are up, you can access the client in PORT 5173
+you can access the server in PORT 3000 and client in PORT 5173.
+#### Test
+```
+npm run test:up
+```
+you can access the server in PORT 3001 and client in PORT 5174.
 
 ## Screenshots
-![alt](./screenshots/Screenshot%20from%202024-03-21%2014-37-18.png)
+![alt](./screenshots/home_2024-05-09.png)
 *Initial view*
 
-![alt](./screenshots/Screenshot%20from%202024-03-21%2014-38-02.png)
-*Sidebar opened*
+![alt](./screenshots/settings_2024-05-09.png)
+*Settings sidebar*
 
-![alt](./screenshots/Screenshot%20from%202024-03-21%2014-38-19.png)
-*Successful import*
+![alt](./screenshots/importing_2024-05-09.png)
+*Importing bookmarks in tools sidebar*
 
-![alt](./screenshots/Screenshot%20from%202024-03-21%2014-39-02.png)
-*Filtering and selecting an album*
+![alt](./screenshots/selecting_2024-05-09.png)
+*Filtering and selecting an album in albums sidebar*
 
-![alt](./screenshots/Screenshot%20from%202024-03-21%2014-39-23.png)
-*Fullscreen video*
+![alt](./screenshots/filtering-and-sorting_2024-05-09.png)
+*Filtering and sorting albums*
+
+![alt](./screenshots/editing_2024-05-09.png)
+*Editing an album*
+
+![alt](./screenshots/creating_2024-05-09.png)
+*Creating a new album*
+
+![alt](./screenshots/playing_2024-05-09.png)
+*Playing*
+
+![alt](./screenshots/fullscreen_2024-05-09.png)
+*Fullscreen*
+
+![alt](./screenshots/queue_2024-05-09.png)
+*Queueing*
