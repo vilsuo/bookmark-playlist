@@ -33,7 +33,6 @@ const albumsSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(fetchAlbums.fulfilled, (state, action) => {
-        console.log('Fetched!');
         const albums = action.payload;
         state.albums = albums;
       })
@@ -42,10 +41,15 @@ const albumsSlice = createSlice({
         state.albums = state.albums.concat(newAlbums);
       })
       .addCase(createAlbum.fulfilled, (state, action) => {
-        console.log('Fulfilled!');
         const newAlbum = action.payload;
         state.albums.push(newAlbum);
       })
+      .addCase(updateAlbum.fulfilled, (state, action) => {
+        const updatedAlbum = action.payload;
+        state.albums = state.albums.map((album) => 
+          (album.id === updatedAlbum.id) ? updatedAlbum : album
+        );
+      });
   },
 });
 
@@ -64,7 +68,7 @@ export const isRejectedResponse = (error: unknown): error is RejectedResponse =>
     ('errorMessage' in error && typeof error.errorMessage === 'string');
 };
 
-// CREATE FROM BOOK MARKS
+// CREATE FROM BOOKMARKS
 export const createFromBookmarks = createAsyncThunk<
   Album[],
   FormData,
@@ -87,6 +91,23 @@ export const createAlbum = createAsyncThunk(
   async (albumValues: AlbumCreation, { rejectWithValue }) => {
     try {
       const response = await albumService.create(albumValues);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+    }
+  }
+);
+
+// UPDATE
+export const updateAlbum = createAsyncThunk<
+  Album,
+  Album,
+  { rejectValue: RejectedResponse }
+>(
+  'albums/update',
+  async (album: Album, { rejectWithValue }) => {
+    try {
+      const response = await albumService.update(album);
       return response.data;
     } catch (error) {
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
