@@ -2,6 +2,12 @@
 Import your bookmark html file and view it as a playlist
 
 ## Features
+<ul>
+  <li>Convert bookmarks into a playlist</li>
+  <li>Sort and filter albums</li>
+  <li>Play albums from the playlist, or add them in a queue</li>
+  <li>Create/Update/Delete albums</li>
+</ul>
 
 ## How to start
 ### Installing
