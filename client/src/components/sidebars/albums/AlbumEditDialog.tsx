@@ -4,7 +4,7 @@ import DragDialog from '../../general/DragDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
-import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albumsSlice';
+import { deleteAlbum, updateAlbum, view } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -43,6 +43,9 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
+
+      // removed album is beign viewed, unview it
+      dispatch(view(null));
 
       onClose();
 
