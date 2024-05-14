@@ -1,0 +1,160 @@
+import { useAppSelector } from '../../redux/hooks';
+import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSlice';
+import YouTube, { YouTubeProps } from 'react-youtube';
+import VideoControls from './VideoControls';
+import { useRef, useState } from 'react';
+
+enum PlayerState {
+  UNSTARTED = -1,
+  ENDED = 0,
+  PLAYING = 1,
+  PAUSED = 2,
+  BUFFERING = 3,
+  VIDEO_CUED = 5,
+};
+
+const ORIGIN = 'http://localhost:5173';
+
+/**
+ * https://developers.google.com/youtube/player_parameters
+ */
+const BASE_PLAYER_VARS = {
+  // autoplay
+  // cc_lang_pref
+  // cc_load_policy
+  // color
+  // controls
+  // disablekb
+  
+  // enables the player to be controlled via IFrame Player API calls
+  enablejsapi: 1,
+
+  // end
+  
+  // prevent the fullscreen button from displaying in the player
+  fs: 0,
+
+  // hl
+  // iv_load_policy
+  // list
+  // listType
+  // loop
+  // modestbranding
+  
+  // This parameter provides an extra security measure for the IFrame API and
+  // is only supported for IFrame embeds. If you are using the IFrame API, which
+  // means you are setting the enablejsapi parameter value to 1, you should always
+  // specify your domain as the origin parameter value.
+  origin, ORIGIN,
+
+  // playlist
+  // playsinline
+  // rel
+  // start
+  // widget_referrer
+};
+
+interface VideoPlayerProps {
+  videoId: string;
+  playNext: () => void;
+  close: () => void;
+}
+
+const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
+  const autoPlay = useAppSelector(selectAutoplay);
+  const autoqueue = useAppSelector(selectAutoqueue);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const ref = useRef<YouTube>(null);
+
+  const opts: YouTubeProps['opts'] = {
+    // width
+    // height
+    // videoId
+    playerVars: {
+      ...BASE_PLAYER_VARS,
+
+      autoplay: +autoPlay,
+      loop: 0,
+    },
+    // events,
+  };
+
+  /**
+   * This event fires when the layer's state changes to PlayerState.ENDED.
+   * 
+   * @param event 
+   */
+  const onEnd: YouTubeProps['onEnd'] = () => {
+    if (autoqueue) { playNext(); }
+  };
+
+  /**
+   * This event fires if an error occurs in the player.
+   * {@link https://developers.google.com/youtube/iframe_api_reference#onError}
+   * 
+   * @param event 
+   */
+  const onError: YouTubeProps['onError'] = (event) => {
+    console.log('YouTube.onError');
+  };
+
+  /**
+   * This event fires whenever the player's state changes.
+   * 
+   * @param event The data property will specify an integer that corresponds
+   *              to the new player state
+   */
+  const onStateChange: YouTubeProps['onStateChange'] = async (event) => {
+    const currentState = event.data;
+    setIsPlaying(currentState === PlayerState.PLAYING);
+  };
+
+  const advance = async () => {
+    const TIME = 10;
+    const target = ref.current;
+    if (target !== null) {
+      const player = target.internalPlayer;
+      const current = await player.getCurrentTime();
+      await player.seekTo(current + TIME);
+    }
+  };
+
+  const togglePlay = async () => {
+    const target = ref.current;
+    if (target !== null) {
+      const player = target.internalPlayer;
+
+      const currentState = await player.getPlayerState();
+      if (currentState === PlayerState.PAUSED) {
+        player.playVideo();
+      } else if (currentState === PlayerState.PLAYING) {
+        player.pauseVideo();
+      }
+    }
+  };
+
+  return (
+    <div>
+      <div className="video">
+        <YouTube
+          ref={ref}
+          videoId={videoId}
+          opts={opts}
+          onEnd={onEnd}
+          onError={onError}
+          onStateChange={onStateChange}
+        />
+      </div>
+      
+      <VideoControls
+        close={close}
+        isPlaying={isPlaying}
+        toggle={togglePlay}
+        advance={advance}
+      />
+    </div>
+  );
+};
+
+export default VideoPlayer;

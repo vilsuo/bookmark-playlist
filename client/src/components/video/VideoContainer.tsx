@@ -1,5 +1,5 @@
 import { Album } from '../../types';
-import Video from './Video';
+import VideoPlayer from './VideoPlayer';
 import VideoDetails from './VideoDetails';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShowVideoDetails } from '../../redux/reducers/settingsSlice';
@@ -22,10 +22,9 @@ const VideoContainer = ({ album, closeVideo, playNext }: VideoContainerProps) =>
     <div className="video-container">
       <div className="header">
         <h1>{formatVideoTitle(album)}</h1>
-        <button onClick={closeVideo}>&#x2715;</button>
       </div>
 
-      <Video videoId={album.videoId} playNext={playNext} />
+      <VideoPlayer videoId={album.videoId} playNext={playNext} close={closeVideo} />
 
       { showVideoDetails && <VideoDetails album={album} /> }
     </div>
