@@ -313,16 +313,16 @@ dialog .header h3 {
   display: flex;
   flex-flow: column;
   gap: 10px;
-}
-.bookmark-converter .info {
-  text-align: justify;
-  font-style: italic;
 
   padding: 4px;
   border: 2px solid black;
   background-color: var(--ma);
 }
-.bookmark-converter .info .format {
+p.info {
+  text-align: justify;
+  font-style: italic;
+}
+p.info .format {
   display: block;
   color: orange;
   text-transform: uppercase;
@@ -333,10 +333,6 @@ dialog .header h3 {
   display: flex;
   flex-flow: column nowrap;
   gap: 10px;
-
-  padding: 4px;
-  border: 2px solid black;
-  background-color: var(--ma);
 }
 .bookmark-converter form label + span {
   font-size: smaller;
@@ -347,7 +343,6 @@ dialog .header h3 {
   margin-top: 4px;
   color: black;
 }
-
 .bookmark-converter form input[type='file'] {
   cursor: pointer;
 
@@ -356,6 +351,14 @@ dialog .header h3 {
 
   border: 1px dashed black;
   background-color: white;
+}
+.album-downloader {
+  display: flex;
+  justify-content: space-between;
+  
+  padding: 4px;
+  border: 2px solid black;
+  background-color: var(--ma);
 }
 
 /* Album filter */

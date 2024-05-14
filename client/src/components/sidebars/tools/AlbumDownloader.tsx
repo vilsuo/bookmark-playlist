@@ -7,12 +7,10 @@ const AlbumDownloader = () => {
   };
 
   return (
-    <div>
-      <h3>Download Albums data</h3>
+    <div className="album-downloader">
       <p className="info">
-        Download all albums as JSON
+        Download albums in JSON-format
       </p>
-
       <button onClick={handleDownload}>Download</button>
     </div>
   );
