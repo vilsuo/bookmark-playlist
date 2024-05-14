@@ -93,7 +93,7 @@ const BookmarkConverter = () => {
           <span>Accepted filetypes: .html</span>
         </div>
 
-        <button>Convert & Download</button>
+        <button disabled={ !(name && file) }>Convert</button>
       </form>
     </div>
   );
