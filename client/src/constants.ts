@@ -1,0 +1,1 @@
+export const SKIP_SECONDS = 10;

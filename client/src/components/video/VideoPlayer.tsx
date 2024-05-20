@@ -3,6 +3,7 @@ import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSl
 import YouTube, { YouTubeProps } from 'react-youtube';
 import VideoControls from './VideoControls';
 import { useRef, useState } from 'react';
+import { SKIP_SECONDS } from '../../constants';
 
 enum PlayerState {
   UNSTARTED = -1,
@@ -110,26 +111,40 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
     setIsPlaying(currentState === PlayerState.PLAYING);
   };
 
-  const advance = async () => {
-    const TIME = 10;
+  const getPlayer = () => {
     const target = ref.current;
-    if (target !== null) {
-      const player = target.internalPlayer;
-      const current = await player.getCurrentTime();
-      await player.seekTo(current + TIME);
+    return (target !== null) ? target.internalPlayer : null;
+  };
+
+  const getTime = async () => {
+    const player = getPlayer();
+    return player ? await player.getCurrentTime() : 0;
+  };
+
+  const getDuration = async () => {
+    const player = getPlayer();
+    return player ? await player.getDuration() : 0;
+  };
+
+  const seekTo = async (cb: (current: number) => number) => {
+    const player = getPlayer();
+    if (player) {
+      const currentTime = await getTime();
+      await player.seekTo(cb(currentTime));
     }
   };
 
-  const togglePlay = async () => {
-    const target = ref.current;
-    if (target !== null) {
-      const player = target.internalPlayer;
+  const forward = async () => seekTo((current) => current + SKIP_SECONDS);
+  const backward = async () => seekTo((current) => Math.max(current - SKIP_SECONDS, 0));
 
+  const togglePlay = async () => {
+    const player = getPlayer();
+    if (player) {
       const currentState = await player.getPlayerState();
-      if (currentState === PlayerState.PAUSED) {
-        player.playVideo();
-      } else if (currentState === PlayerState.PLAYING) {
+      if (currentState === PlayerState.PLAYING) {
         player.pauseVideo();
+      } else {
+        player.playVideo();
       }
     }
   };
@@ -148,10 +163,14 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
       </div>
       
       <VideoControls
+        key={`controls-${videoId}`}
         close={close}
-        isPlaying={isPlaying}
         toggle={togglePlay}
-        advance={advance}
+        forward={forward}
+        backward={backward}
+        isPlaying={isPlaying}
+        getTime={getTime}
+        getDuration={getDuration}
       />
     </div>
   );
