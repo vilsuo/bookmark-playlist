@@ -14,6 +14,12 @@ h1, h2, h3 {
   text-align: center;
 }
 
+/* Icon button */
+button svg {
+  display: inline-flex;
+  vertical-align: middle; 
+}
+
 /* Draggable dialog */
 dialog {
   border: 1px solid white;
@@ -278,12 +284,24 @@ dialog .header h3 {
   width: 100%;
   height: 100%;
 }
+
+/* Video controls */
 .video-controls {
   display: flex;
+  justify-content: space-around;
+  padding: 2px;
+
+  background-color: black;
+}
+.video-controls .actions {
+  display: flex;
   justify-content: center;
-  padding: 4px;
+  align-items: center;
+  gap: 10px;
   
-  background-color: orange;
+  padding: 4px;
+  border: 1px solid white;
+  background-color: var(--ma);
 }
 
 /* Video details */
