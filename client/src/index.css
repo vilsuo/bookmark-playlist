@@ -14,7 +14,14 @@ h1, h2, h3 {
   text-align: center;
 }
 
-/* Icon button */
+/* button */
+button:not(:disabled):hover {
+  cursor: pointer;
+  background-color: darkgrey;
+}
+button:disabled:hover {
+  cursor: not-allowed;
+}
 button svg {
   display: inline-flex;
   vertical-align: middle; 
@@ -246,10 +253,6 @@ dialog .header h3 {
 .sidebar-opener button {
   width: 44px;
   height: 44px;
-}
-.sidebar-opener button:hover {
-  cursor: pointer;
-  background-color: darkgrey;
 }
 
 /* Video player */
