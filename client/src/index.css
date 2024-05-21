@@ -184,7 +184,8 @@ dialog .header h3 {
   height: 30px;
   width: 30px;
 }
-.albums-view .actions .play-button {
+.albums-view .actions .play-button,
+.play-button {
   height: 50px;
   width: 50px;
 }

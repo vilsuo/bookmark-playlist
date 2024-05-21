@@ -1,6 +1,49 @@
 import { useEffect, useState } from 'react';
 import { SKIP_SECONDS } from '../../constants';
 
+const PauseIcon = ({ size = 1 }) => {
+  const dim = 2 * 20 * size;
+
+  return (
+    <svg width={dim} height={dim} viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="5" height="30" width="8" rx="2" />
+      <rect x="24" y="5" height="30" width="8" rx="2" />
+    </svg>
+  );
+};
+
+const PlayIcon = ({ size = 1 }) => {
+  const dim = 2 * 20 * size;
+
+  return (
+    <svg width={dim} height={dim} viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="8,5 32,20 8,35" />
+    </svg>
+  );
+};
+
+interface PlayToggleButtonProps {
+  isPlaying: boolean;
+  play: () => void;
+  pause: () => void;
+}
+
+const PlayToggleButton = ({ isPlaying, play, pause }: PlayToggleButtonProps) => {
+  if (isPlaying) {
+    return (
+      <button className="play-button" onClick={pause}>
+        <PauseIcon />
+      </button>
+    );
+  }
+
+  return (
+    <button className="play-button" onClick={play}>
+      <PlayIcon />
+    </button>
+  );
+};
+
 interface VideoControlsProps {
   close: () => void;
   toggle: () => void;
@@ -62,9 +105,9 @@ const VideoControls = ({
     <div className="video-controls">
       <button onClick={close}>Close</button>
       <button onClick={handleBackward}>{'-' + SKIP_SECONDS}</button>
-      <button onClick={toggle}>{isPlaying ? 'Pause' : 'Resume'}</button>
+      <PlayToggleButton isPlaying={isPlaying} play={toggle} pause={toggle} />
       <button onClick={handleForward}>{'+' + SKIP_SECONDS}</button>
-      <p>Time: {formatTime(time) + '/' + formatTime(duration)}</p>
+      <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
     </div>
   );
 };
