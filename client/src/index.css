@@ -257,7 +257,11 @@ dialog .header h3 {
 
 /* Video player */
 .video-container {
-  border: 2px solid black;
+  display: flex;
+  flex-flow: column;
+  gap: 2px;
+  padding: 2px;
+  background-color: black;
 }
 .video-container .header {
   display: flex;
@@ -291,33 +295,24 @@ dialog .header h3 {
 /* Video controls */
 .video-controls {
   display: flex;
-  justify-content: space-between;
-  padding: 4px;
-  gap: 4px;
-
-  background-color: black;
-}
-.video-controls > * {
-  padding: 10px;
-  border: 1px solid white;
+  flex-flow: row wrap;
   background-color: var(--ma);
 }
-.video-controls .actions {
-  flex-shrink: 1;
+.video-controls > * {
   display: flex;
   justify-content: center;
+  padding: 4px;
+}
+.video-controls .actions {
+  flex: 1;
   align-items: center;
   gap: 10px;
 }
-.video-controls > :not(div.actions) {
-  flex: 1; /* center actions */
-}
 .video-controls .time {
-  display: flex;
+  flex: 1000;
   flex-flow: column;
-  justify-content: center;
   gap: 4px;
-  text-align: end;
+  min-width: 300px;
 }
 
 /* Video details */

@@ -84,9 +84,9 @@ const PlayToggleButton = ({ isPlaying, toggle }: PlayToggleButtonProps) => {
 const ProgressBar = ({ frac = 1 }) => {
 
   return (
-    <svg viewBox="0 0 100 2" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%' }}>
-      <rect height="2" width="100" fill="white" /> 
-      <rect height="2" width={frac * 100} /> 
+    <svg viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg">
+      <rect height="1" width="100" fill="gray" /> 
+      <rect height="1" width={frac * 100} fill="red" /> 
     </svg>
   );
 };
@@ -150,10 +150,6 @@ const VideoControls = ({
 
   return (
     <div className="video-controls">
-      <div>
-
-      </div>
-      
       <div className="actions">
         <button onClick={close}>
           <StopIcon size={0.75} />
@@ -175,8 +171,8 @@ const VideoControls = ({
       </div>
 
       <div className="time">
-        <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
         <ProgressBar frac={duration ? time / duration : 0}/>
+        <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
       </div>
     </div>
   );
