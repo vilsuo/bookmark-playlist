@@ -19,6 +19,8 @@ const AlbumRow = ({ album, isPlayed, isViewed, view }: AlbumRowProps) => {
     isViewed ? view(null) : view(album);
   };
 
+  const parseAddDate = (album: Album) => album.addDate.split('T')[0].replace(/-/g, '/');
+
   return (
     <tr
       className={`album-row ${getExtraClassNames(isPlayed, isViewed)}`}
@@ -27,6 +29,7 @@ const AlbumRow = ({ album, isPlayed, isViewed, view }: AlbumRowProps) => {
       <td>{album.artist}</td>
       <td>{album.title}</td>
       <td>{album.published}</td>
+      <td>{parseAddDate(album)}</td>
     </tr>
   );
 };

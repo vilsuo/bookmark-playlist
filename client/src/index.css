@@ -90,7 +90,7 @@ dialog .header h3 {
 }
 .container .sidebar {
   overflow: hidden;
-  width: 500px;
+  width: 550px; /* +50 */
   
   background-color: var(--ma-selected);
   border-right: 2px solid white;
@@ -159,7 +159,7 @@ dialog .header h3 {
 
   position: fixed;
   bottom: 0;
-  width: 500px;
+  width: 550px;
   height: 120px;
 
   border-right: 2px solid white;
@@ -560,10 +560,13 @@ table thead th.sortable:hover {
   white-space: nowrap;
 }
 .album-table th:first-child {
-  width: 36%;
+  width: 30%;
 }
 .album-table th:nth-child(2) {
-  width: 52%;
+  width: 42%;
+}
+.album-table th:nth-child(3) {
+  width: 11%;
 }
 /* Viewing row */
 .album-table tbody .album-row.viewing {

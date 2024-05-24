@@ -48,12 +48,14 @@ const getSortFn =
       }
 
       return sortOrder * (aTitle < bTitle ? -1 : 1);
-    } else {
-      // published
+    } else if (sortColumn === AlbumColumn.PUBLISHED) {
       if (a.published === b.published) {
         return aArtist < bArtist ? -1 : 1;
       }
       return sortOrder * (a.published - b.published);
+    } else {
+      // add date
+      return sortOrder * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
     }
   };
 
@@ -138,7 +140,7 @@ const AlbumTable = ({
     <table className="album-table">
       <thead>
         <tr>
-          {[AlbumColumn.ARTIST, AlbumColumn.ALBUM, AlbumColumn.PUBLISHED].map(
+          {[AlbumColumn.ARTIST, AlbumColumn.ALBUM, AlbumColumn.PUBLISHED, AlbumColumn.ADD_DATE].map(
             (col) => (
               <SortableColumn
                 key={col}

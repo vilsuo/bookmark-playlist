@@ -7,6 +7,7 @@ export enum AlbumColumn {
   ARTIST = 'Artist',
   ALBUM = 'Title',
   PUBLISHED = 'Year',
+  ADD_DATE = 'Added',
 }
 
 export type Interval = {
