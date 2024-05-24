@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SKIP_SECONDS } from '../../constants';
+import { useSelector } from 'react-redux';
+import { selectQueueFirst } from '../../redux/reducers/queueSlice';
 
 const StopIcon = ({ size = 1}) => {
   const dim = 2 * 20 * size;
@@ -94,9 +96,9 @@ const ProgressBar = ({ frac = 1 }) => {
 interface VideoControlsProps {
   close: () => void;
   toggle: () => void;
-  forward: () => Promise<void>;
-  backward: () => Promise<void>;
+  seekTo: (t: number) => Promise<void>;
   isPlaying: boolean;
+  playNext: () => void;
   getTime: () => Promise<number>;
   getDuration: () => Promise<number>;
 }
@@ -104,14 +106,16 @@ interface VideoControlsProps {
 const VideoControls = ({
   close,
   toggle,
-  forward,
-  backward,
+  seekTo,
   isPlaying,
+  playNext,
   getTime,
   getDuration,
 }: VideoControlsProps) => {
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  const nextAlbum = useSelector(selectQueueFirst);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -139,13 +143,17 @@ const VideoControls = ({
   };
 
   const handleForward = async () => {
-    await forward();
-    setTime(Math.min(time + SKIP_SECONDS, duration));
+    const currentTime = await getTime();
+    const newTime = Math.min(currentTime + SKIP_SECONDS, duration);
+    await seekTo(newTime);
+    setTime(newTime);
   };
 
   const handleBackward = async () => {
-    await backward();
-    setTime(Math.max(0, time - SKIP_SECONDS));
+    const currentTime = await getTime();
+    const newTime = Math.max(0, currentTime - SKIP_SECONDS)
+    await seekTo(newTime);
+    setTime(newTime);
   };
 
   return (
@@ -165,13 +173,13 @@ const VideoControls = ({
           <ForwardIcon size={0.75} />
         </button>
 
-        <button>
+        <button onClick={playNext} disabled={!nextAlbum}>
           <SkipIcon size={0.75} />
         </button>
       </div>
 
       <div className="time">
-        <ProgressBar frac={duration ? time / duration : 0}/>
+        <ProgressBar frac={duration ? time / duration : 0} />
         <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
       </div>
     </div>

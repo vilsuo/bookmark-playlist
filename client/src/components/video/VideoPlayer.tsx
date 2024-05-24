@@ -3,7 +3,6 @@ import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSl
 import YouTube, { YouTubeProps } from 'react-youtube';
 import VideoControls from './VideoControls';
 import { useRef, useState } from 'react';
-import { SKIP_SECONDS } from '../../constants';
 
 enum PlayerState {
   UNSTARTED = -1,
@@ -126,16 +125,12 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
     return player ? await player.getDuration() : 0;
   };
 
-  const seekTo = async (cb: (current: number) => number) => {
+  const seekTo = async (time: number) => {
     const player = getPlayer();
     if (player) {
-      const currentTime = await getTime();
-      await player.seekTo(cb(currentTime));
+      await player.seekTo(time);
     }
   };
-
-  const forward = async () => seekTo((current) => current + SKIP_SECONDS);
-  const backward = async () => seekTo((current) => Math.max(current - SKIP_SECONDS, 0));
 
   const togglePlay = async () => {
     const player = getPlayer();
@@ -166,9 +161,9 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
         key={`controls-${videoId}`}
         close={close}
         toggle={togglePlay}
-        forward={forward}
-        backward={backward}
+        seekTo={seekTo}
         isPlaying={isPlaying}
+        playNext={playNext}
         getTime={getTime}
         getDuration={getDuration}
       />
