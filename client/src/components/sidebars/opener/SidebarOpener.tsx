@@ -11,8 +11,8 @@ const SidebarOpener = ({ show }: SidebarOpenerProps) => {
   return (
     <div className="sidebar-opener">
       <AlbumsButton show={() => show(SidebarType.ALBUMS)} />
-      <ToolsButton show={() => show(SidebarType.TOOLS)} />
       <SettingsButton show={() => show(SidebarType.SETTINGS)} />
+      <ToolsButton show={() => show(SidebarType.TOOLS)} />
     </div>
   );
 };
