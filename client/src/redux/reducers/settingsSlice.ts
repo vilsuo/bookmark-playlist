@@ -9,7 +9,7 @@ export interface SettingsState {
 }
 
 export const initialState: SettingsState = {
-  autoplay: false,
+  autoplay: true,
   autoqueue: true,
   showVideoDetails: true,
 };
