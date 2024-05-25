@@ -5,13 +5,15 @@ import { RootState } from '../store';
 export interface FilterState {
   column: AlbumColumn;
   text: string;
-  interval: Interval;
+  publishInterval: Interval<string>;
+  addDateInterval: Interval<string>;
 }
 
 const initialState: FilterState = {
   column: AlbumColumn.ARTIST,
   text: '',
-  interval: { start: '', end: '' },
+  publishInterval: { start: '', end: '' },
+  addDateInterval: { start: '', end: '' },
 };
 
 const filtersSlice = createSlice({
@@ -26,14 +28,18 @@ const filtersSlice = createSlice({
       const text = action.payload;
       state.text = text;
     },
-    setFilterInterval: (state, action: PayloadAction<Interval>) => {
+    setFilterPublishInterval: (state, action: PayloadAction<Interval<string>>) => {
       const interval = action.payload;
-      state.interval = interval;
+      state.publishInterval = interval;
+    },
+    setFilterAddDateInterval: (state, action: PayloadAction<Interval<string>>) => {
+      const interval = action.payload;
+      state.addDateInterval = interval;
     },
   },
 });
 
-export const { selectFilterColumn, setFilterText, setFilterInterval } =
+export const { selectFilterColumn, setFilterText, setFilterPublishInterval, setFilterAddDateInterval } =
   filtersSlice.actions;
 
 export const selectFilters = (state: RootState) => state.filters;

@@ -10,9 +10,9 @@ export enum AlbumColumn {
   ADD_DATE = 'Added',
 }
 
-export type Interval = {
-  start: string;
-  end: string;
+export type Interval<T> = {
+  start: T;
+  end: T;
 };
 
 export enum Order {

@@ -4,6 +4,7 @@ import AlbumRow from './AlbumRow';
 import SortableColumn from '../general/SortableColumn';
 import { useAppSelector } from '../../redux/hooks';
 import { FilterState, selectFilters } from '../../redux/reducers/filterSlice';
+import { parseDateInterval } from '../../util/dateConverter';
 
 /**
  * Create a {@link Album} sorting funtion. The sorting function will sort
@@ -21,6 +22,8 @@ import { FilterState, selectFilters } from '../../redux/reducers/filterSlice';
  * {@link AlbumColumn.PUBLISHED}: If two {@link Album.published} are equal,
  * then the album with earlier {@link Album.artist} value will ALWAYS be first
  * regardless of given {@link Order}.
+ * 
+ * {@link AlbumColumn.ADD_DATE}: Sort by {@link Album.addDate}.
  *
  * @param sortColumn name of the current column to sort by
  * @param sortOrder the sorting order
@@ -67,9 +70,9 @@ const getSortFn =
  * @returns the filter funtion
  */
 const getFilterFn = (filterState: FilterState) => (album: Album) => {
-  const { text, column, interval } = filterState;
+  const { text, column, publishInterval, addDateInterval } = filterState;
 
-  if (column !== AlbumColumn.PUBLISHED) {
+  if (column === AlbumColumn.ARTIST || column === AlbumColumn.ALBUM) {
     // filter only by text value, select album artist or title
     if (!text) return true;
 
@@ -79,19 +82,39 @@ const getFilterFn = (filterState: FilterState) => (album: Album) => {
     } else {
       return album.title.toLowerCase().indexOf(searchText) !== -1;
     }
-  } else {
+  } else if (column === AlbumColumn.PUBLISHED) {
     // filter only by published
     const { published } = album;
-    const { start, end } = interval;
+    const { start, end } = publishInterval;
 
     if (!start && !end) {
-      return 1; // no interval filter
+      return true; // no interval filter
+
     } else if (start && end) {
       return Number(start) <= published && published <= Number(end);
+
     } else if (start) {
       return published >= Number(start);
+      
     } else {
       return published <= Number(end);
+    }
+  } else {
+    // filter only by addDate
+    const date = new Date(album.addDate);
+    const { startDate, endDate } = parseDateInterval(addDateInterval);
+    
+    if (!startDate && !endDate) {
+      return true; // no interval filter
+
+    } else if (startDate && endDate) {
+      return startDate <= date && date < endDate;
+
+    } else if (startDate) {
+      return date >= startDate;
+
+    } else {
+      return date < endDate;
     }
   }
 };
