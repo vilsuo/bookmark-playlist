@@ -112,7 +112,7 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
 
   const getPlayer = () => {
     const target = ref.current;
-    return (target !== null) ? target.internalPlayer : null;
+    return (target !== null) ? target.getInternalPlayer() : null;
   };
 
   const getTime = async () => {
