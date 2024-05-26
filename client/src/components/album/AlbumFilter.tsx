@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  resetFilters,
   selectFilterColumn,
   selectFilters,
   setFilterAddDateInterval,
@@ -115,6 +116,10 @@ const AlbumFilter = () => {
     dispatch(selectFilterColumn(value));
   };
 
+  const handleFilterReset = () => {
+    dispatch(resetFilters());
+  };
+
   return (
     <div className="album-filter">
       <div className="filter-column">
@@ -134,6 +139,10 @@ const AlbumFilter = () => {
       </div>
 
       <FilterInputs column={column} />
+
+      <button onClick={handleFilterReset}>
+        Clear
+      </button>
     </div>
   );
 };

@@ -36,10 +36,13 @@ const filtersSlice = createSlice({
       const interval = action.payload;
       state.addDateInterval = interval;
     },
+    resetFilters: (state) => {
+      return { ...initialState, column: state.column };
+    },
   },
 });
 
-export const { selectFilterColumn, setFilterText, setFilterPublishInterval, setFilterAddDateInterval } =
+export const { selectFilterColumn, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters } =
   filtersSlice.actions;
 
 export const selectFilters = (state: RootState) => state.filters;
