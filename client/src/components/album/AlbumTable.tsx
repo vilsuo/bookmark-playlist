@@ -114,17 +114,17 @@ const getFilterFn = (filterState: FilterState) => (album: Album) => {
       const date = new Date(album.addDate);
       const { startDate, endDate } = parseDateInterval(addDateInterval);
 
-      if (!startDate && !endDate) {
-        return true; // no interval filter
-
-      } else if (startDate && endDate) {
+      if (startDate && endDate) {
         return startDate <= date && date < endDate;
 
       } else if (startDate) {
         return date >= startDate;
 
-      } else {
+      } else if (endDate) {
         return date < endDate;
+
+      } else {
+        return true; // no interval filter
       }
     }
     default:
