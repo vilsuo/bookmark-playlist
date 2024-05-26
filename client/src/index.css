@@ -389,6 +389,10 @@ p.info .format {
   border: 1px dashed black;
   background-color: white;
 }
+.bookmark-converter form .actions {
+  display: flex;
+  justify-content: end;
+}
 .album-downloader {
   display: flex;
   justify-content: space-between;
