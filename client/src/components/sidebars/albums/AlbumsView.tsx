@@ -6,11 +6,12 @@ import AlbumEditDialog from './AlbumEditDialog';
 
 interface AlbumsViewProps {
   album: Album;
+  isPlaying: boolean;
   close: () => void;
   play: () => void;
 }
 
-const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
+const AlbumsView = ({ album, isPlaying, close, play }: AlbumsViewProps) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -36,7 +37,9 @@ const AlbumsView = ({ album, close, play }: AlbumsViewProps) => {
 
         <div className="content">
           <div className="actions">
-            <button className="play-button" onClick={play}>Play</button>
+            <button className="play-button" onClick={play} disabled={isPlaying}>
+              Select
+            </button>
             <button onClick={addToQueue}>Q</button>
             <button onClick={openEdit}>E</button>
           </div>

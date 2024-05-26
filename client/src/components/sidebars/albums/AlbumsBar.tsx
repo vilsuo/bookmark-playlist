@@ -63,6 +63,7 @@ const AlbumsBar = ({
       { viewingAlbum && (
         <AlbumsView
           album={viewingAlbum}
+          isPlaying={playingAlbum !== null && viewingAlbum.id === playingAlbum.id}
           close={(() => setViewingAlbum(null))}
           play={() => setPlayingAlbum(viewingAlbum)}
         />
