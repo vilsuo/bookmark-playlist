@@ -406,10 +406,13 @@ p.info .format {
 .album-filter {
   display: flex;
   flex-flow: row nowrap;
-  gap: 6px;
+  gap: 4px;
   padding: 4px;
   border: 2px solid black;
   background-color: var(--ma);
+}
+.album-filter label {
+  align-content: center;
 }
 .album-filter .filter-column {
   display: flex;
