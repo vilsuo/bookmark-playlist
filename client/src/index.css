@@ -566,7 +566,21 @@ table thead th.sortable {
   cursor: pointer;
 }
 table thead th.sortable:hover {
-  color: var(--ma-active);
+  color: black;
+  text-shadow: none;
+  background-color: white;
+}
+table thead th.sortable:hover .sortable-icon:before {
+  border-bottom: 4px solid lightgrey;
+}
+table thead th.sortable:hover .sortable-icon:after {
+  border-top: 4px solid lightgrey;
+}
+table thead th.sortable:hover .sortable-icon.asc:before {
+  border-bottom: 4px solid black;
+}
+table thead th.sortable:hover .sortable-icon.desc:after {
+  border-top: 4px solid black;
 }
 
 /* Album table */
