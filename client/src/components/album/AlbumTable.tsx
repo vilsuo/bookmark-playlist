@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Album, AlbumColumn, Order } from '../../types';
 import AlbumRow from './AlbumRow';
 import SortableColumn from '../general/SortableColumn';
@@ -146,6 +146,8 @@ const AlbumTable = ({
   viewingAlbum,
   setViewingAlbum,
 }: AlbumTableProps) => {
+  const [sortedAlbums, setSortedAlbums] = useState<Album[]>([]);
+
   // filters
   const filterState = useAppSelector(selectFilters);
 
@@ -169,9 +171,13 @@ const AlbumTable = ({
     setSortColumn(colum);
   };
 
-  const sortedAlbums = albums
-    .filter(getFilterFn(filterState))
-    .toSorted(getSortFn(sortColumn, sortOrder));
+  useEffect(() => {
+    setSortedAlbums(
+      albums
+        .filter(getFilterFn(filterState))
+        .toSorted(getSortFn(sortColumn, sortOrder))
+    );
+  }, [albums, sortColumn, sortOrder, filterState]);
 
   return (
     <table className="album-table">
