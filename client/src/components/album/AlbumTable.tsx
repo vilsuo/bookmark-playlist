@@ -87,16 +87,17 @@ const getFilterFn = (filterState: FilterState) => (album: Album) => {
     const { published } = album;
     const { start, end } = publishInterval;
 
-    if (!start && !end) {
+    if (start === undefined && end === undefined) {
       return true; // no interval filter
 
-    } else if (start && end) {
+    } else if (start !== undefined && end !== undefined) {
       return Number(start) <= published && published <= Number(end);
 
-    } else if (start) {
+    } else if (start !== undefined) {
       return published >= Number(start);
       
     } else {
+      // end !== undefined
       return published <= Number(end);
     }
   } else {

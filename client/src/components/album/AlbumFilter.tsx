@@ -22,11 +22,13 @@ const FilterInputs = ({ column }: FilterInputsProps) => {
   };
 
   const handlePublishStartChange = (value: string) => {
-    dispatch(setFilterPublishInterval({ ...publishInterval, start: value }));
+    const newStart = value !== "" ? Number(value) : undefined;
+    dispatch(setFilterPublishInterval({ ...publishInterval, start: newStart }));
   };
 
   const handlePublishEndChange = (value: string) => {
-    dispatch(setFilterPublishInterval({ ...publishInterval, end: value }));
+    const newEnd = value !== "" ? Number(value) : undefined;
+    dispatch(setFilterPublishInterval({ ...publishInterval, end: newEnd }));
   };
 
   const handleAddDateStartChange = (value: string) => {
@@ -59,8 +61,8 @@ const FilterInputs = ({ column }: FilterInputsProps) => {
             <label htmlFor="album-filter-publish-start">From:</label>
             <input
               id="album-filter-publish-start"
-              type="text"
-              value={publishInterval.start}
+              type="number"
+              value={publishInterval.start !== undefined ? publishInterval.start : ""}
               onChange={({ target }) => handlePublishStartChange(target.value)}
             />
           </div>
@@ -69,8 +71,8 @@ const FilterInputs = ({ column }: FilterInputsProps) => {
             <label htmlFor="album-filter-publish-end">to:</label>
             <input
               id="album-filter-publish-end"
-              type="text"
-              value={publishInterval.end}
+              type="number"
+              value={publishInterval.end !== undefined ? publishInterval.end : ""}
               onChange={({ target }) => handlePublishEndChange(target.value)}
             />
           </div>
