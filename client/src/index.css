@@ -437,6 +437,9 @@ p.info .format {
   flex: 1;
   width: 0;
 }
+.album-filter .filter-interval .start {
+  flex-basis: 22px;
+}
 
 /* Notification */
 .notification-container {

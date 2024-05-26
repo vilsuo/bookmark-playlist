@@ -55,7 +55,7 @@ const FilterInputs = ({ column }: FilterInputsProps) => {
     case AlbumColumn.PUBLISHED:
       return (
         <div className="filter-interval">
-          <div>
+          <div className="start">
             <label htmlFor="album-filter-publish-start">From:</label>
             <input
               id="album-filter-publish-start"
@@ -80,7 +80,7 @@ const FilterInputs = ({ column }: FilterInputsProps) => {
     case AlbumColumn.ADD_DATE:
       return (
         <div className="filter-interval">
-          <div>
+          <div className="start">
             <label htmlFor="album-filter-addDate-start">From:</label>
             <input
               id="album-filter-addDate-start"
