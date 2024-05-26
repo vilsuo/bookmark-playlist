@@ -126,8 +126,8 @@ dialog .dialog-body .options {
   overflow-y: auto;
 
   background-color: var(--ma-selected);
-  border-left: 2px solid white;
-  border-right: 2px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -279,14 +279,13 @@ dialog .dialog-body .options {
 .video-container {
   display: flex;
   flex-flow: column;
-  gap: 2px;
-  padding: 2px;
-  background-color: black;
+  gap: 10px;
+  padding: 10px;
+  background-color: var(--ma);
+  border: 2px solid black;
 }
 .video-container .header {
   display: flex;
-  padding: 4px;
-  background-color: var(--ma);
 }
 .video-container .header h1 {
   flex: 1;
@@ -316,12 +315,13 @@ dialog .dialog-body .options {
 .video-controls {
   display: flex;
   flex-flow: row wrap;
+  gap: 0 10px;
   background-color: var(--ma);
 }
 .video-controls > * {
   display: flex;
   justify-content: center;
-  padding: 4px;
+  padding-top: 10px;
 }
 .video-controls .actions {
   flex: 1;
@@ -330,26 +330,28 @@ dialog .dialog-body .options {
 }
 .video-controls .time {
   flex: 1000;
-  flex-flow: column;
+  flex-direction: column;
   gap: 4px;
   min-width: 300px;
 }
 
 /* Video details */
 .video-details {
-  padding: 4px;
   background-color: var(--ma);
   display: flex;
   flex-flow: row wrap;
   gap: 10px;
 }
-.video-details a {
+.video-details .ma {
+  margin: auto 0;
+}
+.video-details .ma a {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding-top: 2px;
+  gap: 4px;
   color: white;
-} 
+  text-align: center;
+}
 .chip {
   display: inline-block;
   padding: 2px 4px 2px 4px;
