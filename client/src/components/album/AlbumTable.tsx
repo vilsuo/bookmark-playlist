@@ -39,27 +39,32 @@ const getSortFn =
     const aTitle = a.title.toLowerCase();
     const bTitle = b.title.toLowerCase();
 
-    if (sortColumn === AlbumColumn.ARTIST) {
-      if (aArtist === bArtist) {
-        return b.published - a.published;
+    switch (sortColumn) {
+      case AlbumColumn.ARTIST: {
+        if (aArtist === bArtist) {
+          return b.published - a.published;
+        }
+        return sortOrder * (aArtist < bArtist ? -1 : 1);
       }
-
-      return sortOrder * (aArtist < bArtist ? -1 : 1);
-    } else if (sortColumn === AlbumColumn.ALBUM) {
-      if (aTitle === bTitle) {
-        return aArtist < bArtist ? -1 : 1;
+      case AlbumColumn.ALBUM: {
+        if (aTitle === bTitle) {
+          return aArtist < bArtist ? -1 : 1;
+        }
+        return sortOrder * (aTitle < bTitle ? -1 : 1);
       }
-
-      return sortOrder * (aTitle < bTitle ? -1 : 1);
-    } else if (sortColumn === AlbumColumn.PUBLISHED) {
-      if (a.published === b.published) {
-        return aArtist < bArtist ? -1 : 1;
+      case AlbumColumn.PUBLISHED: {
+        if (a.published === b.published) {
+          return aArtist < bArtist ? -1 : 1;
+        }
+        return sortOrder * (a.published - b.published);
       }
-      return sortOrder * (a.published - b.published);
-    } else {
-      // add date
-      return sortOrder * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
-    }
+      case AlbumColumn.ADD_DATE: {
+        return sortOrder * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
+      }
+      default:
+        sortColumn satisfies never;
+        return 1;
+    };
   };
 
 /**
@@ -72,52 +77,60 @@ const getSortFn =
 const getFilterFn = (filterState: FilterState) => (album: Album) => {
   const { text, column, publishInterval, addDateInterval } = filterState;
 
-  if (column === AlbumColumn.ARTIST || column === AlbumColumn.ALBUM) {
-    // filter only by text value, select album artist or title
-    if (!text) return true;
+  switch (column) {
+    case AlbumColumn.ARTIST:
+    case AlbumColumn.ALBUM: {
+      // filter only by text value, select album artist or title
+      if (!text) return true;
 
-    const searchText = text.toLowerCase();
-    if (column === AlbumColumn.ARTIST) {
-      return album.artist.toLowerCase().indexOf(searchText) !== -1;
-    } else {
-      return album.title.toLowerCase().indexOf(searchText) !== -1;
+      const searchText = text.toLowerCase();
+      if (column === AlbumColumn.ARTIST) {
+        return album.artist.toLowerCase().indexOf(searchText) !== -1;
+      } else {
+        return album.title.toLowerCase().indexOf(searchText) !== -1;
+      }
     }
-  } else if (column === AlbumColumn.PUBLISHED) {
-    // filter only by published
-    const { published } = album;
-    const { start, end } = publishInterval;
+    case AlbumColumn.PUBLISHED: {
+      // filter only by published
+      const { published } = album;
+      const { start, end } = publishInterval;
 
-    if (start === undefined && end === undefined) {
-      return true; // no interval filter
+      if (start === undefined && end === undefined) {
+        return true; // no interval filter
 
-    } else if (start !== undefined && end !== undefined) {
-      return Number(start) <= published && published <= Number(end);
+      } else if (start !== undefined && end !== undefined) {
+        return Number(start) <= published && published <= Number(end);
 
-    } else if (start !== undefined) {
-      return published >= Number(start);
-      
-    } else {
-      // end !== undefined
-      return published <= Number(end);
+      } else if (start !== undefined) {
+        return published >= Number(start);
+        
+      } else {
+        // end !== undefined
+        return published <= Number(end);
+      }
     }
-  } else {
-    // filter only by addDate
-    const date = new Date(album.addDate);
-    const { startDate, endDate } = parseDateInterval(addDateInterval);
-    
-    if (!startDate && !endDate) {
-      return true; // no interval filter
+    case AlbumColumn.ADD_DATE: {
+      // filter only by addDate
+      const date = new Date(album.addDate);
+      const { startDate, endDate } = parseDateInterval(addDateInterval);
 
-    } else if (startDate && endDate) {
-      return startDate <= date && date < endDate;
+      if (!startDate && !endDate) {
+        return true; // no interval filter
 
-    } else if (startDate) {
-      return date >= startDate;
+      } else if (startDate && endDate) {
+        return startDate <= date && date < endDate;
 
-    } else {
-      return date < endDate;
+      } else if (startDate) {
+        return date >= startDate;
+
+      } else {
+        return date < endDate;
+      }
     }
-  }
+    default:
+      column satisfies never;
+      return true;
+  };
 };
 
 interface AlbumTableProps {
