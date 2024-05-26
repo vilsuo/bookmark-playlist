@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type ToggleDialogProps = {
+interface ToggleDialogProps {
   title: string;
   isOpen: boolean;
   onClose: () => void;

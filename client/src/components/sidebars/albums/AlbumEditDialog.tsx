@@ -5,6 +5,8 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
 import { deleteAlbum, updateAlbum, view } from '../../../redux/reducers/albumsSlice';
+import { useState } from 'react';
+import ConfirmDialog from '../../general/ConfirmDialog';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -14,6 +16,8 @@ interface AlbumEditDialogProps {
 
 const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const dispatch = useAppDispatch();
+
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
 
   const updateAndClose = async (albumValues: AlbumCreation) => {
     try {
@@ -44,7 +48,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         title: 'Album removed successfully',
       }));
 
-      // removed album is beign viewed, unview it
+      // removed album is being viewed, unview it
       dispatch(view(null));
 
       onClose();
@@ -58,21 +62,43 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
     }
   };
 
+  const confirmAndDelete = async () => {
+    await removeAndClose();
+    closeConfirmDialog();
+  };
+
+  const closeConfirmDialog = () => { setIsRemoveOpen(false) };
+  const openConfirmDialog = () => { setIsRemoveOpen(true); };
+
   return (
-    <DragDialog
-      title='Edit album'
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <AlbumForm
-        album={album}
-        submit={updateAndClose}
+    <>
+      <ConfirmDialog
+        title='Remove album'
+        isOpen={isRemoveOpen}
+        onConfirm={confirmAndDelete}
+        onCancel={closeConfirmDialog}
       >
-        <button type='submit'>Save</button>
-        <button type='button' onClick={removeAndClose}>Remove</button>
-        <button type='button' onClick={onClose}>Cancel</button>
-      </AlbumForm>
-    </DragDialog>
+        <p>
+          Really remove album <span className="italic">{album.title}</span>
+          by <span className="italic">{album.artist}</span>?
+        </p>
+      </ConfirmDialog>
+
+      <DragDialog
+        title='Edit album'
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <AlbumForm
+          album={album}
+          submit={updateAndClose}
+        >
+          <button type='submit'>Save</button>
+          <button type='button' onClick={openConfirmDialog}>Remove</button>
+          <button type='button' onClick={onClose}>Cancel</button>
+        </AlbumForm>
+      </DragDialog>
+    </>
   );
 };
 

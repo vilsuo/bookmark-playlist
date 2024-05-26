@@ -14,6 +14,10 @@ h1, h2, h3 {
   text-align: center;
 }
 
+span.italic {
+  font-style: italic;
+}
+
 /* button */
 button:not(:disabled):hover {
   cursor: pointer;
@@ -47,6 +51,22 @@ dialog .header button {
 }
 dialog .header h3 {
   margin: 0 auto;
+}
+
+/* Dialog body */
+dialog .dialog-body p {
+  padding: 10px 4px;
+  background-color: var(--ma-selected);
+  color: white;
+}
+dialog .dialog-body .options {
+  display: flex;
+  gap: 4px;
+  justify-content: end;
+  padding: 4px;
+
+  background-color: black;
+  border: 1px solid white;
 }
 
 /* Album forms */
