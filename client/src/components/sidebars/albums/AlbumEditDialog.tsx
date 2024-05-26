@@ -79,8 +79,8 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         onCancel={closeConfirmDialog}
       >
         <p>
-          Really remove album <span className="italic">{album.title}</span>
-          by <span className="italic">{album.artist}</span>?
+          Really remove the album <span className="italic">{album.title}
+          </span> by <span className="italic">{album.artist}</span>?
         </p>
       </ConfirmDialog>
 
