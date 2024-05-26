@@ -156,6 +156,8 @@ const VideoControls = ({
     setTime(newTime);
   };
 
+  const fraction = (duration !== 0 && !isNaN(time / duration)) ? time / duration : 0;
+
   return (
     <div className="video-controls">
       <div className="actions">
@@ -179,7 +181,7 @@ const VideoControls = ({
       </div>
 
       <div className="time">
-        <ProgressBar frac={duration ? time / duration : 0} />
+        <ProgressBar frac={fraction} />
         <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
       </div>
     </div>
