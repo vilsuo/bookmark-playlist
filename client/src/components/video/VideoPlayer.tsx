@@ -87,7 +87,7 @@ const VideoPlayer = ({ videoId, playNext, close, disablePlayingNext }: VideoPlay
    * @param event 
    */
   const onEnd: YouTubeProps['onEnd'] = () => {
-    if (autoqueue) { playNext(); }
+    if (autoqueue && !disablePlayingNext) { playNext(); }
   };
 
   /**
