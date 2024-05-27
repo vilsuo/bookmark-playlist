@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Album, AlbumColumn, Order } from '../../types';
 import AlbumRow from './AlbumRow';
 import SortableColumn from '../general/SortableColumn';
-import { useAppSelector } from '../../redux/hooks';
-import { FilterState, selectFilters } from '../../redux/reducers/filterSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { FilterState, selectFilters, setSort } from '../../redux/reducers/filterSlice';
 import { parseDateInterval } from '../../util/dateConverter';
 
 /**
@@ -148,20 +148,17 @@ const AlbumTable = ({
 }: AlbumTableProps) => {
   const [sortedAlbums, setSortedAlbums] = useState<Album[]>([]);
 
-  // filters
   const filterState = useAppSelector(selectFilters);
 
-  // sort options
-  const [sortColumn, setSortColumn] = useState(AlbumColumn.ARTIST);
-  const [sortOrder, setSortOrder] = useState(Order.ASC);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setSortedAlbums(
       albums
         .filter(getFilterFn(filterState))
-        .toSorted(getSortFn(sortColumn, sortOrder))
+        .toSorted(getSortFn(filterState.column, filterState.order))
     );
-  }, [albums, sortColumn, sortOrder, filterState]);
+  }, [albums, filterState]);
 
   const isPlaying = (album: Album) => {
     return playingAlbum !== null && playingAlbum.videoId === album.videoId;
@@ -171,11 +168,8 @@ const AlbumTable = ({
     return viewingAlbum !== null && viewingAlbum.videoId === album.videoId;
   };
 
-  const handleSortChange = (colum: AlbumColumn) => {
-    if (colum === sortColumn) {
-      setSortOrder(sortOrder === Order.ASC ? Order.DESC : Order.ASC);
-    }
-    setSortColumn(colum);
+  const handleSortChange = (column: AlbumColumn) => {
+    dispatch(setSort(column));
   };
 
   return (
@@ -188,8 +182,8 @@ const AlbumTable = ({
                 key={col}
                 value={col}
                 setValue={handleSortChange}
-                sortColumn={sortColumn}
-                sortOrder={sortOrder}
+                sortColumn={filterState.column}
+                sortOrder={filterState.order}
               />
             ),
           )}

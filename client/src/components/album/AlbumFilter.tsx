@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   resetFilters,
-  selectFilterColumn,
+  setFilterColumn,
   selectFilters,
   setFilterAddDateInterval,
   setFilterPublishInterval,
@@ -115,7 +115,7 @@ const AlbumFilter = () => {
   const { column } = useAppSelector(selectFilters);
 
   const handleColumnChange = (value: AlbumColumn) => {
-    dispatch(selectFilterColumn(value));
+    dispatch(setFilterColumn(value));
   };
 
   const handleFilterReset = () => {
