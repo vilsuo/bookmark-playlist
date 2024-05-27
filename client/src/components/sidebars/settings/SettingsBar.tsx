@@ -38,13 +38,13 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
             value={autoplay}
             toggle={() => dispatch(toggleAutoplay())}
             label='Autoplay'
-            details='When an album is played, the video will autoplay'
+            details='Selected video will autoplay'
           />
           <SettingsCheckbox
             value={autoqueue}
             toggle={() => dispatch(toggleAutoqueue())}
             label='Autoqueue'
-            details='Autoselect next album from queue when a video ends'
+            details='Select the next album when a video ends'
           />
           <SettingsCheckbox
             value={showVideoDetails}
