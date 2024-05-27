@@ -49,10 +49,25 @@ const albumsSlice = createSlice({
         state.albums = state.albums.map((album) => 
           (album.id === updatedAlbum.id) ? updatedAlbum : album
         );
+
+        // update viewing & playing
+        const { viewing, playing } = state;
+        if (viewing && viewing.id === updatedAlbum.id) {
+          state.viewing = updatedAlbum;
+        }
+        if (playing && playing.id === updatedAlbum.id) {
+          state.playing = updatedAlbum;
+        }
       })
       .addCase(deleteAlbum.fulfilled, (state, action) => {
         const removedAlbumId = action.payload;
         state.albums = state.albums.filter((album) => album.id !== removedAlbumId);
+
+        // update viewing, keep the current playing
+        const { viewing } = state;
+        if (viewing && viewing.id === removedAlbumId) {
+          state.viewing = null;
+        }
       })
   },
 });
