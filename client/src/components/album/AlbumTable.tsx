@@ -155,6 +155,14 @@ const AlbumTable = ({
   const [sortColumn, setSortColumn] = useState(AlbumColumn.ARTIST);
   const [sortOrder, setSortOrder] = useState(Order.ASC);
 
+  useEffect(() => {
+    setSortedAlbums(
+      albums
+        .filter(getFilterFn(filterState))
+        .toSorted(getSortFn(sortColumn, sortOrder))
+    );
+  }, [albums, sortColumn, sortOrder, filterState]);
+
   const isPlaying = (album: Album) => {
     return playingAlbum !== null && playingAlbum.videoId === album.videoId;
   };
@@ -167,17 +175,8 @@ const AlbumTable = ({
     if (colum === sortColumn) {
       setSortOrder(sortOrder === Order.ASC ? Order.DESC : Order.ASC);
     }
-
     setSortColumn(colum);
   };
-
-  useEffect(() => {
-    setSortedAlbums(
-      albums
-        .filter(getFilterFn(filterState))
-        .toSorted(getSortFn(sortColumn, sortOrder))
-    );
-  }, [albums, sortColumn, sortOrder, filterState]);
 
   return (
     <table className="album-table">

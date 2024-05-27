@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AlbumFilter from '../../album/AlbumFilter';
 import AlbumTable from '../../album/AlbumTable';
 import { Album } from '../../../types';
@@ -9,13 +9,11 @@ import AlbumAddDialog from './AlbumAddDialog';
 
 interface AlbumsBarProps {
   albums: Album[];
-  close: () => void;
+  close: (pos: number | undefined) => void;
+  pos: number;
 }
 
-const AlbumsBar = ({
-  albums,
-  close,
-}: AlbumsBarProps) => {
+const AlbumsBar = ({ albums, close, pos }: AlbumsBarProps) => {
   const dispatch = useAppDispatch();
   const playingAlbum = useAppSelector(selectPlaying);
   const viewingAlbum = useAppSelector(selectViewing);
@@ -24,8 +22,16 @@ const AlbumsBar = ({
 
   const [isAddOpen, setIsAddOpen] = useState(false);
 
+  const listRef = useRef<null | HTMLDivElement>(null)
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    // console.log('scrolling to', pos);
+    setTimeout(() => {
+      listRef.current?.scrollTo({ top: pos, behavior: 'instant' });
+    }, 500);
+  }, [pos]);
 
   const scrollTo = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
@@ -38,10 +44,10 @@ const AlbumsBar = ({
         <button onClick={() => scrollTo(endRef)}>&#x21D3;</button>
         <h2>Albums</h2>
         <button onClick={() => setIsAddOpen(true)}>New</button>
-        <button onClick={close}>&#x2715;</button>
+        <button onClick={() => close(listRef.current?.scrollTop)}>&#x2715;</button>
       </div>
 
-      <div className={`sidebar-container ${viewingAlbum ? 'album-viewed' : ''}`}>
+      <div ref={listRef} className={`sidebar-container ${viewingAlbum ? 'album-viewed' : ''}`}>
         <div id="start-ref" ref={startRef} />
 
         {albums.length > 0 && (

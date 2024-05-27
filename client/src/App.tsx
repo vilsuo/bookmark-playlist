@@ -1,17 +1,12 @@
-import { useEffect, useState } from 'react';
-import { SidebarType,  } from './types';
-import SidebarOpener from './components/sidebars/opener/SidebarOpener';
-import Sidebar from './components/sidebars/Sidebar';
+import { useEffect } from 'react';
 import Main from './components/Main';
 import NotificationContainer from './components/general/notification/NotificationContainer';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { fetchAlbums, selectAlbums } from './redux/reducers/albumsSlice';
+import SidebarContainer from './components/sidebars/SidebarContainer';
 
 const App = () => {
   const albums = useAppSelector(selectAlbums);
-
-  // the current opened sidebar
-  const [sidebarType, setSidebarType] = useState<SidebarType | null>(null);
 
   const dispatch = useAppDispatch();
 
@@ -23,21 +18,9 @@ const App = () => {
     load();
   }, [dispatch]);
 
-  const closeSidebar = () => setSidebarType(null);
-
   return (
     <div className="container">
-      { (sidebarType !== null) ? (
-        <Sidebar 
-          type={sidebarType}
-          close={closeSidebar}
-          albums={albums}
-        />
-      ) : (
-        <SidebarOpener 
-          show={setSidebarType}
-        />
-      )}
+      <SidebarContainer albums={albums} />
 
       <NotificationContainer />
 

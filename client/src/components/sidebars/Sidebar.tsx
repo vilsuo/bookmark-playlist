@@ -4,18 +4,28 @@ import ToolsBar from './tools/ToolsBar';
 import SettingsBar from './settings/SettingsBar';
 
 interface SidebarProps {
-  type: SidebarType;
+  sidebarType: SidebarType;
   close: () => void;
   albums: Album[];
+  scrollPos: number;
+  setScrollPos: (val: number) => void;
 };
 
-const Sidebar = ({ type, close, albums }: SidebarProps) => {
-  switch(type) {
+const Sidebar = ({ sidebarType, close, albums, scrollPos, setScrollPos }: SidebarProps) => {
+
+  const closeAndSaveScrollPos = (pos: number | undefined) => {
+    console.log('pos', pos);
+    setScrollPos(pos || 0);
+    close();
+  };
+
+  switch(sidebarType) {
     case SidebarType.ALBUMS: {
       return (
         <AlbumsBar
           albums={albums}
-          close={close}
+          close={closeAndSaveScrollPos}
+          pos={scrollPos}
         />
       );
     }
@@ -34,7 +44,7 @@ const Sidebar = ({ type, close, albums }: SidebarProps) => {
       );
     }
     default:
-      throw new Error(`No sidebar for type ${type}`);
+      sidebarType satisfies never;
   }
 };
 
