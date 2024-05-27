@@ -9,6 +9,10 @@ const Main = () => {
   const playingAlbum = useAppSelector(selectPlaying);
   const nextAlbumInQueue = useAppSelector(selectQueueFirst);
 
+  const closeVideo = () => {
+    dispatch(play(null));
+  };
+
   const playNextFromQueue = () => {
     dispatch(play(nextAlbumInQueue));
     dispatch(queuePop());
@@ -17,7 +21,10 @@ const Main = () => {
   return (
     <div className="main">
       {playingAlbum && (
-        <VideoContainer album={playingAlbum} closeVideo={playNextFromQueue} playNext={playNextFromQueue} />
+        <VideoContainer
+          album={playingAlbum}
+          closeVideo={closeVideo}
+          playNext={playNextFromQueue} />
       )}
 
       <div>
