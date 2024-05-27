@@ -12,7 +12,7 @@ const QueueTable = () => {
     removeFromQueue(album);
   };
 
-  const removeFromQueue = (album: Album) => dispatch(queueRemove(album));
+  const removeFromQueue = (album: Album) => dispatch(queueRemove(album.id));
 
   if (queue.length === 0) {
     return null;
@@ -40,7 +40,7 @@ const QueueTable = () => {
             <td>
               {album.title}
             </td>
-            <td onClick={(event) => event.stopPropagation()}>
+            <td onClick={(event) => { event.stopPropagation(); }}>
               <div className="actions">
                 <button onClick={() => playAndRemoveFromQueue(album)}>
                   &#x25B6;

@@ -1,12 +1,13 @@
 import { Album, AlbumCreation, NotificationType } from '../../../types';
 import { getThunkError } from '../../../util/errorMessages';
 import DragDialog from '../../general/DragDialog';
-import { useAppDispatch } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
 import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albumsSlice';
 import { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
+import { isQueued, queueRemove, queueUpdate } from '../../../redux/reducers/queueSlice';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -18,15 +19,23 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const dispatch = useAppDispatch();
 
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
+  const isInQueue = useAppSelector(state => isQueued(state, album));
 
   const updateAndClose = async (albumValues: AlbumCreation) => {
     try {
-      await dispatch(updateAlbum({ ...album, ...albumValues })).unwrap();
+      const updatedAlbum = await dispatch(
+        updateAlbum({ ...album, ...albumValues })
+      ).unwrap();
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album edited successfully',
       }));
+
+      // update in queue
+      if (isInQueue) {
+        dispatch(queueUpdate(updatedAlbum))
+      }
 
       onClose();
 
@@ -41,12 +50,17 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
 
   const removeAndClose = async () => {
     try {
-      await dispatch(deleteAlbum(album.id)).unwrap();
+      const removedAlbumId = await dispatch(deleteAlbum(album.id)).unwrap();
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
+
+      // remove from queue
+      if (isInQueue) {
+        dispatch(queueRemove(removedAlbumId));
+      }
 
       onClose();
 

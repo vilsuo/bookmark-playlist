@@ -17,22 +17,22 @@ const queueSlice = createSlice({
     queueAdd: (state, action: PayloadAction<Album>) => {
       const albumToAdd = action.payload;
       const filtered = state.queue.filter(
-        (album) => album.videoId !== albumToAdd.videoId
+        (album) => album.id !== albumToAdd.id,
       );
 
       state.queue = [...filtered, albumToAdd];
     },
-    queueRemove: (state, action: PayloadAction<Album>) => {
-      const albumToRemove = action.payload;
+    queueRemove: (state, action: PayloadAction<Album['id']>) => {
+      const albumToRemoveId = action.payload;
       state.queue = state.queue.filter(
-        (album) => album.videoId !== albumToRemove.videoId
+        (album) => album.id !== albumToRemoveId,
       );
     },
     queuePrepend: (state, action: PayloadAction<Album>) => {
       const albumToAdd = action.payload;
 
       const filtered = state.queue.filter(
-        (album) => album.videoId !== albumToAdd.videoId
+        (album) => album.id !== albumToAdd.id,
       );
 
       state.queue = [albumToAdd, ...filtered];
@@ -42,10 +42,17 @@ const queueSlice = createSlice({
       const [first, ...others] = state.queue;
       state.queue = others;
     },
+    queueUpdate: (state, action: PayloadAction<Album>) => {
+      const updatedAlbum = action.payload;
+
+      state.queue = state.queue.map(
+        (album) => (album.id === updatedAlbum.id) ? updatedAlbum : album,
+      );
+    },
   },
 });
 
-export const { queueAdd, queueRemove, queuePrepend, queuePop } = queueSlice.actions;
+export const { queueAdd, queueRemove, queuePrepend, queuePop, queueUpdate } = queueSlice.actions;
 
 export const selectQueue = (state: RootState) => state.queue.queue;
 
