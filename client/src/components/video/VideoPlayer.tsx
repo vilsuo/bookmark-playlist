@@ -58,9 +58,10 @@ interface VideoPlayerProps {
   videoId: string;
   playNext: () => void;
   close: () => void;
+  disablePlayingNext: boolean;
 }
 
-const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
+const VideoPlayer = ({ videoId, playNext, close, disablePlayingNext }: VideoPlayerProps) => {
   const autoPlay = useAppSelector(selectAutoplay);
   const autoqueue = useAppSelector(selectAutoqueue);
 
@@ -166,6 +167,7 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
         playNext={playNext}
         getTime={getTime}
         getDuration={getDuration}
+        disablePlayingNext={disablePlayingNext}
       />
     </div>
   );

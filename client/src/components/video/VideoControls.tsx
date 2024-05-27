@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { SKIP_SECONDS } from '../../constants';
-import { useSelector } from 'react-redux';
-import { selectQueueFirst } from '../../redux/reducers/queueSlice';
 
 const StopIcon = ({ size = 1}) => {
   const dim = 2 * 20 * size;
@@ -101,6 +99,7 @@ interface VideoControlsProps {
   playNext: () => void;
   getTime: () => Promise<number>;
   getDuration: () => Promise<number>;
+  disablePlayingNext: boolean;
 }
 
 const VideoControls = ({
@@ -111,11 +110,10 @@ const VideoControls = ({
   playNext,
   getTime,
   getDuration,
+  disablePlayingNext,
 }: VideoControlsProps) => {
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
-
-  const nextAlbum = useSelector(selectQueueFirst);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -175,7 +173,7 @@ const VideoControls = ({
           <ForwardIcon size={0.75} />
         </button>
 
-        <button onClick={playNext} disabled={!nextAlbum}>
+        <button onClick={playNext} disabled={disablePlayingNext}>
           <SkipIcon size={0.75} />
         </button>
       </div>

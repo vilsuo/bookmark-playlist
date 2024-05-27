@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { play, selectPlaying } from '../redux/reducers/albumsSlice';
+import { getNextAlbumInSequence, getRandomAlbum, play, selectPlaying } from '../redux/reducers/albumsSlice';
 import { queuePop, selectPlayMode, selectQueueFirst } from '../redux/reducers/queueSlice';
 import { Album, PlayMode } from '../types';
 import QueueTable from './queue/QueueTable';
@@ -19,36 +19,12 @@ const Main = ({ albums }: MainProps) => {
     dispatch(play(null));
   };
 
-  const getNextAlbumInSequence = () => {
-    // no albums and/or match the filter
-    if (!albums.length) { return null; }
-
-    // no album selected, play the first
-    if (!playingAlbum) { return albums[0]; }
-
-    const playingAlbumIdx = albums.findIndex((album) => album.id === playingAlbum.id);
-    if (playingAlbumIdx === -1) {
-      // album not found, user likely changed filters...
-      return albums[0];
-
-    } else if (playingAlbumIdx === albums.length - 1) {
-      // reached the end of the list
-      return null;
-
-    } else {
-      // return next in sequence
-      return albums[playingAlbumIdx + 1];
-    }
-  };
-
-  // can return the current playing album...
-  const getRandomAlbum = () => albums.length ? albums[Math.floor(albums.length * Math.random())] : null;
-
+  /**
+   * Notice: in {@link PlayMode.SEQUENCE}, sequence starts again from the queued album
+   */
   const playNext = () => {
     if (nextAlbumInQueue) {
       // always prioritize queue
-
-      // in sequential mode, sequence starts again from the queued album...
       dispatch(play(nextAlbumInQueue));
       dispatch(queuePop());
 
@@ -60,11 +36,11 @@ const Main = ({ albums }: MainProps) => {
           break;
         }
         case PlayMode.SEQUENCE: {
-          dispatch(play(getNextAlbumInSequence()));
+          dispatch(play(getNextAlbumInSequence(albums, playingAlbum)));
           break;
         }
         case PlayMode.SHUFFLE: {
-          dispatch(play(getRandomAlbum()));
+          dispatch(play(getRandomAlbum(albums)));
           break;
         }
         default:
@@ -73,13 +49,46 @@ const Main = ({ albums }: MainProps) => {
     }
   };
 
+  /**
+   * Check if next album can be played based on current {@link PlayMode}
+   * @returns
+   */
+  const checkDisableNext = () => {
+    // can play next from queue
+    if (nextAlbumInQueue !== null) { return false; }
+
+    switch (playMode) {
+      case PlayMode.MANUAL: {
+        // can only play from queue
+        return true;
+      }
+      case PlayMode.SEQUENCE: {
+        // no sequence to play
+        if (albums.length === 0) { return true; }
+
+        return playingAlbum
+          ? (albums[albums.length - 1].id === playingAlbum.id) // playing last album in sequence
+          : false;
+      }
+      case PlayMode.SHUFFLE: {
+        // disable if album list is empty
+        return (albums.length === 0);
+      }
+      default:
+        playMode satisfies never;
+        return true;
+    }
+  }
+
   return (
     <div className="main">
       {playingAlbum && (
         <VideoContainer
           album={playingAlbum}
           closeVideo={closeVideo}
-          playNext={playNext} />
+          playNext={playNext}
+          disablePlayingNext={checkDisableNext()}
+        />
       )}
 
       <div>
