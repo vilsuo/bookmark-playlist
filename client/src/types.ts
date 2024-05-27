@@ -3,6 +3,12 @@ export enum NotificationType {
   ERROR = 'error',
 }
 
+export enum PlayMode {
+  MANUAL,
+  SHUFFLE,
+  SEQUENCE,
+}
+
 export enum AlbumColumn {
   ARTIST = 'Artist',
   ALBUM = 'Title',
