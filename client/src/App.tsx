@@ -37,7 +37,7 @@ const App = () => {
 
       <NotificationContainer />
 
-      <Main />
+      <Main albums={filteredAndSortedAlbums} />
     </div>
   );
 };
