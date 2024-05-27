@@ -53,7 +53,16 @@ const filtersSlice = createSlice({
       state.addDateInterval = interval;
     },
     resetFilters: (state) => {
-      return { ...initialState, column: state.column };
+      return { 
+        ...initialState,
+        
+        // save filter column
+        column: state.column,
+
+        // save sorting info
+        sortColumn: state.sortColumn,
+        sortOrder: state.sortOrder,
+      };
     },
   },
 });
