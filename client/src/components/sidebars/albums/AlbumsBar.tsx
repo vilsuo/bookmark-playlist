@@ -27,11 +27,12 @@ const AlbumsBar = ({ albums, close, pos }: AlbumsBarProps) => {
   const endRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    // console.log('scrolling to', pos);
-    setTimeout(() => {
-      listRef.current?.scrollTo({ top: pos, behavior: 'instant' });
-    }, 500);
+    listRef.current?.scrollTo({ top: pos, behavior: 'instant' });
   }, [pos]);
+
+  const getScrollPosition = () => {
+    return listRef.current?.scrollTop;
+  };
 
   const scrollTo = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,25 +45,19 @@ const AlbumsBar = ({ albums, close, pos }: AlbumsBarProps) => {
         <button onClick={() => scrollTo(endRef)}>&#x21D3;</button>
         <h2>Albums</h2>
         <button onClick={() => setIsAddOpen(true)}>New</button>
-        <button onClick={() => close(listRef.current?.scrollTop)}>&#x2715;</button>
+        <button onClick={() => close(getScrollPosition())}>&#x2715;</button>
       </div>
 
       <div ref={listRef} className={`sidebar-container ${viewingAlbum ? 'album-viewed' : ''}`}>
         <div id="start-ref" ref={startRef} />
+          <AlbumFilter />
 
-        {albums.length > 0 && (
-          <React.Fragment>
-            <AlbumFilter />
-
-            <AlbumTable
-              albums={albums}
-              playingAlbum={playingAlbum}
-              viewingAlbum={viewingAlbum}
-              setViewingAlbum={setViewingAlbum}
-            />
-          </React.Fragment>
-        )}
-
+          <AlbumTable
+            albums={albums}
+            playingAlbum={playingAlbum}
+            viewingAlbum={viewingAlbum}
+            setViewingAlbum={setViewingAlbum}
+          />
         <div id="end-ref" ref={endRef} />
       </div>
 

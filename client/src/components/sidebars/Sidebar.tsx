@@ -14,7 +14,6 @@ interface SidebarProps {
 const Sidebar = ({ sidebarType, close, albums, scrollPos, setScrollPos }: SidebarProps) => {
 
   const closeAndSaveScrollPos = (pos: number | undefined) => {
-    console.log('pos', pos);
     setScrollPos(pos || 0);
     close();
   };
