@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { getNextAlbumInSequence, getRandomAlbum, play, selectPlaying } from '../redux/reducers/albumsSlice';
-import { queuePop, selectPlayMode, selectQueueFirst } from '../redux/reducers/queueSlice';
+import { queuePop, selectQueueFirst } from '../redux/reducers/queueSlice';
+import { selectPlayMode } from '../redux/reducers/settingsSlice';
 import { Album, PlayMode } from '../types';
 import QueueTable from './queue/QueueTable';
 import VideoContainer from './video/VideoContainer';

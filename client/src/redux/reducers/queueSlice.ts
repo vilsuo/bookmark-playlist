@@ -1,15 +1,13 @@
 import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
-import { Album, PlayMode } from '../../types';
+import { Album } from '../../types';
 import { RootState } from '../store';
 
 export interface QueueState {
   queue: Album[];
-  playMode: PlayMode;
 };
 
 const initialState: QueueState = {
   queue: [],
-  playMode: PlayMode.SHUFFLE,
 };
 
 const queueSlice = createSlice({
@@ -51,17 +49,12 @@ const queueSlice = createSlice({
         (album) => (album.id === updatedAlbum.id) ? updatedAlbum : album,
       );
     },
-    setPlayMode: (state, action: PayloadAction<PlayMode>) => {
-      const newPlayMode = action.payload;
-      state.playMode = newPlayMode;
-    },
   },
 });
 
 export const { queueAdd, queueRemove, queuePrepend, queuePop, queueUpdate } = queueSlice.actions;
 
 export const selectQueue = (state: RootState) => state.queue.queue;
-export const selectPlayMode = (state: RootState) => state.queue.playMode;
 
 export const selectQueueFirst = (state: RootState) => {
   const queue = selectQueue(state);
