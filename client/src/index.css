@@ -283,6 +283,11 @@ dialog .dialog-body .options {
   color: orange;
 }
 
+/* Tools sidebar */
+#tools-bar {
+  width: 400px;
+}
+
 /* Sidebar opener */
 .sidebar-opener button {
   width: 44px;
