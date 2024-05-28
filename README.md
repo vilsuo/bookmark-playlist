@@ -34,10 +34,10 @@ you can access the server in PORT 3001 and client in PORT 5174.
 ![alt](./screenshots/home_2024-05-09.png)
 *Initial view*
 
-![alt](./screenshots/settings_2024-05-09.png)
+![alt](./screenshots/settings_2024-05-28.png)
 *Settings sidebar*
 
-![alt](./screenshots/importing_2024-05-09.png)
+![alt](./screenshots/convert_2024-05-28.png)
 *Importing bookmarks in tools sidebar*
 
 ![alt](./screenshots/selecting_2024-05-09.png)
@@ -52,11 +52,8 @@ you can access the server in PORT 3001 and client in PORT 5174.
 ![alt](./screenshots/creating_2024-05-09.png)
 *Creating a new album*
 
-![alt](./screenshots/playing_2024-05-09.png)
+![alt](./screenshots/playing_2024-05-28.png)
 *Playing*
 
-![alt](./screenshots/fullscreen_2024-05-09.png)
-*Fullscreen*
-
-![alt](./screenshots/queue_2024-05-09.png)
+![alt](./screenshots/queueing_2024-05-28.png)
 *Queueing*
