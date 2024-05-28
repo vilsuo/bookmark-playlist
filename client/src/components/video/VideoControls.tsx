@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SKIP_SECONDS } from '../../constants';
-import { useSelector } from 'react-redux';
-import { selectQueueFirst } from '../../redux/reducers/queueSlice';
+import { useAppSelector } from '../../redux/hooks';
+import { selectPlayMode } from '../../redux/reducers/settingsSlice';
 
 const StopIcon = ({ size = 1}) => {
   const dim = 2 * 20 * size;
@@ -101,6 +101,7 @@ interface VideoControlsProps {
   playNext: () => void;
   getTime: () => Promise<number>;
   getDuration: () => Promise<number>;
+  disablePlayingNext: boolean;
 }
 
 const VideoControls = ({
@@ -111,11 +112,12 @@ const VideoControls = ({
   playNext,
   getTime,
   getDuration,
+  disablePlayingNext,
 }: VideoControlsProps) => {
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  const nextAlbum = useSelector(selectQueueFirst);
+  const playMode = useAppSelector(selectPlayMode);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -175,14 +177,17 @@ const VideoControls = ({
           <ForwardIcon size={0.75} />
         </button>
 
-        <button onClick={playNext} disabled={!nextAlbum}>
+        <button onClick={playNext} disabled={disablePlayingNext}>
           <SkipIcon size={0.75} />
         </button>
       </div>
 
       <div className="time">
         <ProgressBar frac={fraction} />
-        <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
+        <div className='details'>
+          <div>{formatTime(time) + ' / ' + formatTime(duration)}</div>
+          <div>{playMode}</div>
+        </div>
       </div>
     </div>
   );

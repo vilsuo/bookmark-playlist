@@ -13,9 +13,10 @@ interface VideoContainerProps {
   album: Album;
   closeVideo: () => void;
   playNext: () => void;
+  disablePlayingNext: boolean;
 }
 
-const VideoContainer = ({ album, closeVideo, playNext }: VideoContainerProps) => {
+const VideoContainer = ({ album, closeVideo, playNext, disablePlayingNext }: VideoContainerProps) => {
   const showVideoDetails = useAppSelector(selectShowVideoDetails);
 
   return (
@@ -24,7 +25,12 @@ const VideoContainer = ({ album, closeVideo, playNext }: VideoContainerProps) =>
         <h1>{formatVideoTitle(album)}</h1>
       </div>
 
-      <VideoPlayer videoId={album.videoId} playNext={playNext} close={closeVideo} />
+      <VideoPlayer
+        videoId={album.videoId}
+        playNext={playNext}
+        close={closeVideo}
+        disablePlayingNext={disablePlayingNext}
+      />
 
       { showVideoDetails && <VideoDetails album={album} /> }
     </div>

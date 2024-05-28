@@ -152,3 +152,40 @@ export const selectPlaying = (state: RootState) => state.albums.playing;
 export const selectAlbums = (state: RootState) => state.albums.albums;
 
 export default albumsSlice.reducer;
+
+/**
+ * 
+ * @param albums array to choose from
+ * @param currentAlbum the given album
+ * @returns null if album list is empty or the album is the last album;
+ * the first album in the list if album is not given or not found in the list;
+ * else the album after the given album
+ */
+export const getNextAlbumInSequence = (albums: Album[], currentAlbum: Album | null) => {
+  // no albums and/or match the filter
+  if (!albums.length) { return null; }
+
+  // no album selected, play the first
+  if (!currentAlbum) { return albums[0]; }
+
+  const playingAlbumIdx = albums.findIndex((album) => album.id === currentAlbum.id);
+  if (playingAlbumIdx === -1) {
+    // album not found, user likely changed filters...
+    return albums[0];
+
+  } else if (playingAlbumIdx === albums.length - 1) {
+    // reached the end of the list
+    return null;
+
+  } else {
+    // return next in sequence
+    return albums[playingAlbumIdx + 1];
+  }
+};
+
+/**
+ * 
+ * @param albums 
+ * @returns random album from the list if it is not empty
+ */
+export const getRandomAlbum = (albums: Album[]) => albums.length ? albums[Math.floor(albums.length * Math.random())] : null;
