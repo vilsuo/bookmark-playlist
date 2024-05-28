@@ -8,7 +8,7 @@ interface SettingsCheckboxProps {
 const SettingsCheckbox = ({ value, toggle, label, details }: SettingsCheckboxProps) => {
 
   return (
-    <div className="settings-checbox">
+    <div className="settings-checkbox">
       <label>
         <input type='checkbox'
           checked={value}

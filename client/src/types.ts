@@ -4,9 +4,9 @@ export enum NotificationType {
 }
 
 export enum PlayMode {
-  MANUAL,
-  SHUFFLE,
-  SEQUENCE,
+  MANUAL = 'Manual',
+  SHUFFLE = 'Shuffle',
+  SEQUENCE = 'Sequence',
 }
 
 export enum AlbumColumn {
