@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SKIP_SECONDS } from '../../constants';
+import { useAppSelector } from '../../redux/hooks';
+import { selectPlayMode } from '../../redux/reducers/settingsSlice';
 
 const StopIcon = ({ size = 1}) => {
   const dim = 2 * 20 * size;
@@ -115,6 +117,8 @@ const VideoControls = ({
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
+  const playMode = useAppSelector(selectPlayMode);
+
   useEffect(() => {
     const interval = setInterval(async () => {
       if (isPlaying) setTime(await getTime());
@@ -180,7 +184,10 @@ const VideoControls = ({
 
       <div className="time">
         <ProgressBar frac={fraction} />
-        <p>{formatTime(time) + ' / ' + formatTime(duration)}</p>
+        <div className='details'>
+          <div>{formatTime(time) + ' / ' + formatTime(duration)}</div>
+          <div>{playMode}</div>
+        </div>
       </div>
     </div>
   );

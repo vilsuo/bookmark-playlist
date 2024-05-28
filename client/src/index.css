@@ -346,7 +346,11 @@ dialog .dialog-body .options {
   flex: 1000;
   flex-direction: column;
   gap: 4px;
-  min-width: 300px;
+  min-width: 200px;
+}
+.video-controls .time .details {
+  display: flex;
+  justify-content: space-between;
 }
 
 /* Video details */
