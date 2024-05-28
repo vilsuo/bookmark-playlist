@@ -17,6 +17,7 @@ export const initialState: SettingsState = {
   playMode: PlayMode.MANUAL,
 };
 
+// ADD A MATCHER TO A LISTENER IF PERSISTING!
 const settingsSlice = createSlice({
   name: 'settings',
   initialState,
