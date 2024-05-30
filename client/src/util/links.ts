@@ -32,6 +32,11 @@ export const getAlbumSearchLink = (album: Album) => {
   return `https://www.metal-archives.com/search/advanced/searching/albums?${query}`;
 };
 
-export const getYoutubeEmbedLink = (videoId: Album['videoId'], attributes: Attributes) => {
-  return `https://www.youtube.com/embed/${videoId}?${createQueryString(attributes)}`
+// export const getYoutubeEmbedLink = (videoId: Album['videoId'], attributes: Attributes) => {
+//   return `https://www.youtube.com/embed/${videoId}?${createQueryString(attributes)}`
+// };
+
+export const getYoutubeSearchLink = (album: Album) => {
+  const queryString = toQueryString(`${album.artist} ${album.title}`);
+  return `https://www.youtube.com/results?search_query=${queryString}`;
 };

@@ -365,10 +365,10 @@ dialog .dialog-body .options {
   flex-flow: row wrap;
   gap: 10px;
 }
-.video-details .ma {
+.video-details .ico {
   margin: auto 0;
 }
-.video-details .ma a {
+.video-details .ico a {
   display: flex;
   align-items: center;
   gap: 4px;

@@ -1,7 +1,7 @@
 import { Album } from "../../types";
 import { toDateString } from "../../util/dateConverter";
-import { getAlbumSearchLink, getArtistSearchLink } from "../../util/links";
-import { MaLink } from "../general/Links";
+import { getAlbumSearchLink, getArtistSearchLink, getYoutubeSearchLink } from "../../util/links";
+import { MaLink, YtLink } from "../general/Links";
 import Chip from "./Chip";
 
 interface VideoDetailsProps {
@@ -24,6 +24,10 @@ const VideoDetails = ({ album }: VideoDetailsProps) => {
       />
       <MaLink
         link={{ text: album.title, href: getAlbumSearchLink(album) }}
+      />
+
+      <YtLink
+        link={{ text: "Search", href: getYoutubeSearchLink(album) }}
       />
     </div>
   );
