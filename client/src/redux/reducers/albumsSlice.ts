@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Album, AlbumCreation } from '../../types';
 import { RootState } from '../store';
 import * as albumService from '../../util/albumService';
@@ -150,6 +150,10 @@ export const { view, play } = albumsSlice.actions;
 export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
 export const selectAlbums = (state: RootState) => state.albums.albums;
+
+export const selectCategories = createSelector(selectAlbums, (albums) => {
+  return Array.from(new Set(albums.map(album => album.category))).sort();
+});
 
 export default albumsSlice.reducer;
 
