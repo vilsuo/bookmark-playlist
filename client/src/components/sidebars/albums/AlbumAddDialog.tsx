@@ -5,6 +5,7 @@ import { addNotification } from '../../../redux/reducers/notificationSlice';
 import { getThunkError } from '../../../util/errorMessages';
 import AlbumForm from './AlbumForm';
 import { createAlbum } from '../../../redux/reducers/albumsSlice';
+import { CATEGORY_OTHER } from '../../../constants';
 
 interface AlbumAddDialogProps {
   isOpen: boolean;
@@ -15,7 +16,7 @@ const defaultValues = {
   artist: '',
   title: '',
   published: 2000,
-  category: '',
+  category: CATEGORY_OTHER,
   videoId: '',
 };
 

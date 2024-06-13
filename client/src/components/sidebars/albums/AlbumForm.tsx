@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { AlbumCreation } from '../../../types';
 import { useAppSelector } from '../../../redux/hooks';
 import { selectCategories } from '../../../redux/reducers/albumsSlice';
-
-export const CATEGORY_OTHER = "";
+import { CATEGORY_OTHER } from '../../../constants';
 
 interface CategorySelectProps {
   category: string;
@@ -11,13 +10,13 @@ interface CategorySelectProps {
 }
 
 const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
-  const [inputSelected, setInputSelected] = useState(false);
+  const [inputSelected, setInputSelected] = useState(category === CATEGORY_OTHER);
 
   const categories = useAppSelector(selectCategories);
 
-  const handleSelect = (event) => {
+  const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = event.target;
-    setInputSelected(!value);
+    setInputSelected(value === CATEGORY_OTHER);
     setCategory(value);
   };
 
