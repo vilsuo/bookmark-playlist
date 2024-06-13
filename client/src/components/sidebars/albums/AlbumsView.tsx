@@ -23,11 +23,13 @@ const AlbumsView = ({ album, isPlaying, close, play }: AlbumsViewProps) => {
 
   return (
     <>
-      <AlbumEditDialog
-        album={album}
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-      />
+      { isEditorOpen && (
+        <AlbumEditDialog
+          album={album}
+          isOpen={isEditorOpen}
+          onClose={() => setIsEditorOpen(false)}
+        />
+      )}
 
       <div className="albums-view">
         <div className="header">
