@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { selectCategories } from '../../redux/reducers/albumsSlice';
 import {
   resetFilters,
   setFilterColumn,
@@ -9,11 +11,57 @@ import {
 } from '../../redux/reducers/filterSlice';
 import { AlbumColumn } from '../../types';
 
-interface FilterInputsProps {
+const FilterCategories = () => {
+  const categories = useAppSelector(selectCategories);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(categories);
+  const [showList, setShowList] = useState(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    
+    if (!selectedCategories.includes(value)) {
+      setSelectedCategories([ ...selectedCategories, value ]);
+
+    } else {
+      setSelectedCategories(selectedCategories.filter(c => c !== value));
+    }
+  };
+
+  return (
+    <div>
+      <div className="category-display">
+        <button onClick={() => setShowList(!showList)}>Categories</button>
+
+        <div className="categories">
+          { selectedCategories.map(category => 
+            <span key={category}>{category}</span>
+          )}
+        </div>
+      </div>
+
+      { showList && (
+        <div className="category-filter">
+          { categories.map(category => 
+            <label key={category}>
+              {category}
+              <input type="checkbox"
+                value={category}
+                checked={selectedCategories.includes(category)}
+                onChange={handleChange}
+              />
+            </label>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface FilterColumnInputsProps {
   column: AlbumColumn;
 }
 
-const FilterInputs = ({ column }: FilterInputsProps) => {
+const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
   const dispatch = useAppDispatch();
   const { text, publishInterval, addDateInterval } = useAppSelector(selectFilters);
 
@@ -123,28 +171,34 @@ const AlbumFilter = () => {
   };
 
   return (
-    <div className="album-filter">
-      <div className="filter-column">
-        <label htmlFor="album-filter-column">Filter by:</label>
-        <select
-          id="album-filter-column"
-          value={column}
-          onChange={({ target }) =>
-            handleColumnChange(target.value as AlbumColumn)
-          }
-        >
-          <option value={AlbumColumn.ARTIST}>{AlbumColumn.ARTIST}</option>
-          <option value={AlbumColumn.ALBUM}>{AlbumColumn.ALBUM}</option>
-          <option value={AlbumColumn.PUBLISHED}>{AlbumColumn.PUBLISHED}</option>
-          <option value={AlbumColumn.ADD_DATE}>{AlbumColumn.ADD_DATE}</option>
-        </select>
+    <div>
+      <div className="filter-column-container">
+        <div className="filter-column">
+          <label htmlFor="album-filter-column">Filter by:</label>
+          <select
+            id="album-filter-column"
+            value={column}
+            onChange={({ target }) =>
+              handleColumnChange(target.value as AlbumColumn)
+            }
+          >
+            <option value={AlbumColumn.ARTIST}>{AlbumColumn.ARTIST}</option>
+            <option value={AlbumColumn.ALBUM}>{AlbumColumn.ALBUM}</option>
+            <option value={AlbumColumn.PUBLISHED}>{AlbumColumn.PUBLISHED}</option>
+            <option value={AlbumColumn.ADD_DATE}>{AlbumColumn.ADD_DATE}</option>
+          </select>
+        </div>
+
+        <FilterColumnInputs column={column} />
+
+        <button onClick={handleFilterReset}>
+          Clear
+        </button>
       </div>
 
-      <FilterInputs column={column} />
-
-      <button onClick={handleFilterReset}>
-        Clear
-      </button>
+      <div className="category-filter-container">
+        <FilterCategories />
+      </div>
     </div>
   );
 };

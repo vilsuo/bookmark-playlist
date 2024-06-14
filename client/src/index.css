@@ -453,8 +453,8 @@ p.info .format {
   background-color: var(--ma);
 }
 
-/* Album filter */
-.album-filter {
+/* Album filter: Column filter */
+.filter-column-container {
   display: flex;
   flex-flow: row nowrap;
   gap: 4px;
@@ -462,34 +462,83 @@ p.info .format {
   border: 2px solid black;
   background-color: var(--ma);
 }
-.album-filter label {
+.filter-column-container label {
   align-content: center;
 }
-.album-filter .filter-column {
+.filter-column-container .filter-column {
   display: flex;
   gap: 4px;
 }
-.album-filter .filter-text {
+.filter-column-container .filter-text {
   flex: 1;
   display: flex;
   gap: 4px;
 }
-.album-filter .filter-text input {
+.filter-column-container .filter-text input {
   width: 100%;
 }
-.album-filter .filter-interval,
-.album-filter .filter-interval div {
+.filter-column-container .filter-interval,
+.filter-column-container .filter-interval div {
   flex: 1;
   display: flex;
   flex-flow: row nowrap;
   gap: 4px;
 }
-.album-filter .filter-interval input {
+.filter-column-container .filter-interval input {
   flex: 1;
   width: 0;
 }
-.album-filter .filter-interval .start {
+.filter-column-container .filter-interval .start {
   flex-basis: 22px;
+}
+
+/* Album filter: Category filter */
+.category-filter-container {
+  margin-top: 2px;
+  gap: 4px;
+  padding: 4px;
+  border: 2px solid black;
+  background-color: var(--ma);
+}
+.category-filter-container .category-display {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 4px;
+}
+.category-filter-container .category-display .categories {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 4px;
+}
+.category-filter-container .category-display .categories span {
+  color: orange;
+}
+.category-filter-container .category-display .categories span::after {
+  content: ";";
+  color: white;
+}
+
+.category-filter-container .category-filter {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 2px;
+
+  max-height: 150px;
+  overflow-y: auto;
+
+  margin-top: 4px;
+  border-top: 1px solid white;
+}
+.category-filter-container .category-filter label {
+  display: flex;
+  padding: 2px;
+  justify-content: space-between;
+
+}
+.category-filter-container .category-filter label:hover {
+  cursor: pointer;
+  background-color: white;
+  color: black;
 }
 
 /* Notification */
