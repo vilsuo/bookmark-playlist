@@ -80,7 +80,7 @@ dialog .dialog-body .options {
 .album-form > label:first-child {
   margin-top: 10px;
 }
-.album-form label,
+.album-form > label,
 .album-form .category-select {
   padding: 2px;
   margin: 0 10px;
@@ -100,9 +100,9 @@ dialog .dialog-body .options {
   border: 1px solid white;
   background-color: black;
 }
-
 .album-form .category-select div {
   display: flex;
+  flex-flow: column nowrap;
   gap: 4px;
 }
 

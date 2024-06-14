@@ -22,8 +22,8 @@ const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
 
   return (
     <div className="category-select">
-      Category
       <div>
+        <label>Category
         <select
           value={category}
           onChange={handleSelect}
@@ -36,7 +36,7 @@ const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
             </option>
           )}
         </select>
-
+        </label>
         { inputSelected && (
           <input autoFocus
             type='text'
