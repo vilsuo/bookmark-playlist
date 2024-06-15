@@ -493,32 +493,39 @@ p.info .format {
 }
 
 /* Album filter: Category filter */
-.category-filter-container {
+.filter-category-container {
+  display: flex;
+  flex-flow: column nowrap;
+
   margin-top: 2px;
-  gap: 4px;
   padding: 4px;
   border: 2px solid black;
   background-color: var(--ma);
 }
-.category-filter-container .category-display {
+.filter-category-container .category-display {
+  flex: 1;
   display: flex;
   flex-flow: row nowrap;
   gap: 4px;
 }
-.category-filter-container .category-display .categories {
+.filter-category-container .category-display .selected {
+  flex: 1;
   display: flex;
   flex-flow: row wrap;
   gap: 4px;
 }
-.category-filter-container .category-display .categories span {
+.filter-category-container .category-display .selected span {
   color: orange;
 }
-.category-filter-container .category-display .categories span::after {
+.filter-category-container .category-display .selected span::after {
   content: ";";
   color: white;
 }
+.filter-category-container .category-display button {
+  align-self: start;
+}
 
-.category-filter-container .category-filter {
+.filter-category-container .category-filter {
   display: flex;
   flex-flow: column nowrap;
   gap: 2px;
@@ -529,13 +536,13 @@ p.info .format {
   margin-top: 4px;
   border-top: 1px solid white;
 }
-.category-filter-container .category-filter label {
+.filter-category-container .category-filter label {
   display: flex;
   padding: 2px;
   justify-content: space-between;
 
 }
-.category-filter-container .category-filter label:hover {
+.filter-category-container .category-filter label:hover {
   cursor: pointer;
   background-color: white;
   color: black;

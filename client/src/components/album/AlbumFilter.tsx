@@ -11,7 +11,7 @@ import {
 } from '../../redux/reducers/filterSlice';
 import { AlbumColumn } from '../../types';
 
-const FilterCategories = () => {
+const FilterCategory = () => {
   const categories = useAppSelector(selectCategories);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(categories);
   const [showList, setShowList] = useState(false);
@@ -28,15 +28,18 @@ const FilterCategories = () => {
   };
 
   return (
-    <div>
+    <div className="filter-category-container">
       <div className="category-display">
-        <button onClick={() => setShowList(!showList)}>Categories</button>
-
-        <div className="categories">
+        <div className="selected">
+          Categories:
           { selectedCategories.map(category => 
             <span key={category}>{category}</span>
           )}
         </div>
+
+        <button onClick={() => setShowList(!showList)}>
+          { !showList ? "Change" : "Close" }
+        </button>
       </div>
 
       { showList && (
@@ -174,7 +177,7 @@ const AlbumFilter = () => {
     <div>
       <div className="filter-column-container">
         <div className="filter-column">
-          <label htmlFor="album-filter-column">Filter by:</label>
+          <label htmlFor="album-filter-column">Filter albums:</label>
           <select
             id="album-filter-column"
             value={column}
@@ -196,9 +199,7 @@ const AlbumFilter = () => {
         </button>
       </div>
 
-      <div className="category-filter-container">
-        <FilterCategories />
-      </div>
+      <FilterCategory />
     </div>
   );
 };
