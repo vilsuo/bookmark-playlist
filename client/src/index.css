@@ -497,7 +497,7 @@ p.info .format {
   display: flex;
   flex-flow: column nowrap;
 
-  margin-top: 2px;
+  margin-top: 10px;
   padding: 4px;
   border: 2px solid black;
   background-color: var(--ma);
@@ -513,9 +513,17 @@ p.info .format {
   display: flex;
   flex-flow: row wrap;
   gap: 4px;
+
+  overflow: hidden;
 }
 .filter-category-container .category-display .selected span {
   color: orange;
+  word-wrap: break-word;
+  font-style: italic;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .filter-category-container .category-display .selected span::after {
   content: ";";
@@ -538,14 +546,19 @@ p.info .format {
 }
 .filter-category-container .category-filter label {
   display: flex;
-  padding: 2px;
+  padding: 1px;
   justify-content: space-between;
-
 }
 .filter-category-container .category-filter label:hover {
   cursor: pointer;
   background-color: white;
   color: black;
+}
+.filter-category-container .category-filter label span {
+  font-style: italic;
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* Notification */

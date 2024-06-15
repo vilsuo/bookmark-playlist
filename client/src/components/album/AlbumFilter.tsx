@@ -46,7 +46,7 @@ const FilterCategory = () => {
         <div className="category-filter">
           { categories.map(category => 
             <label key={category}>
-              {category}
+              <span>{category}</span>
               <input type="checkbox"
                 value={category}
                 checked={selectedCategories.includes(category)}
@@ -174,7 +174,7 @@ const AlbumFilter = () => {
   };
 
   return (
-    <div>
+    <div className="album-filter">
       <div className="filter-column-container">
         <div className="filter-column">
           <label htmlFor="album-filter-column">Filter albums:</label>
