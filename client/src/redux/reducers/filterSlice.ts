@@ -13,6 +13,8 @@ export interface FilterState {
   text: string;
   publishInterval: Interval<number | undefined>;
   addDateInterval: Interval<string>;
+
+  categories: string[];
 }
 
 const initialState: FilterState = {
@@ -23,6 +25,8 @@ const initialState: FilterState = {
   text: '',
   publishInterval: { start: undefined, end: undefined },
   addDateInterval: { start: '', end: '' },
+
+  categories: [], // populate later
 };
 
 const filtersSlice = createSlice({
@@ -55,22 +59,30 @@ const filtersSlice = createSlice({
     resetFilters: (state) => {
       return { 
         ...initialState,
-        
-        // save filter column
-        column: state.column,
 
-        // save sorting info
+        // do not reset the following
+    
         sortColumn: state.sortColumn,
         sortOrder: state.sortOrder,
+
+        column: state.column,
+
+        categories: state.categories,
       };
+    },
+
+    setFilterCategories: (state, action: PayloadAction<string[]>) => {
+      const categories = action.payload;
+      state.categories = categories;
     },
   },
 });
 
-export const { setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters } =
+export const { setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters, setFilterCategories } =
   filtersSlice.actions;
 
 export const selectFilters = (state: RootState) => state.filters;
+export const selectFilterCategories = (state: RootState) => state.filters.categories;
 
 export default filtersSlice.reducer;
 
@@ -138,12 +150,14 @@ export const getSortFn =
 /**
  * Create a {@link Album} filter function.
  *
- * @param filterState current filter options. The filters are only applied to the
- * property specified by {@link FilterState.column}.
+ * @param filterState current filter options. The filters except {@link FilterState.categories}
+ * are only applied to the property specified by {@link FilterState.column}.
  * @returns the filter funtion
  */
 export const getFilterFn = (filterState: FilterState) => (album: Album) => {
-  const { text, column, publishInterval, addDateInterval } = filterState;
+  const { text, column, publishInterval, addDateInterval, categories } = filterState;
+
+  if (!categories.includes(album.category)) return false;
 
   switch (column) {
     case AlbumColumn.ARTIST:

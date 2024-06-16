@@ -8,13 +8,17 @@ import {
   setFilterAddDateInterval,
   setFilterPublishInterval,
   setFilterText,
+  selectFilterCategories,
+  setFilterCategories,
 } from '../../redux/reducers/filterSlice';
 import { AlbumColumn } from '../../types';
 import { CATEGORY_ALL } from '../../constants';
 
 const FilterCategory = () => {
   const categories = useAppSelector(selectCategories);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(categories);
+  const selectedCategories = useAppSelector(selectFilterCategories);
+  const dispatch = useAppDispatch();
+
   const [showList, setShowList] = useState(false);
 
   const ALL_SELECTED = selectedCategories.length === categories.length;
@@ -23,17 +27,19 @@ const FilterCategory = () => {
     const { value } = event.target;
     
     if (!selectedCategories.includes(value)) {
-      setSelectedCategories([ ...selectedCategories, value ]);
+      // add one
+      dispatch(setFilterCategories([ ...selectedCategories, value ]));
 
     } else {
-      setSelectedCategories(selectedCategories.filter(c => c !== value));
+      // remove one
+      dispatch(setFilterCategories(selectedCategories.filter(c => c !== value)));
     }
   };
 
   const handleToggle = () => {
     ALL_SELECTED
-      ? setSelectedCategories([])
-      : setSelectedCategories(categories);
+      ? dispatch(setFilterCategories([]))
+      : dispatch(setFilterCategories(categories));
   };
 
   return (
