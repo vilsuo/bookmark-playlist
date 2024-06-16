@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import AlbumFilter from '../../album/AlbumFilter';
+import AlbumFilter from './filters/AlbumFilter';
 import AlbumTable from '../../album/AlbumTable';
 import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
