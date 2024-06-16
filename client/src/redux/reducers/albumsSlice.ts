@@ -152,12 +152,16 @@ export const selectPlaying = (state: RootState) => state.albums.playing;
 export const selectAlbums = (state: RootState) => state.albums.albums;
 
 export const selectCategories = createSelector(selectAlbums, (albums) => {
-  return Array.from(new Set(albums.map(album => album.category))).sort(
+  return getCategories(albums).sort(
     (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
   );
 });
 
 export default albumsSlice.reducer;
+
+export const getCategories = (albums: Album[]) => {
+  return Array.from(new Set(albums.map(album => album.category)));
+};
 
 /**
  * 
