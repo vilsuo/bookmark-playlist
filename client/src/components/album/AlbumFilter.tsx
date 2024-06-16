@@ -10,11 +10,14 @@ import {
   setFilterText,
 } from '../../redux/reducers/filterSlice';
 import { AlbumColumn } from '../../types';
+import { CATEGORY_ALL } from '../../constants';
 
 const FilterCategory = () => {
   const categories = useAppSelector(selectCategories);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(categories);
   const [showList, setShowList] = useState(false);
+
+  const ALL_SELECTED = selectedCategories.length === categories.length;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -27,14 +30,23 @@ const FilterCategory = () => {
     }
   };
 
+  const handleToggle = () => {
+    ALL_SELECTED
+      ? setSelectedCategories([])
+      : setSelectedCategories(categories);
+  };
+
   return (
     <div className="filter-category-container">
       <div className="category-display">
         <div className="selected">
           Categories:
-          { selectedCategories.map(category => 
-            <span key={category}>{category}</span>
-          )}
+          { !ALL_SELECTED
+            ? selectedCategories.map(
+              category => <span key={category}>{category}</span>
+            )
+            : <span>{CATEGORY_ALL}</span>
+          }
         </div>
 
         <button onClick={() => setShowList(!showList)}>
@@ -44,8 +56,17 @@ const FilterCategory = () => {
 
       { showList && (
         <div className="category-filter">
+          <label className={`all ${ ALL_SELECTED ? "checked" : "" }`}>
+            <span>{CATEGORY_ALL}</span>
+            <input type="checkbox"
+              value={categories}
+              checked={ALL_SELECTED}
+              onChange={handleToggle}
+            />
+          </label>
+
           { categories.map(category => 
-            <label key={category}>
+            <label key={category} className={ selectedCategories.includes(category) ? "checked" : "" }>
               <span>{category}</span>
               <input type="checkbox"
                 value={category}
