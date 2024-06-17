@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Album, AlbumColumn, Interval, Order } from '../../types';
 import { RootState } from '../store';
 import { parseDateInterval } from '../../util/dateConverter';
+import { CATEGORY_ALL } from '../../constants';
 
 export interface FilterState {
   // sorting
@@ -14,7 +15,7 @@ export interface FilterState {
   publishInterval: Interval<number | undefined>;
   addDateInterval: Interval<string>;
 
-  categories: string[];
+  categories: string[] | typeof CATEGORY_ALL;
 }
 
 const initialState: FilterState = {
@@ -26,7 +27,7 @@ const initialState: FilterState = {
   publishInterval: { start: undefined, end: undefined },
   addDateInterval: { start: '', end: '' },
 
-  categories: [], // populate later
+  categories: CATEGORY_ALL,
 };
 
 const filtersSlice = createSlice({
@@ -71,14 +72,24 @@ const filtersSlice = createSlice({
       };
     },
 
-    setFilterCategories: (state, action: PayloadAction<string[]>) => {
+    setFilterCategories: (state, action: PayloadAction<FilterState["categories"]>) => {
       const categories = action.payload;
       state.categories = categories;
     },
+
+    //removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<string>) => {
+    //  const category = action.payload;
+    //  if (state.categories !== CATEGORY_ALL) {
+    //    state.categories = state.categories.filter(c => c !== category);
+    //  }
+    //},
   },
 });
 
-export const { setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters, setFilterCategories } =
+export const {
+  setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters,
+  setFilterCategories, //removeFilterCategoryIfSubsetSelected,
+} =
   filtersSlice.actions;
 
 export const selectFilters = (state: RootState) => state.filters;
@@ -157,7 +168,7 @@ export const getSortFn =
 export const getFilterFn = (filterState: FilterState) => (album: Album) => {
   const { text, column, publishInterval, addDateInterval, categories } = filterState;
 
-  if (!categories.includes(album.category)) return false;
+  if (categories !== CATEGORY_ALL && !categories.includes(album.category)) return false;
 
   switch (column) {
     case AlbumColumn.ARTIST:
