@@ -30,6 +30,11 @@ const initialState: FilterState = {
   categories: CATEGORY_ALL,
 };
 
+interface CategoryPayload {
+  category: string,
+  allCategories: string[];
+}
+
 const filtersSlice = createSlice({
   name: 'filters',
   initialState,
@@ -72,12 +77,41 @@ const filtersSlice = createSlice({
       };
     },
 
-    setFilterCategories: (state, action: PayloadAction<FilterState["categories"]>) => {
-      const categories = action.payload;
-      state.categories = categories;
+    toggleFilterCategory: (state, action: PayloadAction<CategoryPayload>) => {
+      const { category, allCategories } = action.payload;
+
+      if (category === CATEGORY_ALL) {
+        // toggle all on/off
+        state.categories = (state.categories === CATEGORY_ALL) ? [] : CATEGORY_ALL;
+
+      } else {
+        // toggle single on/off
+
+        if (state.categories === CATEGORY_ALL) {
+          // all categories was selected previously, so set all categories except one
+          state.categories = allCategories.filter(c => c !== category);
+    
+        } else {
+          const selectedCategories = state.categories;
+          
+          if (!selectedCategories.includes(category)) {
+            // add one
+
+            const onlyCategoryMissing = selectedCategories.length === allCategories.length - 1;
+
+            state.categories = onlyCategoryMissing
+              ? CATEGORY_ALL
+              : [ ...selectedCategories, category ];
+      
+          } else {
+            // remove one
+            state.categories = selectedCategories.filter(c => c !== category);
+          }
+        }
+      }
     },
 
-    //removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<string>) => {
+    //removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<CategoryPayload>) => {
     //  const category = action.payload;
     //  if (state.categories !== CATEGORY_ALL) {
     //    state.categories = state.categories.filter(c => c !== category);
@@ -88,7 +122,7 @@ const filtersSlice = createSlice({
 
 export const {
   setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters,
-  setFilterCategories, //removeFilterCategoryIfSubsetSelected,
+  toggleFilterCategory,
 } =
   filtersSlice.actions;
 

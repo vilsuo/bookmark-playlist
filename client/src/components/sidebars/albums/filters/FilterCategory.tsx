@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { selectCategories } from "../../../../redux/reducers/albumsSlice";
-import { selectFilterCategories, setFilterCategories } from "../../../../redux/reducers/filterSlice";
+import { selectFilterCategories, toggleFilterCategory } from "../../../../redux/reducers/filterSlice";
 import { CATEGORY_ALL } from "../../../../constants";
 import { Album } from "../../../../types";
 
@@ -17,30 +17,17 @@ const FilterCategory = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     
-    if (ALL_SELECTED) {
-      // set all categories except one
-      dispatch(setFilterCategories(categories.filter(c => c !== value)));
-
-    } else {
-      if (!selectedCategories.includes(value)) {
-        // add one
-        if (selectedCategories.length === categories.length - 1) {
-          dispatch(setFilterCategories(CATEGORY_ALL));
-        } else {
-          dispatch(setFilterCategories([ ...selectedCategories, value ]));
-        }
-  
-      } else {
-        // remove one
-        dispatch(setFilterCategories(selectedCategories.filter(c => c !== value)));
-      }
-    }
+    dispatch(toggleFilterCategory({
+      category: value,
+      allCategories: categories,
+    }));
   };
 
   const handleToggle = () => {
-    ALL_SELECTED
-      ? dispatch(setFilterCategories([]))
-      : dispatch(setFilterCategories(CATEGORY_ALL));
+    dispatch(toggleFilterCategory({
+      category: CATEGORY_ALL,
+      allCategories: categories,
+    }));
   };
 
   const isSelected = (category: Album["category"]) => {
