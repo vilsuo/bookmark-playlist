@@ -152,16 +152,30 @@ export const selectPlaying = (state: RootState) => state.albums.playing;
 export const selectAlbums = (state: RootState) => state.albums.albums;
 
 export const selectCategories = createSelector(selectAlbums, (albums) => {
-  return getCategories(albums).sort(
+  return Array.from(new Set(albums.map(album => album.category))).sort(
     (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
   );
 });
 
-export default albumsSlice.reducer;
+// export const selectCategoryCounts = createSelector(selectAlbums, (albums: Album[]) => {
+//   return albums.reduce<Record<string, number>>(
+//     (prev, current) => {
+//       const { category } = current;
+//       prev[category] = (category in prev) ? prev[category] + 1 : 0;
+//       return prev;
+//     }, {}
+//   );
+// });
 
-export const getCategories = (albums: Album[]) => {
-  return Array.from(new Set(albums.map(album => album.category)));
-};
+export const selectIsAloneInCategory = (category: string) => createSelector(
+  selectAlbums,
+  (albums: Album[]) => albums.reduce(
+    (prev, curr) => prev + (curr.category === category ? 1 : 0),
+    0,
+  ) === 1,
+);
+
+export default albumsSlice.reducer;
 
 /**
  * 

@@ -4,10 +4,11 @@ import DragDialog from '../../general/DragDialog';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
-import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albumsSlice';
+import { deleteAlbum, selectIsAloneInCategory, selectCategories, updateAlbum } from '../../../redux/reducers/albumsSlice';
 import { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
 import { isQueued, queueRemove, queueUpdate } from '../../../redux/reducers/queueSlice';
+import { removeFilterCategoryIfSubsetSelected } from '../../../redux/reducers/filterSlice';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -16,13 +17,30 @@ interface AlbumEditDialogProps {
 }
 
 const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
+  const categories = useAppSelector(selectCategories);
+  const isAloneInCategory = useAppSelector(selectIsAloneInCategory(album.category));
+
   const dispatch = useAppDispatch();
 
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const isInQueue = useAppSelector(state => isQueued(state, album));
 
+  const removeCategoryFromFilterIfLastOne = (oldCategory: string) => {
+    // remove category of the previous album value from the
+    // filter if the category no longer exists
+
+    if (isAloneInCategory) {
+      dispatch(removeFilterCategoryIfSubsetSelected({
+        category: oldCategory,
+        allCategories: categories,
+      }));
+    }
+  };
+
   const updateAndClose = async (albumValues: AlbumCreation) => {
     try {
+      const oldCategory = album.category;
+
       const updatedAlbum = await dispatch(
         updateAlbum({ ...album, ...albumValues })
       ).unwrap();
@@ -32,10 +50,12 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         title: 'Album edited successfully',
       }));
 
-      // update in queue
+      // update the album if it is in the queue
       if (isInQueue) {
-        dispatch(queueUpdate(updatedAlbum))
+        dispatch(queueUpdate(updatedAlbum));
       }
+
+      removeCategoryFromFilterIfLastOne(oldCategory);
 
       onClose();
 
@@ -50,6 +70,8 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
 
   const removeAndClose = async () => {
     try {
+      const oldCategory = album.category;
+
       const removedAlbumId = await dispatch(deleteAlbum(album.id)).unwrap();
 
       dispatch(addNotification({
@@ -61,6 +83,8 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
       if (isInQueue) {
         dispatch(queueRemove(removedAlbumId));
       }
+
+      removeCategoryFromFilterIfLastOne(oldCategory);
 
       onClose();
 
