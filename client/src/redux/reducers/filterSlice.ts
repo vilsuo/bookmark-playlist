@@ -97,9 +97,9 @@ const filtersSlice = createSlice({
           if (!selectedCategories.includes(category)) {
             // add one
 
-            const onlyCategoryMissing = selectedCategories.length === allCategories.length - 1;
+            const setAll = justOneCategoryMissing(category, selectedCategories, allCategories);
 
-            state.categories = onlyCategoryMissing
+            state.categories = setAll
               ? CATEGORY_ALL
               : [ ...selectedCategories, category ];
       
@@ -111,18 +111,45 @@ const filtersSlice = createSlice({
       }
     },
 
-    //removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<CategoryPayload>) => {
-    //  const category = action.payload;
-    //  if (state.categories !== CATEGORY_ALL) {
-    //    state.categories = state.categories.filter(c => c !== category);
-    //  }
-    //},
+    removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<CategoryPayload>) => {
+      const { category, allCategories } = action.payload;
+      if (state.categories !== CATEGORY_ALL) {
+        const newSelectedCategories = state.categories.filter(c => c !== category);
+
+        const setAll = justOneCategoryMissing(category, newSelectedCategories, allCategories);
+
+        state.categories = setAll
+          ? CATEGORY_ALL
+          : newSelectedCategories;
+      }
+    },
   },
 });
 
+/**
+ * 
+ * @param value 
+ * @param first 
+ * @param second 
+ * @returns true the arrays have the same elements (also the same number),
+ *          when parameter value is appended to the first array
+ */
+const justOneCategoryMissing = (value: string, first: string[], second: string[]) => {
+  if (first.length + 1 !== second.length) return false;
+
+  const source = [ ...first, value ].toSorted()
+  const target = second.toSorted();
+
+  for (let i = 0; i < target.length; i++) {
+    if (source[i] !== target[i]) return false;
+  }
+
+  return true;
+};
+
 export const {
   setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters,
-  toggleFilterCategory,
+  toggleFilterCategory, removeFilterCategoryIfSubsetSelected,
 } =
   filtersSlice.actions;
 
