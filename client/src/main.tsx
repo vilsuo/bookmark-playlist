@@ -4,10 +4,10 @@ import './index.css';
 
 // Redux
 import { Provider } from 'react-redux';
-import { store } from './redux/store.ts';
+import { setupStore, preloadedState } from './redux/store.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <Provider store={store}>
+  <Provider store={setupStore(preloadedState)}>
     <App />
   </Provider>,
 );

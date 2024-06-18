@@ -10,15 +10,6 @@ import queueSlice from './reducers/queueSlice.ts';
 import { initialState as initialSettingsState } from './reducers/settingsSlice.ts';
 import notificationSlice from './reducers/notificationSlice.ts';
 
-/*
-const loggerMiddleware: Middleware<{}, RootState> = storeApi => next => action => {
-  console.log('dispatching', action);
-  const result = next(action);
-  console.log('next state', storeApi.getState());
-  return result;
-};
-*/
-
 // save settings to local storage
 startAppListening({
   matcher: isAnyOf(toggleAutoplay, toggleAutoqueue, toggleShowVideoDetails, setPlayMode),
@@ -27,7 +18,7 @@ startAppListening({
   },
 });
 
-const preloadedState = {
+export const preloadedState = {
   settings: {
     // load defaults (only relevant if a new setting has been defined)
     ...initialSettingsState,
@@ -45,7 +36,7 @@ const rootReducer = combineReducers({
   notifications: notificationSlice,
 });
 
-export const store = configureStore({
+export const setupStore = (preloadedState?: Partial<RootState>) => configureStore({
   reducer: rootReducer,
   preloadedState,
   middleware: (getDefaultMiddleware) =>
@@ -53,12 +44,8 @@ export const store = configureStore({
       // NOTE: Since this can receive actions with functions inside,
       // it should go before the serializability check middleware
       .prepend(listenerMiddleware.middleware),
-
-  //.concat(loggerMiddleware),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
-
-export type AppDispatch = typeof store.dispatch;
-
-export type AppStore = typeof store;
+export type AppStore = ReturnType<typeof setupStore>;
+export type AppDispatch = AppStore["dispatch"];
