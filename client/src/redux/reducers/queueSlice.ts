@@ -38,8 +38,7 @@ const queueSlice = createSlice({
       state.queue = [albumToAdd, ...filtered];
     },
     queuePop: (state) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [first, ...others] = state.queue;
+      const [, ...others] = state.queue;
       state.queue = others;
     },
     queueUpdate: (state, action: PayloadAction<Album>) => {
