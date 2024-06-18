@@ -55,7 +55,9 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         dispatch(queueUpdate(updatedAlbum));
       }
 
-      removeCategoryFromFilterIfLastOne(oldCategory);
+      if (oldCategory !== updatedAlbum.category) {
+        removeCategoryFromFilterIfLastOne(oldCategory);
+      }
 
       onClose();
 
