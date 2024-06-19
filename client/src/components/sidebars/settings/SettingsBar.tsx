@@ -58,7 +58,7 @@ const SettingsBar = ({ close }: SettingsBarProps) => {
           />
           <div className='settings-select'>
             <div>
-              <label htmlFor='playMode-select'>Play Mode</label>
+              <label htmlFor='playMode-select'>Play mode</label>
               <select
                 id="playMode-select"
                 value={playMode}
