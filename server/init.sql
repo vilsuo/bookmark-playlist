@@ -3,5 +3,5 @@ CREATE TABLE albums (
   artist text,
   title text,
   published integer,
-  category text,
+  category text
 );

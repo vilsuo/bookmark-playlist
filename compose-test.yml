@@ -32,6 +32,9 @@ services:
       POSTGRES_DB: test
     ports:
       - 6666:5432
+    volumes:
+    # scripts are only run if you start the container with a data directory that is empty
+      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --username username --dbname test"]
       interval: 5s
