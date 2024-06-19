@@ -2,7 +2,7 @@ import { describe, test } from '@jest/globals';
 import { screen } from '@testing-library/react';
 
 // We're using our own custom render function and not RTL's render.
-import { renderWithProviders } from '../../../testUtils/customRender';
+import { renderWithProviders } from '../../../redux/testUtils';
 
 import SettingsBar from "./SettingsBar";
 
