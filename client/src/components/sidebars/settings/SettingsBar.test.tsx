@@ -6,13 +6,22 @@ import { renderWithProviders } from '../../../redux/testUtils';
 
 import SettingsBar from "./SettingsBar";
 import { initialState as initialSettingsState } from '../../../redux/reducers/settingsSlice';
+import { PlayMode } from '../../../types';
 
-const findInputByMatcher = async (matcher: RegExp) => screen.findByLabelText<HTMLInputElement>(matcher);
+const findInputByLabelMatcher = async (matcher: RegExp | string) =>
+  screen.findByLabelText<HTMLInputElement>(matcher);
+
+const changeOptionByLabel = async (matcher: RegExp | string, value: string) => {
+  fireEvent.change(await findInputByLabelMatcher(matcher), {
+    target: { value },
+  });
+};
 
 describe("<SettingsBar />", () => {
   const mockClose = () => {};
 
   const autoPlayMatcher = /Autoplay/i;
+  const playmodeMatcher = /Play mode/i;
 
   test("Should render settings bar", () => {
     renderWithProviders(<SettingsBar close={mockClose} />);
@@ -23,16 +32,16 @@ describe("<SettingsBar />", () => {
   test("Correct default options should be selected", async () => {
     renderWithProviders(<SettingsBar close={mockClose} />);
 
-    expect((await findInputByMatcher(autoPlayMatcher)).checked)
+    expect((await findInputByLabelMatcher(autoPlayMatcher)).checked)
       .toBe(initialSettingsState.autoplay);
 
-    expect((await findInputByMatcher(/Autoqueue/i)).checked)
+    expect((await findInputByLabelMatcher(/Autoqueue/i)).checked)
       .toBe(initialSettingsState.autoqueue);
 
-    expect((await findInputByMatcher(/Show playing album details/i)).checked)
+    expect((await findInputByLabelMatcher(/Show playing album details/i)).checked)
       .toBe(initialSettingsState.showVideoDetails);
 
-    expect(screen.getByLabelText(/Play mode/i)).toHaveValue(
+    expect(await findInputByLabelMatcher(playmodeMatcher)).toHaveValue(
       initialSettingsState.playMode
     );
   });
@@ -40,13 +49,28 @@ describe("<SettingsBar />", () => {
   test("Can toggle settings", async () => {
     renderWithProviders(<SettingsBar close={mockClose} />);
 
-    fireEvent.click((await findInputByMatcher(autoPlayMatcher)));
-    expect((await findInputByMatcher(autoPlayMatcher)).checked)
+    fireEvent.click((await findInputByLabelMatcher(autoPlayMatcher)));
+    expect((await findInputByLabelMatcher(autoPlayMatcher)).checked)
       .toBe(!initialSettingsState.autoplay);
 
-    fireEvent.click((await findInputByMatcher(autoPlayMatcher)));
-    expect((await findInputByMatcher(autoPlayMatcher)).checked)
+    fireEvent.click((await findInputByLabelMatcher(autoPlayMatcher)));
+    expect((await findInputByLabelMatcher(autoPlayMatcher)).checked)
       .toBe(initialSettingsState.autoplay);
+  });
+
+  test("Can change playmode", async () => {
+    renderWithProviders(<SettingsBar close={mockClose} />);
+
+    const newPlaymode = PlayMode.SEQUENCE;
+
+    // check that truly selecting a new playmode
+    expect(newPlaymode).not.toBe(initialSettingsState.playMode);
+
+    // select a new option
+    changeOptionByLabel(playmodeMatcher, newPlaymode);
+
+    expect(await findInputByLabelMatcher(playmodeMatcher))
+      .toHaveValue(newPlaymode);
   });
 
 });
