@@ -55,12 +55,12 @@ export const { queueAdd, queueRemove, queuePrepend, queuePop, queueUpdate } = qu
 
 export const selectQueue = (state: RootState) => state.queue.queue;
 
-export const selectQueueFirst = (state: RootState) => {
-  const queue = selectQueue(state);
-  return (queue.length > 0) ? queue[0]: null;
-};
+export const selectQueueFirst = createSelector(
+  selectQueue,
+  (queue) => (queue.length > 0) ? queue[0]: null,
+);
 
-export const isQueued = createSelector(
+export const selectIsQueued = createSelector(
   [selectQueue, (_state, album) => album],
   (queue, album) => queue.find((q) => q.videoId === album.videoId) !== undefined,
 );

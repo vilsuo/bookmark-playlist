@@ -7,7 +7,7 @@ import AlbumForm from './AlbumForm';
 import { deleteAlbum, selectIsAloneInCategory, selectCategories, updateAlbum } from '../../../redux/reducers/albumsSlice';
 import { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
-import { isQueued, queueRemove, queueUpdate } from '../../../redux/reducers/queueSlice';
+import { selectIsQueued, queueRemove, queueUpdate } from '../../../redux/reducers/queueSlice';
 import { removeFilterCategoryIfSubsetSelected } from '../../../redux/reducers/filterSlice';
 
 interface AlbumEditDialogProps {
@@ -23,7 +23,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const dispatch = useAppDispatch();
 
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
-  const isInQueue = useAppSelector(state => isQueued(state, album));
+  const isInQueue = useAppSelector(state => selectIsQueued(state, album));
 
   const removeCategoryFromFilterIfLastOne = (oldCategory: string) => {
     // remove category of the previous album value from the
