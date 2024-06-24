@@ -7,9 +7,9 @@ import { setupServer } from 'msw/node';
 
 import { renderWithProviders } from "../../../redux/testUtils";
 import { findInputByLabelMatcher } from "../../../../test/helpers";
+import { albums } from "../../../../test/constants";
 
 import BookmarkConverter from "./BookmarkConverter";
-import { Album } from "../../../types";
 import { BASE_URL } from "../../../util/converterService";
 
 const findBookmarkInput = async () => findInputByLabelMatcher(/Root folder/i);
@@ -26,19 +26,9 @@ describe("<BookmarkConverter />", () => {
   const testBookmarkName = "My_bookmarks";
   const testFile = new File(['<html></html>'], "test.html", { type: "text/html" });
 
-  const album: Album = {
-    id: 1841,
-    videoId: "JMAbKMSuVfI",
-    artist: "Massacra",
-    title: "Signs of the Decline",
-    published: 1992,
-    category: "Death",
-    addDate: "2022-06-20T11:22:04.000Z"
-  };
-
   const handlers = [
     http.post(BASE_URL, async () => {
-      return HttpResponse.json([album]);
+      return HttpResponse.json(albums);
     }),
   ];
 
