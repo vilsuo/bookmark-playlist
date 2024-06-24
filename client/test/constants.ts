@@ -47,3 +47,5 @@ export const newAlbumValues = {
   category: "Death",
   addDate: "2022-05-07T10:58:56.000Z",
 };
+
+export const categories = ["Thrash", "Death", "Black", "Doom"];
