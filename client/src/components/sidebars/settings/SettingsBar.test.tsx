@@ -7,15 +7,7 @@ import { renderWithProviders } from '../../../redux/testUtils';
 import SettingsBar from "./SettingsBar";
 import { initialState as initialSettingsState } from '../../../redux/reducers/settingsSlice';
 import { PlayMode } from '../../../types';
-
-const findInputByLabelMatcher = async (matcher: RegExp | string) =>
-  screen.findByLabelText<HTMLInputElement>(matcher);
-
-const changeOptionByLabel = async (matcher: RegExp | string, value: string) => {
-  fireEvent.change(await findInputByLabelMatcher(matcher), {
-    target: { value },
-  });
-};
+import { changeOptionByLabel, findInputByLabelMatcher } from '../../../../test/helpers';
 
 describe("<SettingsBar />", () => {
   const mockClose = () => {};

@@ -31,7 +31,7 @@ const BookmarkConverter = () => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append('file', file, file.name);
+    if (file) { formData.append('file', file, file.name); }
     formData.append('name', name);
 
     try {
@@ -94,7 +94,7 @@ const BookmarkConverter = () => {
         </div>
 
         <div className="actions">
-          <button disabled={ !(name && file) }>
+          <button type="submit" disabled={ !(name && file) }>
             Convert
           </button>
         </div>
