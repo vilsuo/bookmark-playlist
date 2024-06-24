@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "@jest/globals";
 import userEvent, { UserEvent } from '@testing-library/user-event';
-import { fireEvent, screen } from "@testing-library/dom";
+import { fireEvent, screen, waitFor } from "@testing-library/dom";
 
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -14,7 +14,7 @@ import { BASE_URL } from "../../../util/converterService";
 
 const findBookmarkInput = async () => findInputByLabelMatcher(/Root folder/i);
 const findUploadInput = async () => findInputByLabelMatcher(/Attachment/i);
-const getConvertButton = () => screen.getByRole("button", { name: /Convert/i });
+const findConvertButton = async () => screen.findByRole("button", { name: /Convert/i });
 
 const typeBookmarkNameToInput = async (user: UserEvent, value: string) =>
   user.type(await findBookmarkInput(), value);
@@ -38,7 +38,6 @@ describe("<BookmarkConverter />", () => {
 
   const handlers = [
     http.post(BASE_URL, async () => {
-      console.log("Intercepted!");
       return HttpResponse.json([album]);
     }),
   ];
@@ -62,7 +61,7 @@ describe("<BookmarkConverter />", () => {
 
     expect(await findBookmarkInput()).toHaveDisplayValue(testBookmarkName);
 
-    expect(getConvertButton()).toHaveProperty("disabled", true);
+    expect(await findConvertButton()).toHaveProperty("disabled", true);
   });
 
   test("Can input a file", async () => {
@@ -75,19 +74,24 @@ describe("<BookmarkConverter />", () => {
     expect(input.files![0]).toBe(testFile);
     expect(input.files).toHaveLength(1);
 
-    expect(getConvertButton()).toHaveProperty("disabled", true);
+    expect(await findConvertButton()).toHaveProperty("disabled", true);
   });
 
-  test.only("Can convert bookmarks", async () => {
+  test("Converting bookmarks disables converting", async () => {
     const user = userEvent.setup();
     renderWithProviders(<BookmarkConverter />);
 
     await typeBookmarkNameToInput(user, testBookmarkName);
     await uploadFileToInput(user, testFile);
 
-    expect(getConvertButton()).toHaveProperty("disabled", false);
+    expect(await findConvertButton()).toHaveProperty("disabled", false);
 
-    // https://github.com/testing-library/user-event/issues/1032
-    fireEvent.submit(getConvertButton());
+    await waitFor(async () => {
+      // https://stackoverflow.com/a/76565489
+      // https://github.com/testing-library/user-event/issues/1032
+      fireEvent.submit(await findConvertButton());
+    });
+
+    expect(await findConvertButton()).toHaveProperty("disabled", true);
   });
 });
