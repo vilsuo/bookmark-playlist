@@ -32,7 +32,7 @@ const initialState: FilterState = {
 
 interface CategoryPayload {
   category: string,
-  allCategories: string[];
+  categories: string[];
 }
 
 const filtersSlice = createSlice({
@@ -78,7 +78,7 @@ const filtersSlice = createSlice({
     },
 
     toggleFilterCategory: (state, action: PayloadAction<CategoryPayload>) => {
-      const { category, allCategories } = action.payload;
+      const { category, categories } = action.payload;
 
       if (category === CATEGORY_ALL) {
         // toggle all on/off
@@ -89,7 +89,7 @@ const filtersSlice = createSlice({
 
         if (state.categories === CATEGORY_ALL) {
           // all categories was selected previously, so set all categories except one
-          state.categories = allCategories.filter(c => c !== category);
+          state.categories = categories.filter(c => c !== category);
     
         } else {
           const selectedCategories = state.categories;
@@ -97,7 +97,7 @@ const filtersSlice = createSlice({
           if (!selectedCategories.includes(category)) {
             // add one
 
-            const setAll = justOneCategoryMissing(category, selectedCategories, allCategories);
+            const setAll = justOneCategoryMissing(category, selectedCategories, categories);
 
             state.categories = setAll
               ? CATEGORY_ALL
@@ -111,12 +111,19 @@ const filtersSlice = createSlice({
       }
     },
 
+    /**
+     * Used to update filtered categories state then editing or removing an album
+     * results in a category being deleted from the albums list
+     * 
+     * @param state 
+     * @param action 
+     */
     removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<CategoryPayload>) => {
-      const { category, allCategories } = action.payload;
+      const { category, categories } = action.payload;
       if (state.categories !== CATEGORY_ALL) {
         const newSelectedCategories = state.categories.filter(c => c !== category);
 
-        const setAll = justOneCategoryMissing(category, newSelectedCategories, allCategories);
+        const setAll = justOneCategoryMissing(category, newSelectedCategories, categories);
 
         state.categories = setAll
           ? CATEGORY_ALL

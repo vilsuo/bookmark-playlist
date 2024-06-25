@@ -25,14 +25,13 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const isInQueue = useAppSelector(state => selectIsQueued(state, album));
 
-  const removeCategoryFromFilterIfLastOne = (oldCategory: string) => {
+  const removeCategoryFromFilterIfLastOne = (category: string) => {
     // remove category of the previous album value from the
     // filter if the category no longer exists
 
     if (isAloneInCategory) {
       dispatch(removeFilterCategoryIfSubsetSelected({
-        category: oldCategory,
-        allCategories: categories,
+        category, categories,
       }));
     }
   };
