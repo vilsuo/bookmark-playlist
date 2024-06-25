@@ -5,7 +5,8 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { fetchAlbums, selectAlbums } from './redux/reducers/albumsSlice';
 import SidebarContainer from './components/sidebars/SidebarContainer';
 import { Album } from './types';
-import { getFilterFn, getSortFn, selectFilters } from './redux/reducers/filterSlice';
+import { selectFilters } from './redux/reducers/filterSlice';
+import { getFilterFn, getSortFn } from './util/albumHelpers';
 
 const App = () => {
   const albums = useAppSelector(selectAlbums);
