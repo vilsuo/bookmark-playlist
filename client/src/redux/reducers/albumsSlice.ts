@@ -42,7 +42,7 @@ const albumsSlice = createSlice({
       })
       .addCase(createAlbum.fulfilled, (state, action) => {
         const newAlbum = action.payload;
-        state.albums.push(newAlbum);
+        state.albums = [ ...state.albums, newAlbum ];
       })
       .addCase(updateAlbum.fulfilled, (state, action) => {
         const updatedAlbum = action.payload;
@@ -93,8 +93,7 @@ export const createFromBookmarks = createAsyncThunk<
   'albums/createFromBookmarks',
   async (formData: FormData, { rejectWithValue }) => {
     try {
-      const response = await converterService.convertBookmarks(formData);
-      return response.data;
+      return await converterService.convertBookmarks(formData);
     } catch (error) {
       return rejectWithValue({ errorMessage: getErrorMessage(error) });
     }
