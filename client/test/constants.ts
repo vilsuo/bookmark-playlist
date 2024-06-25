@@ -1,4 +1,4 @@
-import { Album } from "../src/types";
+import { Album, AlbumCreation } from "../src/types";
 
 export const albums: Album[] = [
   {
@@ -39,13 +39,12 @@ export const albums: Album[] = [
   },
 ];
 
-export const newAlbumValues = {
+export const newAlbumValues: AlbumCreation = {
   videoId: "9vRqQ8Gd49Y",
   artist: "Mystifier",
   title: "Göetia",
   published: 1993,
   category: "Death",
-  addDate: "2022-05-07T10:58:56.000Z",
 };
 
-export const categories = ["Thrash", "Death", "Black", "Doom"];
+export const categories: Array<Album["category"]> = ["Thrash", "Death", "Black", "Doom"];

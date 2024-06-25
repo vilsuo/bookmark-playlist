@@ -144,11 +144,8 @@ describe("Queue slice", () => {
         const [ first, second, third ] = albums;
         const previousState = createQueueState([ first, second, third ]);
 
-        const { id } = second;
-        const newAlbum: Album = {
-          id,
-          ...newAlbumValues,
-        };
+        const { id, addDate } = second;
+        const newAlbum: Album = { id, addDate, ...newAlbumValues };
 
         const currentState =  reducer(previousState, queueUpdate(newAlbum));
 
