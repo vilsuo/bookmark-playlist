@@ -17,17 +17,11 @@ const FilterCategory = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     
-    dispatch(toggleFilterCategory({
-      category: value,
-      allCategories: categories,
-    }));
+    dispatch(toggleFilterCategory({ category: value, categories }));
   };
 
   const handleToggle = () => {
-    dispatch(toggleFilterCategory({
-      category: CATEGORY_ALL,
-      allCategories: categories,
-    }));
+    dispatch(toggleFilterCategory({ category: CATEGORY_ALL, categories }));
   };
 
   const isSelected = (category: Album["category"]) => {
