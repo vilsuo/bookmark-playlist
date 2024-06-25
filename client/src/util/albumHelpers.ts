@@ -42,7 +42,7 @@ export const getRandomAlbum = (albums: Album[]) => albums.length ? albums[Math.f
 
 /**
  * Create a {@link Album} sorting funtion. The sorting function will sort
- * the albums naturally by the given property and order, with the following
+ * the albums by the given property and order, with the following
  * exceptions regarding the sorting column:
  *
  * {@link AlbumColumn.ARTIST}: If two {@link Album.artist} are equal, then
@@ -56,10 +56,8 @@ export const getRandomAlbum = (albums: Album[]) => albums.length ? albums[Math.f
  * {@link AlbumColumn.PUBLISHED}: If two {@link Album.published} are equal,
  * then the album with earlier {@link Album.artist} value will ALWAYS be first
  * regardless of given {@link Order}.
- * 
- * {@link AlbumColumn.ADD_DATE}: Sort by {@link Album.addDate}.
  *
- * @param sortColumn name of the current column to sort by
+ * @param sortColumn the column to sort by
  * @param sortOrder the sorting order
  * @returns the sorting function
  */
@@ -104,8 +102,8 @@ export const getSortFn =
 /**
  * Create a {@link Album} filter function.
  *
- * @param filterState current filter options. The filters except {@link FilterState.categories}
- * are only applied to the property specified by {@link FilterState.column}.
+ * @param filterState current filter options. The filter {@link FilterState.categories} is
+ * always applied. The only other applied filter is specified by {@link FilterState.column}.
  * @returns the filter funtion
  */
 export const getFilterFn = (filterState: FilterState) => (album: Album) => {
@@ -117,54 +115,64 @@ export const getFilterFn = (filterState: FilterState) => (album: Album) => {
     case AlbumColumn.ARTIST:
     case AlbumColumn.ALBUM: {
       // filter only by text value, select album artist or title
-      if (!text) return true;
-
-      const searchText = text.toLowerCase();
-      if (column === AlbumColumn.ARTIST) {
-        return album.artist.toLowerCase().indexOf(searchText) !== -1;
-      } else {
-        return album.title.toLowerCase().indexOf(searchText) !== -1;
-      }
+      return filterByText(text, column, album);
     }
     case AlbumColumn.PUBLISHED: {
-      // filter only by published
-      const { published } = album;
-      const { start, end } = publishInterval;
-
-      if (start === undefined && end === undefined) {
-        return true; // no interval filter
-
-      } else if (start !== undefined && end !== undefined) {
-        return Number(start) <= published && published <= Number(end);
-
-      } else if (start !== undefined) {
-        return published >= Number(start);
-        
-      } else {
-        // end !== undefined
-        return published <= Number(end);
-      }
+      return filterByPublished(publishInterval, album);
     }
     case AlbumColumn.ADD_DATE: {
-      // filter only by addDate
-      const date = new Date(album.addDate);
-      const { startDate, endDate } = parseDateInterval(addDateInterval);
-
-      if (startDate && endDate) {
-        return startDate <= date && date < endDate;
-
-      } else if (startDate) {
-        return date >= startDate;
-
-      } else if (endDate) {
-        return date < endDate;
-
-      } else {
-        return true; // no interval filter
-      }
+      return filterByAddDate(addDateInterval, album);
     }
     default:
       column satisfies never;
       return true;
   };
+};
+
+const filterByText = (text: string, column: AlbumColumn, album: Album) => {
+  if (!text) return true;
+
+  const searchText = text.toLowerCase();
+  if (column === AlbumColumn.ARTIST) {
+    return album.artist.toLowerCase().indexOf(searchText) !== -1;
+  } else {
+    return album.title.toLowerCase().indexOf(searchText) !== -1;
+  }
+};
+
+const filterByPublished = (publishInterval: FilterState["publishInterval"], album: Album) => {
+  const { published } = album;
+  const { start, end } = publishInterval;
+
+  if (start === undefined && end === undefined) {
+    return true; // no interval filter
+
+  } else if (start !== undefined && end !== undefined) {
+    return Number(start) <= published && published <= Number(end);
+
+  } else if (start !== undefined) {
+    return published >= Number(start);
+    
+  } else {
+    // end !== undefined
+    return published <= Number(end);
+  }
+};
+
+const filterByAddDate = (addDateInterval: FilterState["addDateInterval"], album: Album) => {
+  const date = new Date(album.addDate);
+  const { startDate, endDate } = parseDateInterval(addDateInterval);
+
+  if (startDate && endDate) {
+    return startDate <= date && date < endDate;
+
+  } else if (startDate) {
+    return date >= startDate;
+
+  } else if (endDate) {
+    return date < endDate;
+
+  } else {
+    return true; // no interval filter
+  }
 };
