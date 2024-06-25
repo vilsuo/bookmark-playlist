@@ -4,6 +4,8 @@ import { RootState } from '../store';
 import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
 import { getErrorMessage } from '../../util/errorMessages';
+import { selectFilters } from './filterSlice';
+import { getFilterFn, getSortFn } from '../../util/albumHelpers';
 
 export interface AlbumsState {
   viewing: Album | null;
@@ -72,10 +74,6 @@ const albumsSlice = createSlice({
   },
 });
 
-export const fetchAlbums = createAsyncThunk(
-  'albums/fetchAlbums',
-  async () => albumService.getAlbums(),
-);
 
 type RejectedResponse = { errorMessage: string };
 
@@ -83,6 +81,12 @@ export const isRejectedResponse = (error: unknown): error is RejectedResponse =>
   return (typeof error === 'object' && error !== null) &&
     ('errorMessage' in error && typeof error.errorMessage === 'string');
 };
+
+// GET ALBUMS
+export const fetchAlbums = createAsyncThunk(
+  'albums/fetchAlbums',
+  async () => albumService.getAlbums(),
+);
 
 // CREATE FROM BOOKMARKS
 export const createFromBookmarks = createAsyncThunk<
@@ -148,7 +152,7 @@ export const { view, play } = albumsSlice.actions;
 
 export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
-export const selectAlbums = (state: RootState) => state.albums.albums;
+const selectAlbums = (state: RootState) => state.albums.albums;
 
 export const selectCategories = createSelector(selectAlbums, (albums) => {
   return Array.from(new Set(albums.map(album => album.category))).sort(
@@ -168,10 +172,22 @@ export const selectCategories = createSelector(selectAlbums, (albums) => {
 
 export const selectIsAloneInCategory = (category: string) => createSelector(
   selectAlbums,
-  (albums: Album[]) => albums.reduce(
+  (albums) => albums.reduce(
     (prev, curr) => prev + (curr.category === category ? 1 : 0),
     0,
   ) === 1,
+);
+
+export const selectSortedAndFilteredAlbums = createSelector(
+  selectAlbums,
+  selectFilters,
+  (albums, filters) => {
+    const { sortColumn, sortOrder } = filters;
+
+    return albums
+      .filter(getFilterFn(filters))
+      .toSorted(getSortFn(sortColumn, sortOrder));
+  },
 );
 
 export default albumsSlice.reducer;
