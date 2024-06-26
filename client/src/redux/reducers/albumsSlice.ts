@@ -1,12 +1,12 @@
-import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, ThunkAction, UnknownAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Album, AlbumCreation, PlayMode } from '../../types';
 import { RootState } from '../store';
 import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
 import { getErrorMessage } from '../../util/errorMessages';
 import { selectFilters } from './filterSlice';
-import { getFilterFn, getSortFn } from '../../util/albumHelpers';
-import { selectQueueFirst } from './queueSlice';
+import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '../../util/albumHelpers';
+import { queuePop, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
 
 export interface AlbumsState {
@@ -162,15 +162,17 @@ export const selectCategories = createSelector(selectAlbums, (albums) => {
   );
 });
 
-// export const selectCategoryCounts = createSelector(selectAlbums, (albums: Album[]) => {
-//   return albums.reduce<Record<string, number>>(
-//     (prev, current) => {
-//       const { category } = current;
-//       prev[category] = (category in prev) ? prev[category] + 1 : 0;
-//       return prev;
-//     }, {}
-//   );
-// });
+/*
+export const selectCategoryCounts = createSelector(selectAlbums, (albums: Album[]) => {
+  return albums.reduce<Record<string, number>>(
+    (prev, current) => {
+      const { category } = current;
+      prev[category] = (category in prev) ? prev[category] + 1 : 0;
+      return prev;
+    }, {}
+  );
+});
+*/
 
 export const selectIsAloneInCategory = (category: string) => createSelector(
   selectAlbums,
@@ -193,8 +195,33 @@ export const selectSortedAndFilteredAlbums = createSelector(
 );
 
 
+/*
+Thunk Use Cases
+- Moving complex logic out of components
+- Side-effects, such as generating random values
+- Making async requests or other async logic
+- Writing logic that needs to dispatch multiple actions in a row or over time
+- Writing logic that needs access to getState to make decisions or include
+  other state values in an action
+
+
+Thunks have access to the dispatch method. This can be used to dispatch actions,
+or even other thunks. This can be useful for dispatching multiple actions in a
+row (although this is a pattern that should be minimized), or orchestrating
+complex logic that needs to dispatch at multiple points in the process.
+
+Unlike components, thunks also have access to getState. This can be called at 
+any time to retrieve the current root Redux state value. This can be useful for 
+running conditional logic based on the current state. It's common to use selector 
+functions when reading state inside of thunks rather than accessing nested state 
+fields directly, but either approach is fine.
+
+Since the state is synchronously updated as soon as the reducers process an action, 
+you can call getState after a dispatch to get the updated state.
+*/
+
 /**
- * Creates a memoized album selector function.
+ * Play next album.
  * 
  * Queued albums are always prioritized. Othervise, the next album
  * is choosen from the filtered and sorted albums list based on current
@@ -204,41 +231,44 @@ export const selectSortedAndFilteredAlbums = createSelector(
  * When the play mode is {@link PlayMode.SEQUENCE}, 
  * sequence will start over from the final queued album
  */
-/*
-export const selectNextPlayingAlbum = (state: RootState) => {
+export const playNext = (): ThunkAction<
+  void,         // Return type of the thunk function
+  RootState,    // state type used by getState
+  unknown,      // any "extra argument" injected into the thunk
+  UnknownAction // known types of actions that can be dispatched
+> => (dispatch, getState) => {
+
+  const state = getState();
   const albums = selectSortedAndFilteredAlbums(state);
   const nextAlbumInQueue = selectQueueFirst(state);
   const playMode = selectPlayMode(state);
   const playingAlbum = selectPlaying(state);
 
-  let album: Album | null = null;
-  let queue = false;
   if (nextAlbumInQueue) { 
     // always prioritize queue
-    album = nextAlbumInQueue;
-    queue = true;
+    dispatch(play(nextAlbumInQueue));
+    dispatch(queuePop());
+
   } else {
     // no albums are queued
     switch (playMode) {
       case PlayMode.MANUAL: {
-        album = null;
+        dispatch(play(null));
         break;
       }
       case PlayMode.SEQUENCE: {
-        album = getNextAlbumInSequence(albums, playingAlbum);
+        dispatch(play(getNextAlbumInSequence(albums, playingAlbum)));
         break;
       }
       case PlayMode.SHUFFLE: {
-        album = getRandomAlbum(albums);
+        dispatch(play(getRandomAlbum(albums)));
         break;
       }
       default:
         playMode satisfies never;
     }
   }
-  return { album, queue };
 };
-*/
 
 export const selectCanPlayNextAlbum = createSelector(
   selectSortedAndFilteredAlbums,

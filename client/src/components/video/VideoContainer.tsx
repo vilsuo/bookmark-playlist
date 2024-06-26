@@ -2,10 +2,8 @@ import { Album } from '../../types';
 import VideoPlayer from './VideoPlayer';
 import VideoDetails from './VideoDetails';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectPlayMode, selectShowVideoDetails } from '../../redux/reducers/settingsSlice';
-import { play, selectSortedAndFilteredAlbums } from '../../redux/reducers/albumsSlice';
-import { queuePop, selectQueueFirst } from '../../redux/reducers/queueSlice';
-import { getNextPlayingAlbum } from '../../util/albumHelpers';
+import { selectShowVideoDetails } from '../../redux/reducers/settingsSlice';
+import { play, playNext } from '../../redux/reducers/albumsSlice';
 
 const formatVideoTitle = (album: Album) => {
   const { artist, title, published } = album;
@@ -14,32 +12,12 @@ const formatVideoTitle = (album: Album) => {
 
 interface VideoContainerProps {
   playingAlbum: Album;
-  closeVideo: () => void;
 }
 
-const VideoContainer = ({ playingAlbum, closeVideo }: VideoContainerProps) => {
+const VideoContainer = ({ playingAlbum }: VideoContainerProps) => {
   const dispatch = useAppDispatch();
 
   const showVideoDetails = useAppSelector(selectShowVideoDetails);
-
-  const albums = useAppSelector(selectSortedAndFilteredAlbums);
-  const nextAlbumInQueue = useAppSelector(selectQueueFirst);
-  const playMode = useAppSelector(selectPlayMode);
-
-  const playNext = () => {
-    const { album, queue } = getNextPlayingAlbum(
-      albums, nextAlbumInQueue, playMode, playingAlbum
-    );
-
-    if (!album) {
-      closeVideo();
-    } else {
-      if (queue) { dispatch(queuePop()); }
-      dispatch(play(album));
-    }
-    
-    //const rand = Math.random();
-  };
 
   return (
     <div className="video-container">
@@ -49,8 +27,8 @@ const VideoContainer = ({ playingAlbum, closeVideo }: VideoContainerProps) => {
 
       <VideoPlayer
         videoId={playingAlbum.videoId}
-        playNext={playNext}
-        close={closeVideo}
+        playNext={() => { dispatch(playNext()); }}
+        close={() => { dispatch(play(null)); } }
       />
 
       { showVideoDetails && <VideoDetails album={playingAlbum} /> }
