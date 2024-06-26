@@ -1,9 +1,13 @@
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSlice';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import VideoControls from './VideoControls';
 import { useRef, useState } from 'react';
 import { selectCanPlayNextAlbum } from '../../redux/reducers/albumsSlice';
+import { BASE_PLAYER_VARS } from '../../constants';
+import { addNotification } from '../../redux/reducers/notificationSlice';
+import { NotificationType } from '../../types';
+import { createYoutubeErrorMessage } from '../../util/errorMessages';
 
 enum PlayerState {
   UNSTARTED = -1,
@@ -14,47 +18,6 @@ enum PlayerState {
   VIDEO_CUED = 5,
 };
 
-const ORIGIN = 'http://localhost:5173';
-
-/**
- * https://developers.google.com/youtube/player_parameters
- */
-const BASE_PLAYER_VARS = {
-  // autoplay
-  // cc_lang_pref
-  // cc_load_policy
-  // color
-  // controls
-  // disablekb
-  
-  // enables the player to be controlled via IFrame Player API calls
-  enablejsapi: 1,
-
-  // end
-  
-  // prevent the fullscreen button from displaying in the player
-  fs: 0,
-
-  // hl
-  // iv_load_policy
-  // list
-  // listType
-  // loop
-  // modestbranding
-  
-  // This parameter provides an extra security measure for the IFrame API and
-  // is only supported for IFrame embeds. If you are using the IFrame API, which
-  // means you are setting the enablejsapi parameter value to 1, you should always
-  // specify your domain as the origin parameter value.
-  origin, ORIGIN,
-
-  // playlist
-  // playsinline
-  // rel
-  // start
-  // widget_referrer
-};
-
 interface VideoPlayerProps {
   videoId: string;
   playNext: () => void;
@@ -62,25 +25,23 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
+  // settings
   const autoPlay = useAppSelector(selectAutoplay);
   const autoqueue = useAppSelector(selectAutoqueue);
 
   const canPlayNext = useAppSelector(selectCanPlayNextAlbum);
 
+  const dispatch = useAppDispatch();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const ref = useRef<YouTube>(null);
 
   const opts: YouTubeProps['opts'] = {
-    // width
-    // height
-    // videoId
     playerVars: {
       ...BASE_PLAYER_VARS,
-
       autoplay: +autoPlay,
       loop: 0,
     },
-    // events,
   };
 
   /**
@@ -98,8 +59,12 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
    * 
    * @param event 
    */
-  const onError: YouTubeProps['onError'] = () => {
-    console.log('YouTube.onError');
+  const onError: YouTubeProps['onError'] = (event) => {
+    dispatch(addNotification({
+      type: NotificationType.ERROR,
+      title: "Youtube Error",
+      message: createYoutubeErrorMessage(Number(event.data)),
+    }));
   };
 
   /**
@@ -148,7 +113,7 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
   };
 
   return (
-    <div>
+    <div key={`controls-${videoId}`}>
       <div className="video">
         <YouTube
           ref={ref}
@@ -161,7 +126,6 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
       </div>
       
       <VideoControls
-        key={`controls-${videoId}`}
         close={close}
         toggle={togglePlay}
         seekTo={seekTo}
