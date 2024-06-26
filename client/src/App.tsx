@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import Main from './components/Main';
 import NotificationContainer from './components/general/notification/NotificationContainer';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { fetchAlbums, selectSortedAndFilteredAlbums } from './redux/reducers/albumsSlice';
+import { useAppDispatch } from './redux/hooks';
+import { fetchAlbums } from './redux/reducers/albumsSlice';
 import SidebarContainer from './components/sidebars/SidebarContainer';
 
 const App = () => {
-  const filteredAndSortedAlbums = useAppSelector(selectSortedAndFilteredAlbums);
-
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -16,7 +14,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <SidebarContainer albums={filteredAndSortedAlbums} />
+      <SidebarContainer />
 
       <NotificationContainer />
 

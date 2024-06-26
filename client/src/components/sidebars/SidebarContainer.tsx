@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { Album, SidebarType } from "../../types";
+import { SidebarType } from "../../types";
 import Sidebar from "./Sidebar";
 import SidebarOpener from "./opener/SidebarOpener";
 
-interface SidebarContainerProps {
-  albums: Album[];
-}
-
-const SidebarContainer = ({ albums }: SidebarContainerProps) => {
+const SidebarContainer = () => {
   // the current opened sidebar
   const [sidebarType, setSidebarType] = useState<SidebarType | null>(null);
 
@@ -26,7 +22,6 @@ const SidebarContainer = ({ albums }: SidebarContainerProps) => {
       <Sidebar
         sidebarType={sidebarType}
         close={closeSidebar}
-        albums={albums}
         scrollPos={scrollPos}
         setScrollPos={setScrollPos}
       />

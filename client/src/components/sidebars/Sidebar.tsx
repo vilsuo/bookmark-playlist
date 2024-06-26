@@ -1,4 +1,4 @@
-import { Album, SidebarType } from '../../types';
+import { SidebarType } from '../../types';
 import AlbumsBar from './albums/AlbumsBar';
 import ToolsBar from './tools/ToolsBar';
 import SettingsBar from './settings/SettingsBar';
@@ -6,12 +6,11 @@ import SettingsBar from './settings/SettingsBar';
 interface SidebarProps {
   sidebarType: SidebarType;
   close: () => void;
-  albums: Album[];
   scrollPos: number;
   setScrollPos: (val: number) => void;
 };
 
-const Sidebar = ({ sidebarType, close, albums, scrollPos, setScrollPos }: SidebarProps) => {
+const Sidebar = ({ sidebarType, close, scrollPos, setScrollPos }: SidebarProps) => {
 
   const closeAndSaveScrollPos = (pos: number | undefined) => {
     setScrollPos(pos || 0);
@@ -22,7 +21,6 @@ const Sidebar = ({ sidebarType, close, albums, scrollPos, setScrollPos }: Sideba
     case SidebarType.ALBUMS: {
       return (
         <AlbumsBar
-          albums={albums}
           close={closeAndSaveScrollPos}
           pos={scrollPos}
         />

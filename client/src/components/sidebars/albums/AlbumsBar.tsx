@@ -8,15 +8,15 @@ import { play, selectPlaying, selectViewing, view } from '../../../redux/reducer
 import AlbumAddDialog from './AlbumAddDialog';
 
 interface AlbumsBarProps {
-  albums: Album[];
   close: (pos: number | undefined) => void;
   pos: number;
 }
 
-const AlbumsBar = ({ albums, close, pos }: AlbumsBarProps) => {
-  const dispatch = useAppDispatch();
+const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
   const playingAlbum = useAppSelector(selectPlaying);
   const viewingAlbum = useAppSelector(selectViewing);
+
+  const dispatch = useAppDispatch();
   const setPlayingAlbum = (album: Album | null) => dispatch(play(album));
   const setViewingAlbum = (album: Album | null) => dispatch(view(album));
 
@@ -53,7 +53,6 @@ const AlbumsBar = ({ albums, close, pos }: AlbumsBarProps) => {
           <AlbumFilter />
 
           <AlbumTable
-            albums={albums}
             playingAlbum={playingAlbum}
             viewingAlbum={viewingAlbum}
             setViewingAlbum={setViewingAlbum}
