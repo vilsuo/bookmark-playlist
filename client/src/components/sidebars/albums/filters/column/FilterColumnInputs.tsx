@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { selectFilters, setFilterAddDateInterval, setFilterPublishInterval, setFilterText } from "../../../../redux/reducers/filterSlice";
-import { AlbumColumn } from "../../../../types";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
+import { selectFilters, setFilterAddDateInterval, setFilterPublishInterval, setFilterText } from "../../../../../redux/reducers/filterSlice";
+import { AlbumColumn } from "../../../../../types";
 
 interface FilterColumnInputsProps {
   column: AlbumColumn;

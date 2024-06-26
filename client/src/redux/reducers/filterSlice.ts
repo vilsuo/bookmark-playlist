@@ -61,19 +61,14 @@ const filtersSlice = createSlice({
       const interval = action.payload;
       state.addDateInterval = interval;
     },
-    resetFilters: (state) => {
-      return { 
-        ...initialState,
-
-        // do not reset the following
-    
-        sortColumn: state.sortColumn,
-        sortOrder: state.sortOrder,
-
-        column: state.column,
-
-        categories: state.categories,
-      };
+    /**
+     * @remark does not reset {@link FilterState.column}
+     * @param state 
+     */
+    resetColumnFilters: (state) => {
+      state.text = initialState.text;
+      state.publishInterval = initialState.publishInterval;
+      state.addDateInterval = initialState.addDateInterval;
     },
 
     toggleFilterCategory: (state, action: PayloadAction<CategoryPayload>) => {
@@ -154,7 +149,7 @@ const justOneCategoryMissing = (value: string, first: string[], second: string[]
 };
 
 export const {
-  setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetFilters,
+  setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetColumnFilters,
   toggleFilterCategory, removeFilterCategoryIfSubsetSelected,
 } =
   filtersSlice.actions;
