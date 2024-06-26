@@ -5,7 +5,7 @@ import {
   selectFilters,
 } from '../../../../redux/reducers/filterSlice';
 import { AlbumColumn } from '../../../../types';
-import FilterCategory from './FilterCategory';
+import FilterCategory from './category/FilterCategory';
 import FilterColumnInputs from './FilterColumnInputs';
 
 const AlbumFilter = () => {

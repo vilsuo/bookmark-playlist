@@ -578,7 +578,7 @@ p.info .format {
   text-wrap: nowrap;
   text-overflow: ellipsis;
 }
-.filter-category-container .category-filter label.checked {
+.filter-category-container .category-filter label:has(input:checked) {
   background-color: var(--ma-selected);
 }
 
