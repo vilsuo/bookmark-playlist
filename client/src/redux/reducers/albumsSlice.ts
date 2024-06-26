@@ -1,11 +1,13 @@
 import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import { Album, AlbumCreation } from '../../types';
+import { Album, AlbumCreation, PlayMode } from '../../types';
 import { RootState } from '../store';
 import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
 import { getErrorMessage } from '../../util/errorMessages';
 import { selectFilters } from './filterSlice';
 import { getFilterFn, getSortFn } from '../../util/albumHelpers';
+import { selectQueueFirst } from './queueSlice';
+import { selectPlayMode } from './settingsSlice';
 
 export interface AlbumsState {
   viewing: Album | null;
@@ -187,6 +189,88 @@ export const selectSortedAndFilteredAlbums = createSelector(
     return albums
       .filter(getFilterFn(filters))
       .toSorted(getSortFn(sortColumn, sortOrder));
+  },
+);
+
+
+/**
+ * Creates a memoized album selector function.
+ * 
+ * Queued albums are always prioritized. Othervise, the next album
+ * is choosen from the filtered and sorted albums list based on current
+ * {@link PlayMode}.
+ * 
+ * @remarks
+ * When the play mode is {@link PlayMode.SEQUENCE}, 
+ * sequence will start over from the final queued album
+ */
+/*
+export const selectNextPlayingAlbum = (state: RootState) => {
+  const albums = selectSortedAndFilteredAlbums(state);
+  const nextAlbumInQueue = selectQueueFirst(state);
+  const playMode = selectPlayMode(state);
+  const playingAlbum = selectPlaying(state);
+
+  let album: Album | null = null;
+  let queue = false;
+  if (nextAlbumInQueue) { 
+    // always prioritize queue
+    album = nextAlbumInQueue;
+    queue = true;
+  } else {
+    // no albums are queued
+    switch (playMode) {
+      case PlayMode.MANUAL: {
+        album = null;
+        break;
+      }
+      case PlayMode.SEQUENCE: {
+        album = getNextAlbumInSequence(albums, playingAlbum);
+        break;
+      }
+      case PlayMode.SHUFFLE: {
+        album = getRandomAlbum(albums);
+        break;
+      }
+      default:
+        playMode satisfies never;
+    }
+  }
+  return { album, queue };
+};
+*/
+
+export const selectCanPlayNextAlbum = createSelector(
+  selectSortedAndFilteredAlbums,
+  selectQueueFirst,
+  selectPlayMode,
+  selectPlaying,
+  (albums, nextAlbumInQueue, playMode, playingAlbum) => {
+    // can play next from queue
+    if (nextAlbumInQueue) { return true; }
+
+    switch (playMode) {
+      case PlayMode.MANUAL: {
+        // can only play from queue
+        return false;
+      }
+      case PlayMode.SEQUENCE: {
+        // no sequence to play
+        if (albums.length === 0) { return false; }
+
+        // playing last album in sequence?
+        return playingAlbum
+          ? (albums[albums.length - 1].id !== playingAlbum.id)
+          : false;
+      }
+      case PlayMode.SHUFFLE: {
+        // only if there are albums
+        return (albums.length > 0);
+      }
+      default:
+        playMode satisfies never;
+        return false;
+    }
   },
 );
 

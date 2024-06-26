@@ -3,6 +3,7 @@ import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSl
 import YouTube, { YouTubeProps } from 'react-youtube';
 import VideoControls from './VideoControls';
 import { useRef, useState } from 'react';
+import { selectCanPlayNextAlbum } from '../../redux/reducers/albumsSlice';
 
 enum PlayerState {
   UNSTARTED = -1,
@@ -58,12 +59,13 @@ interface VideoPlayerProps {
   videoId: string;
   playNext: () => void;
   close: () => void;
-  disablePlayingNext: boolean;
 }
 
-const VideoPlayer = ({ videoId, playNext, close, disablePlayingNext }: VideoPlayerProps) => {
+const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
   const autoPlay = useAppSelector(selectAutoplay);
   const autoqueue = useAppSelector(selectAutoqueue);
+
+  const canPlayNext = useAppSelector(selectCanPlayNextAlbum);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const ref = useRef<YouTube>(null);
@@ -87,7 +89,7 @@ const VideoPlayer = ({ videoId, playNext, close, disablePlayingNext }: VideoPlay
    * @param event 
    */
   const onEnd: YouTubeProps['onEnd'] = () => {
-    if (autoqueue && !disablePlayingNext) { playNext(); }
+    if (autoqueue && canPlayNext) { playNext(); }
   };
 
   /**
@@ -96,7 +98,7 @@ const VideoPlayer = ({ videoId, playNext, close, disablePlayingNext }: VideoPlay
    * 
    * @param event 
    */
-  const onError: YouTubeProps['onError'] = (event) => {
+  const onError: YouTubeProps['onError'] = () => {
     console.log('YouTube.onError');
   };
 
@@ -167,7 +169,7 @@ const VideoPlayer = ({ videoId, playNext, close, disablePlayingNext }: VideoPlay
         playNext={playNext}
         getTime={getTime}
         getDuration={getDuration}
-        disablePlayingNext={disablePlayingNext}
+        disablePlayingNext={!canPlayNext}
       />
     </div>
   );

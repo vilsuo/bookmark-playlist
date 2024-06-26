@@ -55,10 +55,10 @@ export const { queueAdd, queueRemove, queuePrepend, queuePop, queueUpdate } = qu
 
 export const selectQueue = (state: RootState) => state.queue.queue;
 
-export const selectQueueFirst = createSelector(
-  selectQueue,
-  (queue) => (queue.length > 0) ? queue[0]: null,
-);
+export const selectQueueFirst = (state: RootState) => {
+  const queue = selectQueue(state);
+  return (queue.length > 0) ? queue[0]: null;
+};
 
 export const selectIsQueued = createSelector(
   [selectQueue, (_state, album) => album],

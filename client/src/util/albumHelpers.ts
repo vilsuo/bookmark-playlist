@@ -1,7 +1,41 @@
 import { CATEGORY_ALL } from "../constants";
 import { FilterState } from "../redux/reducers/filterSlice";
-import { Album, AlbumColumn, Order } from "../types";
+import { Album, AlbumColumn, Order, PlayMode } from "../types";
 import { parseDateInterval } from "./dateConverter";
+
+export const getNextPlayingAlbum = (
+  albums: Album[],
+  nextAlbumInQueue: Album | null,
+  playMode: PlayMode,
+  playingAlbum: Album | null,
+) => {
+  let album: Album | null = null;
+  let queue = false;
+  if (nextAlbumInQueue) { 
+    // always prioritize queue
+    album = nextAlbumInQueue;
+    queue = true;
+  } else {
+    // no albums are queued
+    switch (playMode) {
+      case PlayMode.MANUAL: {
+        album = null;
+        break;
+      }
+      case PlayMode.SEQUENCE: {
+        album = getNextAlbumInSequence(albums, playingAlbum);
+        break;
+      }
+      case PlayMode.SHUFFLE: {
+        album = getRandomAlbum(albums);
+        break;
+      }
+      default:
+        playMode satisfies never;
+    }
+  }
+  return { album, queue };
+};
 
 /**
  * 
@@ -9,9 +43,9 @@ import { parseDateInterval } from "./dateConverter";
  * @param currentAlbum the given album
  * @returns null if album list is empty or the album is the last album;
  * the first album in the list if album is not given or not found in the list;
- * else the album after the given album
+ * else the album after the given album in the array
  */
-export const getNextAlbumInSequence = (albums: Album[], currentAlbum: Album | null) => {
+const getNextAlbumInSequence = (albums: Album[], currentAlbum: Album | null) => {
   // no albums and/or match the filter
   if (!albums.length) { return null; }
 
@@ -33,12 +67,9 @@ export const getNextAlbumInSequence = (albums: Album[], currentAlbum: Album | nu
   }
 };
 
-/**
- * 
- * @param albums 
- * @returns random album from the list if it is not empty
- */
-export const getRandomAlbum = (albums: Album[]) => albums.length ? albums[Math.floor(albums.length * Math.random())] : null;
+const getRandomAlbum = (albums: Album[]) => albums.length
+  ? albums[Math.floor(albums.length * Math.random())]
+  : null;
 
 /**
  * Create a {@link Album} sorting funtion. The sorting function will sort
