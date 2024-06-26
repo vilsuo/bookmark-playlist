@@ -1,20 +1,12 @@
-import { useAppSelector } from '../redux/hooks';
-import { selectPlaying } from '../redux/reducers/albumsSlice';
-import QueueTable from './queue/QueueTable';
 import VideoContainer from './video/VideoContainer';
+import QueueTable from './queue/QueueTable';
 
 const Main = () => {
-  const playingAlbum = useAppSelector(selectPlaying);
-
   return (
     <div className="main">
-      {playingAlbum && (
-        <VideoContainer playingAlbum={playingAlbum} />
-      )}
+      <VideoContainer />
 
-      <div>
-        <QueueTable />
-      </div>
+      <QueueTable />
     </div>
   );
 };
