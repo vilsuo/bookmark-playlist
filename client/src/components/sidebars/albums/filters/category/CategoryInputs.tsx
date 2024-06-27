@@ -21,7 +21,7 @@ const CategoryInputs = ({ categories, isAllSelected, isSelected }: CategoryInput
   };
 
   return (
-    <div className="category-filter">
+    <div className="category-inputs">
       <label className="all">
         <span>{CATEGORY_ALL}</span>
         <input type="checkbox"

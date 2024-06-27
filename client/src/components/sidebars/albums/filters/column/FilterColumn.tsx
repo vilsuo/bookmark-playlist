@@ -18,7 +18,7 @@ const FilterColumn = () => {
   };
 
   return (
-    <div className="filter-column-container">
+    <div className="filter-column">
       <ColumnOptions
         column={column}
         handleColumnChange={handleColumnChange}

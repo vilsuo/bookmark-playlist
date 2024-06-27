@@ -20,7 +20,7 @@ const FilterCategory = () => {
   };
 
   return (
-    <div className="filter-category-container">
+    <div className="filter-category">
       <CategoryDisplay
         selectedCategories={selectedCategories}
         showList={showList}

@@ -37,9 +37,9 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
     case AlbumColumn.ARTIST:
       return (
         <div className="filter-text">
-          <label htmlFor="album-filter-text">Search:</label>
+          <label htmlFor="album-artist-text">Search:</label>
           <input
-            id="album-filter-text"
+            id="album-artist-text"
             type="text"
             value={text}
             onChange={({ target }) => handleTextChange(target.value)}
@@ -51,9 +51,9 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
       return (
         <div className="filter-interval">
           <div className="start">
-            <label htmlFor="album-filter-publish-start">From:</label>
+            <label htmlFor="publish-start">From:</label>
             <input
-              id="album-filter-publish-start"
+              id="publish-start"
               type="number"
               value={publishInterval.start !== undefined ? publishInterval.start : ""}
               onChange={({ target }) => handlePublishStartChange(target.value)}
@@ -61,9 +61,9 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
           </div>
 
           <div>
-            <label htmlFor="album-filter-publish-end">to:</label>
+            <label htmlFor="publish-end">to:</label>
             <input
-              id="album-filter-publish-end"
+              id="publish-end"
               type="number"
               value={publishInterval.end !== undefined ? publishInterval.end : ""}
               onChange={({ target }) => handlePublishEndChange(target.value)}
@@ -76,9 +76,9 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
       return (
         <div className="filter-interval">
           <div className="start">
-            <label htmlFor="album-filter-addDate-start">From:</label>
+            <label htmlFor="addDate-start">From:</label>
             <input
-              id="album-filter-addDate-start"
+              id="addDate-start"
               type="date"
               value={addDateInterval.start}
               onChange={({ target }) => handleAddDateStartChange(target.value)}
@@ -86,9 +86,9 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
           </div>
 
           <div>
-            <label htmlFor="album-filter-addDate-end">to:</label>
+            <label htmlFor="addDate-end">to:</label>
             <input
-              id="album-filter-addDate-end"
+              id="addDate-end"
               type="date"
               value={addDateInterval.end}
               onChange={({ target }) => handleAddDateEndChange(target.value)}
