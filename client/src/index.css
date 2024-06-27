@@ -555,7 +555,7 @@ p.info .format {
   text-shadow: none;
   color: black;
 }
-.filter-category .category-inputs label.all span {
+.filter-category .category-inputs label:first-child span {
   flex: 1;
   text-align: center;
 }

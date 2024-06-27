@@ -4,10 +4,10 @@ import { RootState } from '../store';
 import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
 import { getErrorMessage } from '../../util/errorMessages';
-import { selectFilters } from './filterSlice';
 import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '../../util/albumHelpers';
 import { queuePop, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
+import { type selectFilters as SelectFilters } from './filterSlice';
 
 export interface AlbumsState {
   viewing: Album | null;
@@ -15,7 +15,7 @@ export interface AlbumsState {
   albums: Album[];
 };
 
-const initialState: AlbumsState = {
+export const initialState: AlbumsState = {
   viewing: null,
   playing: null,
   albums: [],
@@ -76,13 +76,36 @@ const albumsSlice = createSlice({
   },
 });
 
-
 type RejectedResponse = { errorMessage: string };
 
 export const isRejectedResponse = (error: unknown): error is RejectedResponse => {
   return (typeof error === 'object' && error !== null) &&
     ('errorMessage' in error && typeof error.errorMessage === 'string');
 };
+
+/*
+Thunk Use Cases
+- Moving complex logic out of components
+- Side-effects, such as generating random values
+- Making async requests or other async logic
+- Writing logic that needs to dispatch multiple actions in a row or over time
+- Writing logic that needs access to getState to make decisions or include
+  other state values in an action
+
+Thunks have access to the dispatch method. This can be used to dispatch actions,
+or even other thunks. This can be useful for dispatching multiple actions in a
+row (although this is a pattern that should be minimized), or orchestrating
+complex logic that needs to dispatch at multiple points in the process.
+
+Unlike components, thunks also have access to getState. This can be called at 
+any time to retrieve the current root Redux state value. This can be useful for 
+running conditional logic based on the current state. It's common to use selector 
+functions when reading state inside of thunks rather than accessing nested state 
+fields directly, but either approach is fine.
+
+Since the state is synchronously updated as soon as the reducers process an action, 
+you can call getState after a dispatch to get the updated state.
+*/
 
 // GET ALBUMS
 export const fetchAlbums = createAsyncThunk(
@@ -150,76 +173,6 @@ export const deleteAlbum = createAsyncThunk<
   }
 );
 
-export const { view, play } = albumsSlice.actions;
-
-export const selectViewing = (state: RootState) => state.albums.viewing;
-export const selectPlaying = (state: RootState) => state.albums.playing;
-const selectAlbums = (state: RootState) => state.albums.albums;
-
-export const selectCategories = createSelector(selectAlbums, (albums) => {
-  return Array.from(new Set(albums.map(album => album.category))).sort(
-    (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
-  );
-});
-
-/*
-export const selectCategoryCounts = createSelector(selectAlbums, (albums: Album[]) => {
-  return albums.reduce<Record<string, number>>(
-    (prev, current) => {
-      const { category } = current;
-      prev[category] = (category in prev) ? prev[category] + 1 : 0;
-      return prev;
-    }, {}
-  );
-});
-*/
-
-export const selectIsAloneInCategory = (category: string) => createSelector(
-  selectAlbums,
-  (albums) => albums.reduce(
-    (prev, curr) => prev + (curr.category === category ? 1 : 0),
-    0,
-  ) === 1,
-);
-
-export const selectSortedAndFilteredAlbums = createSelector(
-  selectAlbums,
-  selectFilters,
-  (albums, filters) => {
-    const { sortColumn, sortOrder } = filters;
-
-    return albums
-      .filter(getFilterFn(filters))
-      .toSorted(getSortFn(sortColumn, sortOrder));
-  },
-);
-
-
-/*
-Thunk Use Cases
-- Moving complex logic out of components
-- Side-effects, such as generating random values
-- Making async requests or other async logic
-- Writing logic that needs to dispatch multiple actions in a row or over time
-- Writing logic that needs access to getState to make decisions or include
-  other state values in an action
-
-
-Thunks have access to the dispatch method. This can be used to dispatch actions,
-or even other thunks. This can be useful for dispatching multiple actions in a
-row (although this is a pattern that should be minimized), or orchestrating
-complex logic that needs to dispatch at multiple points in the process.
-
-Unlike components, thunks also have access to getState. This can be called at 
-any time to retrieve the current root Redux state value. This can be useful for 
-running conditional logic based on the current state. It's common to use selector 
-functions when reading state inside of thunks rather than accessing nested state 
-fields directly, but either approach is fine.
-
-Since the state is synchronously updated as soon as the reducers process an action, 
-you can call getState after a dispatch to get the updated state.
-*/
-
 /**
  * Play next album.
  * 
@@ -269,6 +222,41 @@ export const playNext = (): ThunkAction<
     }
   }
 };
+
+export const { view, play } = albumsSlice.actions;
+
+export const selectViewing = (state: RootState) => state.albums.viewing;
+export const selectPlaying = (state: RootState) => state.albums.playing;
+const selectAlbums = (state: RootState) => state.albums.albums;
+
+export const selectCategories = createSelector(selectAlbums, (albums) => {
+  return Array.from(new Set(albums.map(album => album.category))).sort(
+    (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
+  );
+});
+
+export const selectIsAloneInCategory = (category: Album["category"]) => createSelector(
+  selectAlbums,
+  (albums) => albums.reduce(
+    (prev, curr) => prev + (curr.category === category ? 1 : 0),
+    0,
+  ) === 1,
+);
+
+// avoid circular dependency, tests fail otherwise
+const selectFilters: typeof SelectFilters = (state: RootState) => state.filters;
+
+export const selectSortedAndFilteredAlbums = createSelector(
+  selectAlbums,
+  selectFilters,
+  (albums, filters) => {
+    const { sortColumn, sortOrder } = filters;
+
+    return albums
+      .filter(getFilterFn(filters))
+      .toSorted(getSortFn(sortColumn, sortOrder));
+  },
+);
 
 export const selectCanPlayNextAlbum = createSelector(
   selectSortedAndFilteredAlbums,

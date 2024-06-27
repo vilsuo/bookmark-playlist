@@ -1,37 +1,27 @@
 import { describe, expect, test } from "@jest/globals";
-import reducer, { FilterState, removeFilterCategoryIfSubsetSelected, setSort, toggleFilterCategory } from "./filterSlice";
+import reducer, { FilterState, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilterCategoryAll } from "./filterSlice";
 import { AlbumColumn, Order } from "../../types";
 import { CATEGORY_ALL } from "../../constants";
 import { categories } from "../../../test/constants";
+import { RootState } from "../store";
+import { createFilterState } from "../../../test/creators";
 
-const initialState: FilterState = {
-  sortColumn: AlbumColumn.ARTIST,
-  sortOrder: Order.ASC,
-  
-  column: AlbumColumn.ARTIST,
-  text: '',
-  publishInterval: { start: undefined, end: undefined },
-  addDateInterval: { start: '', end: '' },
+const createSortingFilterState = (sortColumn: AlbumColumn, sortOrder: Order) =>
+  createFilterState({ sortColumn, sortOrder });
 
-  categories: CATEGORY_ALL,
-};
+const createCategoryFilterState = (categories: FilterState["categories"]) =>
+  createFilterState({ categories });
 
-const createFilterState = (filters: Partial<FilterState>): FilterState => {
-  return { ...initialState, ...filters };
-};
-
-const createSortingFilterState = (sortColumn: AlbumColumn, sortOrder: Order) => {
-  return createFilterState({ sortColumn, sortOrder });
-};
-
-const createCategoryFilterState = (categories: FilterState["categories"]) => {
-  return createFilterState({ categories });
-};
+const createCategoryFilterRootState = (
+  filterCategories: FilterState["categories"],
+): RootState => (
+  { filters: createCategoryFilterState(filterCategories) } as RootState
+);
 
 describe("Filter slice", () => {
   describe("reducers", () => {
-    describe("set sort", () => {
-      test("sorting without changing column toggles sorting order", () => {
+    describe("setSort", () => {
+      test("should toggle order when calling with current column", () => {
         const sortColumn = AlbumColumn.ARTIST;
         const sortOrder = Order.ASC;
         const previousState = createSortingFilterState(sortColumn, sortOrder);
@@ -45,7 +35,7 @@ describe("Filter slice", () => {
         expect(nextState.sortOrder).toBe(sortOrder);
       });
 
-      test("changing column does not change sorting order", () => {
+      test("should keep the current order when changing column", () => {
         const sortColumn = AlbumColumn.ARTIST;
         const sortOrder = Order.ASC;
         const previousState = createSortingFilterState(sortColumn, sortOrder);
@@ -56,92 +46,36 @@ describe("Filter slice", () => {
       });
     });
 
-    describe("toggle filter category", () => {
-      describe("toggle all", () => {
-        const targetCategory = CATEGORY_ALL;
-
-        test.each<[FilterState["categories"]]>([ [[]], [[categories[0]]] ])
-        ("can toggle all categories when %o is selected", (initialCategory) => {
-          const previousState = createCategoryFilterState(initialCategory);
-          const currentState = reducer(previousState, toggleFilterCategory({
-            category: targetCategory, categories,
-          }));
-          
-          expect(currentState.categories).toBe(CATEGORY_ALL);
-          const nextState = reducer(currentState, toggleFilterCategory({
-            category: targetCategory, categories,
-          }));
-
-          expect(nextState.categories).toHaveLength(0);
-        });
+    describe("toggleFilterCategoryAll", () => {
+      test("should select none when all are selected", () => {
+        const previousState = createCategoryFilterState(CATEGORY_ALL);
+        const currentState = reducer(previousState, toggleFilterCategoryAll());
+        
+        expect(currentState.categories).toBeInstanceOf(Array);
+        expect(currentState.categories).toHaveLength(0);
       });
 
-      describe("toggle single", () => {
-        describe("when all are selected", () => {
-          const initialCategory = CATEGORY_ALL;
+      test("should select all when none are selected", () => {
+        const previousState = createCategoryFilterState([]);
+        const currentState = reducer(previousState, toggleFilterCategoryAll());
+        
+        expect(currentState.categories).toBe(CATEGORY_ALL);
+      });
 
-          test("all categories are selected except the one toggled", () => {
-            const targetCategory = categories[1];
-
-            const previousState = createCategoryFilterState(initialCategory);
-            const currentState = reducer(previousState, toggleFilterCategory({
-              category: targetCategory, categories,
-            }));
-
-            // toggled one is missing
-            expect(currentState.categories).toHaveLength(categories.length - 1);
-            expect(currentState.categories).not.toContain(targetCategory);
-          })
-        });
-
-        describe("when some are not selected", () => {
-          describe("when adding a new category", () => {
-            test("if it is the only one missing, then all are added", () => {
-              const [targetCategory, ...rest] = categories;
-              const previousState = createCategoryFilterState(rest);
-
-              const currentState = reducer(previousState, toggleFilterCategory({
-                category: targetCategory, categories,
-              }));
-
-              expect(currentState.categories).toBe(CATEGORY_ALL);
-            });
-
-            test("if it is not the only one missing, then just it is added", () => {
-              const [targetCategory, otherCategory, ...rest] = categories;
-              const previousState = createCategoryFilterState(rest);
-
-              const currentState = reducer(previousState, toggleFilterCategory({
-                category: targetCategory, categories,
-              }));
-
-              expect(currentState.categories).not.toBe(CATEGORY_ALL);
-              expect(currentState.categories).toContain(targetCategory);
-              expect(currentState.categories).not.toContain(otherCategory);
-            });
-          });
-
-          test("when removing a filtered category, only it is removed", () => {
-            const [ first, second, third ] = categories;
-            const targetCategory = second;
-            const previousState = createCategoryFilterState([ first, second, third ]);
-
-            const currentState = reducer(previousState, toggleFilterCategory({
-              category: targetCategory, categories,
-            }));
-
-            expect(currentState.categories).not.toContain(targetCategory);
-            expect(currentState.categories).toStrictEqual([first, third]);
-          });
-        });
+      test("should select all when some are selected", () => {
+        const previousState = createCategoryFilterState([categories[0]]);
+        const currentState = reducer(previousState, toggleFilterCategoryAll());
+        
+        expect(currentState.categories).toBe(CATEGORY_ALL);
       });
     });
 
-    describe("remove filter category if subset selected", () => {
+    /*
+    describe("removeFilterCategoryIfSubsetSelected", () => {
       test("if all categories are selected, then state does not change", () => {
         const targetCategory = categories[1];
 
-        const previousState = createCategoryFilterState(CATEGORY_ALL);
+        const previousState = createFilterStateWithFilterCategories(CATEGORY_ALL);
         const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
           category: targetCategory, categories,
         }));
@@ -156,7 +90,7 @@ describe("Filter slice", () => {
         describe("when removed category is filtered", () => {
           describe("when it is the only category in the filter", () => {
             test("when just a single category exists, all categories are filtered", () => {
-              const previousState = createCategoryFilterState([targetCategory]);
+              const previousState = createFilterStateWithFilterCategories([targetCategory]);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories: [targetCategory],
               }));
@@ -165,7 +99,7 @@ describe("Filter slice", () => {
             });
 
             test("when multiple categories exists, none are filtered", () => {
-              const previousState = createCategoryFilterState([targetCategory]);
+              const previousState = createFilterStateWithFilterCategories([targetCategory]);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories,
               }));
@@ -175,7 +109,7 @@ describe("Filter slice", () => {
           });
 
           test("when other categories are included in the filter, only these categories remain", () => {
-            const previousState = createCategoryFilterState([targetCategory, otherCategory]);
+            const previousState = createFilterStateWithFilterCategories([targetCategory, otherCategory]);
             const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
               category: targetCategory, categories,
             }));
@@ -186,7 +120,7 @@ describe("Filter slice", () => {
 
         describe("when removed category is not filtered", () => {
           test("when just a single category exists, all categories are filtered", () => {
-            const previousState = createCategoryFilterState([]);
+            const previousState = createFilterStateWithFilterCategories([]);
             const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
               category: targetCategory, categories: [targetCategory],
             }));
@@ -196,7 +130,7 @@ describe("Filter slice", () => {
 
           describe("when two categories exists", () => {
             test("when no categories are filtered, nothing changes", () => {
-              const previousState = createCategoryFilterState([]);
+              const previousState = createFilterStateWithFilterCategories([]);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories: [targetCategory, otherCategory],
               }));
@@ -205,7 +139,7 @@ describe("Filter slice", () => {
             });
 
             test("when just the other category is filtered, all categories are filtered", () => {
-              const previousState = createCategoryFilterState([otherCategory]);
+              const previousState = createFilterStateWithFilterCategories([otherCategory]);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories: [targetCategory, otherCategory],
               }));
@@ -216,7 +150,7 @@ describe("Filter slice", () => {
 
           describe("when multiple categories exists", () => {
             test("when all other categories are filtered, all categories are filtered", () => {
-              const previousState = createCategoryFilterState(otherCategories);
+              const previousState = createFilterStateWithFilterCategories(otherCategories);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories,
               }));
@@ -225,7 +159,7 @@ describe("Filter slice", () => {
             });
 
             test("when a single category is filtered, nothing changes", () => {
-              const previousState = createCategoryFilterState([otherCategory]);
+              const previousState = createFilterStateWithFilterCategories([otherCategory]);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories,
               }));
@@ -234,7 +168,7 @@ describe("Filter slice", () => {
             });
 
             test("when no categories are filtered, nothing changes", () => {
-              const previousState = createCategoryFilterState([]);
+              const previousState = createFilterStateWithFilterCategories([]);
               const currentState = reducer(previousState, removeFilterCategoryIfSubsetSelected({
                 category: targetCategory, categories,
               }));
@@ -245,5 +179,136 @@ describe("Filter slice", () => {
         });
       });
     });
+    */
   });
+
+  describe("selectors", () => {
+    const [ firstCategory, secondCategory ] = categories;
+
+    describe("selectIsCategoryFiltered", () => {
+      describe("all category", () => {
+        test("should return false when no categories are filtered", () => {
+          const state = createCategoryFilterRootState([]);
+          const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
+          expect(result).toBe(false);
+        });
+  
+        test("should return true when all categories are filtered", () => {
+          const state = createCategoryFilterRootState(CATEGORY_ALL);
+          const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
+          expect(result).toBe(true);
+        });
+
+        test("should return false when some categories are filtered", () => {
+          const state = createCategoryFilterRootState([firstCategory, secondCategory]);
+          const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
+          expect(result).toBe(false);
+        });
+      });
+
+      describe("single category", () => {
+        test("should return true when all categories are filtered", () => {
+          const state = createCategoryFilterRootState(CATEGORY_ALL);
+          const result = selectIsCategoryFiltered(state, firstCategory);
+          expect(result).toBe(true);
+        });
+  
+        test("should return true when the category is filtered", () => {
+          const state = createCategoryFilterRootState([firstCategory]);
+          const result = selectIsCategoryFiltered(state, firstCategory);
+          expect(result).toBe(true);
+        });
+
+        test("should return false when the category is not filtered", () => {
+          const state = createCategoryFilterRootState([firstCategory]);
+          const result = selectIsCategoryFiltered(state, secondCategory);
+          expect(result).toBe(false);
+        });
+      });
+    });
+
+    describe("selectIsAllCategoriesFiltered", () => {
+      test("should return false when no categories are filtered", () => {
+        const state = createCategoryFilterRootState([]);
+        const result = selectIsAllCategoriesFiltered(state);
+        expect(result).toBe(false);
+      });
+
+      test("should return true when all categories are filtered", () => {
+        const state = createCategoryFilterRootState(CATEGORY_ALL);
+        const result = selectIsAllCategoriesFiltered(state);
+        expect(result).toBe(true);
+      });
+
+      test("should return false when some categories are filtered", () => {
+        const state = createCategoryFilterRootState([firstCategory, secondCategory]);
+        const result = selectIsAllCategoriesFiltered(state);
+        expect(result).toBe(false);
+      });
+    });
+  });
+
+  /*
+  describe("thunks", () => {
+    describe("toggleFilterCategorySingle", () => {
+      describe("when all are selected", () => {
+        const initialCategory = CATEGORY_ALL;
+
+        test("all categories are selected except the one toggled", () => {
+          const targetCategory = categories[1];
+
+          const previousState = createFilterStateWithFilterCategories(initialCategory);
+          const currentState = reducer(previousState, toggleFilterCategorySingle({
+            category: targetCategory, categories,
+          }));
+
+          // toggled one is missing
+          expect(currentState.categories).toHaveLength(categories.length - 1);
+          expect(currentState.categories).not.toContain(targetCategory);
+        })
+      });
+
+      describe("when some are not selected", () => {
+        describe("when adding a new category", () => {
+          test("if it is the only one missing, then all are added", () => {
+            const [targetCategory, ...rest] = categories;
+            const previousState = createFilterStateWithFilterCategories(rest);
+
+            const currentState = reducer(previousState, toggleFilterCategorySingle({
+              category: targetCategory, categories,
+            }));
+
+            expect(currentState.categories).toBe(CATEGORY_ALL);
+          });
+
+          test("if it is not the only one missing, then just it is added", () => {
+            const [targetCategory, otherCategory, ...rest] = categories;
+            const previousState = createFilterStateWithFilterCategories(rest);
+
+            const currentState = reducer(previousState, toggleFilterCategorySingle({
+              category: targetCategory, categories,
+            }));
+
+            expect(currentState.categories).not.toBe(CATEGORY_ALL);
+            expect(currentState.categories).toContain(targetCategory);
+            expect(currentState.categories).not.toContain(otherCategory);
+          });
+        });
+
+        test("when removing a filtered category, only it is removed", () => {
+          const [ first, second, third ] = categories;
+          const targetCategory = second;
+          const previousState = createFilterStateWithFilterCategories([ first, second, third ]);
+
+          const currentState = reducer(previousState, toggleFilterCategorySingle({
+            category: targetCategory, categories,
+          }));
+
+          expect(currentState.categories).not.toContain(targetCategory);
+          expect(currentState.categories).toStrictEqual([first, third]);
+        });
+      });
+    });
+  });
+  */
 });

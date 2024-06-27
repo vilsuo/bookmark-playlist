@@ -2,12 +2,12 @@ import { describe, expect, test } from '@jest/globals';
 import { fireEvent, screen } from '@testing-library/react';
 
 // We're using our own custom render function and not RTL's render.
-import { renderWithProviders } from '../../../redux/testUtils';
+import { renderWithProviders } from '../../../../test/testUtils';
 
 import SettingsBar from "./SettingsBar";
 import { initialState as initialSettingsState } from '../../../redux/reducers/settingsSlice';
 import { PlayMode } from '../../../types';
-import { changeOptionByLabel, findInputByLabelMatcher } from '../../../../test/helpers';
+import { changeOptionByLabel, findInputByLabelMatcher } from '../../../../test/uiHelpers';
 
 describe("<SettingsBar />", () => {
   const mockClose = () => {};

@@ -1,23 +1,29 @@
 import { CATEGORY_ALL } from "../../../../../constants";
-import { FilterState } from "../../../../../redux/reducers/filterSlice";
+import { useAppSelector } from "../../../../../redux/hooks";
+import { selectFilterCategories } from "../../../../../redux/reducers/filterSlice";
 
 interface CategoryDisplayProps {
-  selectedCategories: FilterState["categories"];
   showList: boolean;
   setShowList: (show: boolean) => void;
 };
 
-const CategoryDisplay = ({ selectedCategories, showList, setShowList }: CategoryDisplayProps) => {
+const CategoryDisplay = ({ showList, setShowList }: CategoryDisplayProps) => {
+  const filterCategories = useAppSelector(selectFilterCategories);
+
+  const isAllSelected = filterCategories === CATEGORY_ALL;
+
   return (
     <div className="category-display">
       <div className="selected">
         Categories:
-        { (selectedCategories !== CATEGORY_ALL)
-          ? selectedCategories.map(
-            category => <span key={category}>{category}</span>
-          )
-          : <span>{selectedCategories}</span>
-        }
+        { isAllSelected
+          ? <span>{filterCategories}</span>
+
+          : filterCategories.map(category =>
+            <span key={category}>
+              {category}
+            </span>
+          )}
       </div>
 
       <button onClick={() => setShowList(!showList)}>

@@ -3,39 +3,27 @@ import reducer, { QueueState, queueAdd, queuePop, queuePrepend, queueRemove, que
 import { albums, newAlbumValues } from "../../../test/constants";
 import { Album } from "../../types";
 import { RootState } from "../store";
+import { createQueueState } from "../../../test/creators";
 
-const createRootState = (queued: Album[]): RootState =>
-  ({ queue: createQueueState(queued) }) as RootState;
+const createQueueRootState = (queued: Album[]): RootState => (
+  { queue: createQueueState(queued) } as RootState
+);
 
-const createQueueState = (albums: Album[]): QueueState => {
-  return { queue: albums, };
-};
-
-const getQueueFromState = (state: QueueState) => state.queue;
-
-/**
- * 
- * @param state 
- * @param album 
- * @returns index of given album in the queue state, or -1 if it can not be found
- */
-const getAlbumPosition = (state: QueueState, id: Album["id"]): number => {
-  return state.queue.map(a => a.id).indexOf(id);
-};
+const getAlbumPosition = (state: QueueState, id: Album["id"]) =>
+  state.queue.map(a => a.id).indexOf(id);
 
 describe("Queue slice", () => {
   describe("reducers", () => {
-    describe("add", () => {
-      test("can add album to an empty queue", () => {
+    describe("queueAdd", () => {
+      test("should add to an empty queue", () => {
+        const album = albums[0];
         const previousState = createQueueState([]);
 
-        const album = albums[0];
-        const currentState =  reducer(previousState, queueAdd(album));
-        expect(getQueueFromState(currentState))
-          .toStrictEqual([album]);
+        const currentState = reducer(previousState, queueAdd(album));
+        expect(currentState.queue).toStrictEqual([album]);
       });
 
-      test("album is added to to end of the queue", () => {
+      test("should add to the end of the queue", () => {
         const [ first, second ] = albums;
         const previousState = createQueueState([first]);
 
@@ -44,11 +32,10 @@ describe("Queue slice", () => {
         expect(getAlbumPosition(currentState, second.id)).toBe(1);
 
         // one is added
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length - 1);
+        expect(previousState.queue).toHaveLength(currentState.queue.length - 1);
       });
 
-      test("adding album again to a queue moves it last", () => {
+      test("should move the album to the and if it is already queued", () => {
         const [ first, second ] = albums;
         const previousState = createQueueState([ first, second ]);
 
@@ -57,13 +44,12 @@ describe("Queue slice", () => {
         expect(getAlbumPosition(currentState, first.id)).toBe(1);
 
         // no extra albums are added
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length);
+        expect(previousState.queue).toHaveLength(currentState.queue.length);
       });
     });
 
-    describe("remove", () => {
-      test("can remove an album from queue", () => {
+    describe("queueRemove", () => {
+      test("should remove album from queue", () => {
         const [ first, second, third ] = albums;
         const previousState = createQueueState([ first, second, third ]);
         const currentState =  reducer(previousState, queueRemove(second.id));
@@ -73,13 +59,12 @@ describe("Queue slice", () => {
         expect(getAlbumPosition(currentState, third.id)).toBe(1);
 
         // one is removed
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length + 1);
+        expect(previousState.queue).toHaveLength(currentState.queue.length + 1);
       });
     });
 
-    describe("prepend", () => {
-      test("album is added to the first place in the queue", () => {
+    describe("queuePrepend", () => {
+      test("should add to the beginning of the queue", () => {
         const [ first, second, third ] = albums;
         const previousState = createQueueState([ first, second ]);
         const currentState =  reducer(previousState, queuePrepend(third));
@@ -89,11 +74,10 @@ describe("Queue slice", () => {
         expect(getAlbumPosition(currentState, third.id)).toBe(0);
 
         // one is added
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length - 1);
+        expect(previousState.queue).toHaveLength(currentState.queue.length - 1);
       });
 
-      test("album that is already in the queue is moved to the first place in the queue", () => {
+      test("should move album to the beginning if it is already queued", () => {
         const [ first, second, third ] = albums;
         const previousState = createQueueState([ first, second, third ]);
         const currentState =  reducer(previousState, queuePrepend(second));
@@ -103,13 +87,12 @@ describe("Queue slice", () => {
         expect(getAlbumPosition(currentState, third.id)).toBe(2);
 
         // no extra albums are added
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length);
+        expect(previousState.queue).toHaveLength(currentState.queue.length);
       });
     });
 
-    describe("pop", () => {
-      test("the first album is removed from the queue", () => {
+    describe("queuePop", () => {
+      test("should remove from the beginning", () => {
         const [ first, second, third ] = albums;
         const previousState = createQueueState([ first, second, third ]);
         const currentState =  reducer(previousState, queuePop());
@@ -119,80 +102,98 @@ describe("Queue slice", () => {
         expect(getAlbumPosition(currentState, third.id)).toBe(1);
 
         // one is removed
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length + 1);
+        expect(previousState.queue).toHaveLength(currentState.queue.length + 1);
       });
 
-      test("can pop from queue with a single album", () => {
+      test("should empty the queue if there is a single album", () => {
         const [album] = albums;
         const previousState = createQueueState([album]);
         const currentState =  reducer(previousState, queuePop());
 
-        expect(getQueueFromState(currentState)).toHaveLength(0);
+        expect(currentState.queue).toHaveLength(0);
       });
 
-      test("can pop from an empty queue", () => {
+      test("should not change the state when the queue is empty", () => {
         const previousState = createQueueState([]);
         const currentState =  reducer(previousState, queuePop());
 
-        expect(getQueueFromState(currentState)).toHaveLength(0);
+        expect(previousState).toStrictEqual(currentState);
       });
     });
 
-    describe("update", () => {
-      test("can update album in the queue", () => {
+    describe("queueUpdate", () => {
+      test("should update the album", () => {
         const [ first, second, third ] = albums;
         const previousState = createQueueState([ first, second, third ]);
 
         const { id, addDate } = second;
         const newAlbum: Album = { id, addDate, ...newAlbumValues };
 
-        const currentState =  reducer(previousState, queueUpdate(newAlbum));
+        const currentState = reducer(previousState, queueUpdate(newAlbum));
 
         // updated album values are changed
-        expect(getQueueFromState(currentState)[1]).toStrictEqual(newAlbum);
-        expect(getQueueFromState(currentState)[1]).not.toStrictEqual(second);
+        expect(currentState.queue[1]).toStrictEqual(newAlbum);
+        expect(currentState.queue[1]).not.toStrictEqual(second);
 
         // other albums remain unchanged
-        expect(getQueueFromState(currentState)[0]).toStrictEqual(first);
-        expect(getQueueFromState(currentState)[2]).toStrictEqual(third);
+        expect(currentState.queue[0]).toStrictEqual(first);
+        expect(currentState.queue[2]).toStrictEqual(third);
 
         // queue length remains unchanged
-        expect(getQueueFromState(previousState))
-          .toHaveLength(getQueueFromState(currentState).length);
+        expect(previousState.queue).toHaveLength(currentState.queue.length);
       });
     });
   });
 
   describe("selectors", () => {
-    describe("queue first", () => {
-      test("empty queue does not have first album", () => {
-        const previousState = createRootState([]);
-        const result = selectQueueFirst(previousState);
+    describe("selectQueueFirst", () => {
+      test("should not return an album when queue is empty", () => {
+        const state = createQueueRootState([]);
+        const result = selectQueueFirst(state);
         expect(result).toBe(null);
       });
 
-      test("non-empty queue has a first album", () => {
+      test("should return the first album if queue is not empty", () => {
         const [ first, second ] = albums;
-        const previousState = createRootState([first, second]);
-        const result = selectQueueFirst(previousState);
+        const state = createQueueRootState([first, second]);
+        const result = selectQueueFirst(state);
         expect(result).toStrictEqual(first);
       });
     });
 
-    describe("is queued", () => {
-      test("if album is in queue, it is queued", () => {
-        const [ first, second, third ] = albums;
-        const previousState = createRootState([first, second, third]);
-        const result = selectIsQueued(previousState, second);
+    describe("selectIsQueued", () => {
+      const [ first, second, third ] = albums;
+
+      test("should return true if album is in queue", () => {
+        const state = createQueueRootState([first, second, third]);
+        const result = selectIsQueued(state, second);
         expect(result).toBeTruthy();
       });
 
-      test("if album is not in queue, it is not queued", () => {
-        const [ first, second, third ] = albums;
-        const previousState = createRootState([first, second]);
-        const result = selectIsQueued(previousState, third);
+      test("should return false if album is not in queue", () => {
+        const state = createQueueRootState([first, second]);
+        const result = selectIsQueued(state, third);
         expect(result).toBeFalsy();
+      });
+
+      test("should not compute again with the same state", () => {
+        const state = createQueueRootState([first]);
+
+        selectIsQueued.resetRecomputations();
+        selectIsQueued(state, first);
+        expect(selectIsQueued.recomputations()).toBe(1);
+        selectIsQueued(state, first);
+        expect(selectIsQueued.recomputations()).toBe(1);
+      });
+
+      test("should recompute with a new state", () => {
+        const state = createQueueRootState([first]);
+
+        selectIsQueued.resetRecomputations();
+        selectIsQueued(state, first);
+        expect(selectIsQueued.recomputations()).toBe(1);
+        selectIsQueued(state, second);
+        expect(selectIsQueued.recomputations()).toBe(2);
       });
     });
   });

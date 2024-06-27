@@ -5,8 +5,8 @@ import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { renderWithProviders } from "../../../redux/testUtils";
-import { findInputByLabelMatcher } from "../../../../test/helpers";
+import { renderWithProviders } from "../../../../test/testUtils";
+import { findInputByLabelMatcher } from "../../../../test/uiHelpers";
 import { albums } from "../../../../test/constants";
 
 import BookmarkConverter from "./BookmarkConverter";

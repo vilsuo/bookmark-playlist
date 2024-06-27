@@ -1,30 +1,43 @@
 import { describe, expect, test } from "@jest/globals";
-import { AlbumsState, selectCategories, selectIsAloneInCategory } from "./albumsSlice";
+import { AlbumsState, selectCategories, selectIsAloneInCategory, selectSortedAndFilteredAlbums } from "./albumsSlice";
 import { Album } from "../../types";
 import { RootState } from "../store";
 import { albums, categories } from "../../../test/constants";
+import { createAlbumsState, createFilterState } from "../../../test/creators";
+import { FilterState } from "./filterSlice";
 
-const createRootState = (albums: Album[]): RootState =>
-  ({ albums: createAlbumsState({ albums }) }) as RootState;
-
-const createAlbumsState = ({ albums = [], viewing = null, playing = null }
-  : Partial<AlbumsState>): AlbumsState => ({ viewing, playing, albums });
-
-const createWithCategory = (album: Album, category: string): Album => ({
+const createAlbumWithCategory = (album: Album, category: string): Album => ({
   ...album, category,
 });
+
+const createAlbumsRootState = (albums: AlbumsState["albums"]): RootState => (
+  { albums: createAlbumsState({ albums }) } as RootState
+);
+
+const createFilteringAndSortingRootState = (
+  { albumsState, filterState }: {
+    albumsState?: Partial<AlbumsState>,
+    filterState?: Partial<FilterState>,
+  } = {}
+): RootState => (
+  {
+    albums: createAlbumsState(albumsState),
+    filters: createFilterState(filterState),
+  } as RootState
+);
+
 
 describe("Albums slice", () => {
   describe("selectors", () => {
     const [ targetCategory, otherCategory ] = categories;
 
-    const sameFirst = createWithCategory(albums[0], targetCategory);
-    const sameSecond = createWithCategory(albums[1], targetCategory);
-    const other = createWithCategory(albums[2], otherCategory);
+    const sameFirst = createAlbumWithCategory(albums[0], targetCategory);
+    const sameSecond = createAlbumWithCategory(albums[1], targetCategory);
+    const other = createAlbumWithCategory(albums[2], otherCategory);
 
-    describe("select categories", () => {
-      test("select categories does not return duplicate categories", () => {
-        const previousState = createRootState([sameFirst, sameSecond, other]);
+    describe("selectCategories", () => {
+      test("should contain exactly one of each category", () => {
+        const previousState = createAlbumsRootState([sameFirst, sameSecond, other]);
         const result = selectCategories(previousState);
 
         expect(result).toHaveLength(2);
@@ -33,27 +46,27 @@ describe("Albums slice", () => {
       });
     });
 
-    describe("select is alone in category", () => {
-      test("without albums, category is not alone", () => {
-        const previousState = createRootState([]);
+    describe("selectIsAloneInCategory", () => {
+      test("should be false without any albums", () => {
+        const previousState = createAlbumsRootState([]);
         const selector = selectIsAloneInCategory(targetCategory);
         const result = selector(previousState);
 
         expect(result).toBeFalsy();
       });
 
-      describe("with a single category", () => {
-        describe("with a single album", () => {
-          test("the album category is alone", () => {
-            const previousState = createRootState([sameFirst]);
+      describe("single category", () => {
+        describe("single album exists", () => {
+          test("should be true with the album category", () => {
+            const previousState = createAlbumsRootState([sameFirst]);
             const selector = selectIsAloneInCategory(sameFirst.category)
             const result = selector(previousState);
 
             expect(result).toBeTruthy();
           });
 
-          test("other category is not alone", () => {
-            const previousState = createRootState([sameFirst]);
+          test("should be false with other category", () => {
+            const previousState = createAlbumsRootState([sameFirst]);
             const selector = selectIsAloneInCategory(other.category)
             const result = selector(previousState);
 
@@ -61,8 +74,8 @@ describe("Albums slice", () => {
           });
         });
 
-        test("with multiple albums with the given category, the category is not alone", () => {
-          const previousState = createRootState([sameFirst, sameSecond]);
+        test("should be false when there are multiple albums with the category", () => {
+          const previousState = createAlbumsRootState([sameFirst, sameSecond]);
           const selector = selectIsAloneInCategory(sameFirst.category)
           const result = selector(previousState);
 
@@ -70,31 +83,70 @@ describe("Albums slice", () => {
         });
       });
 
-      describe("with multiple categories", () => {
-        test("all categories that have a single album are alone", () => {
-          const previousState = createRootState([sameFirst, other]);
+      describe("multiple categories", () => {
+        test("should be true when each category has a single album", () => {
+          const previousState = createAlbumsRootState([sameFirst, other]);
 
-          const firstSelector = selectIsAloneInCategory(sameFirst.category)
+          const firstSelector = selectIsAloneInCategory(sameFirst.category);
           const firstResult = firstSelector(previousState);
           expect(firstResult).toBeTruthy();
 
-          const secondSelector = selectIsAloneInCategory(other.category)
+          const secondSelector = selectIsAloneInCategory(other.category);
           const secondResult = secondSelector(previousState);
           expect(secondResult).toBeTruthy();
         });
 
-        test("just the categories that have a single album are alone", () => {
-          const previousState = createRootState([sameFirst, sameSecond, other]);
+        test("should be false when category has multiple albums", () => {
+          const previousState = createAlbumsRootState([sameFirst, sameSecond, other]);
 
-          const firstSelector = selectIsAloneInCategory(sameFirst.category)
+          const firstSelector = selectIsAloneInCategory(sameFirst.category);
           const firstResult = firstSelector(previousState);
           expect(firstResult).toBeFalsy();
 
-          const secondSelector = selectIsAloneInCategory(other.category)
+          const secondSelector = selectIsAloneInCategory(other.category);
           const secondResult = secondSelector(previousState);
           expect(secondResult).toBeTruthy();
         });
       });
     });
+
+    describe("selectSortedAndFilteredAlbums", () => {
+      test("should return empty array when there are no albums", () => {
+        const state = createFilteringAndSortingRootState();
+
+        const result = selectSortedAndFilteredAlbums(state);
+        expect(result).toHaveLength(0);
+      });  
+    });
+
+    /*
+    describe("selectCanPlayNextAlbum", () => {
+      describe(PlayMode.MANUAL, () => {
+        test("should return true if queue is not empty", () => {
+
+        });
+
+        test("should return false is queue is empty", () => {
+
+        });
+      });
+
+      describe(PlayMode.SEQUENCE, () => {
+
+      });
+
+      describe(PlayMode.SHUFFLE, () => {
+
+      });
+    });
+    */
   });
+
+  /*
+  describe("thunks", () => {
+    describe("playNext", () => {
+      test.todo("");
+    });
+  });
+  */
 });

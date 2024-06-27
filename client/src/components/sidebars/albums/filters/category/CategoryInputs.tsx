@@ -1,45 +1,70 @@
 import { CATEGORY_ALL } from "../../../../../constants";
-import { useAppDispatch } from "../../../../../redux/hooks";
-import { toggleFilterCategory } from "../../../../../redux/reducers/filterSlice";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
+import { selectCategories } from "../../../../../redux/reducers/albumsSlice";
+import { selectIsCategoryFiltered, toggleFilterCategorySingle, toggleFilterCategoryAll, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filterSlice";
 
-interface CategoryInputsProps {
-  categories: string[];
-  isAllSelected: boolean;
-  isSelected: (category: string) => boolean;
+interface CategoryInputAllProps {
+  isAllFiltered: boolean;
 };
 
-const CategoryInputs = ({ categories, isAllSelected, isSelected }: CategoryInputsProps) => {
+const CategoryInputAll = ({ isAllFiltered }: CategoryInputAllProps) => {
   const dispatch = useAppDispatch();
 
   const handleToggleAll = () => {
-    dispatch(toggleFilterCategory({ category: CATEGORY_ALL, categories }));
-  };
-
-  const handleToggleSingle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    dispatch(toggleFilterCategory({ category: value, categories }));
+    dispatch(toggleFilterCategoryAll());
   };
 
   return (
-    <div className="category-inputs">
-      <label className="all">
-        <span>{CATEGORY_ALL}</span>
-        <input type="checkbox"
-          value={categories}
-          checked={isAllSelected}
-          onChange={handleToggleAll}
-        />
-      </label>
+    <label>
+      <span>{CATEGORY_ALL}</span>
+      <input type="checkbox"
+        value={CATEGORY_ALL}
+        checked={isAllFiltered}
+        onChange={handleToggleAll}
+      />
+    </label>
+  );
+};
 
-      { categories.map(category => 
-        <label key={category}>
-          <span>{category}</span>
-          <input type="checkbox"
-            value={category}
-            checked={ isSelected(category) }
-            onChange={handleToggleSingle}
-          />
-        </label>
+interface CategoryInputSinleProps {
+  category: string;
+  isAllFiltered: boolean;
+};
+
+const CategoryInputSingle = ({ category, isAllFiltered }: CategoryInputSinleProps) => {
+  const isCategoryFiltered = useAppSelector((state) => selectIsCategoryFiltered(state, category));
+
+  const dispatch = useAppDispatch();
+
+  const handleToggleSingle = () => {
+    dispatch(toggleFilterCategorySingle(category));
+  };
+
+  return (
+    <label>
+      <span>{category}</span>
+      <input type="checkbox"
+        value={category}
+        checked={isAllFiltered || isCategoryFiltered}
+        onChange={handleToggleSingle}
+      />
+    </label>
+  );
+};
+
+const CategoryInputs = () => {
+  const allCategories = useAppSelector(selectCategories);
+  const isAllCategoriesFiltered = useAppSelector(selectIsAllCategoriesFiltered);
+
+  return (
+    <div className="category-inputs">
+      <CategoryInputAll isAllFiltered={isAllCategoriesFiltered} />
+
+      { allCategories.map(category => 
+        <CategoryInputSingle key={category}
+          category={category}
+          isAllFiltered={isAllCategoriesFiltered}
+        />
       )}
     </div>
   );
