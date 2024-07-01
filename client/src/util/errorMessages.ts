@@ -1,5 +1,4 @@
 import { AxiosError } from 'axios';
-import { isRejectedResponse } from '../redux/reducers/albumsSlice';
 
 const DEFAULT_MESSAGE = 'Unknown error';
 
@@ -14,12 +13,6 @@ export const getErrorMessage = (error: unknown): string => {
   } else {
     return DEFAULT_MESSAGE;
   }
-};
-
-export const getThunkError = (error: unknown) => {
-  return isRejectedResponse(error)
-    ? error.errorMessage
-    : DEFAULT_MESSAGE;
 };
 
 enum YoutubeEventError {

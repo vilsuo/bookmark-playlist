@@ -1,8 +1,6 @@
 import DragDialog from '../../general/DragDialog';
 import { useAppDispatch } from '../../../redux/hooks';
-import { AlbumCreation, NotificationType } from '../../../types';
-import { addNotification } from '../../../redux/reducers/notificationSlice';
-import { getThunkError } from '../../../util/errorMessages';
+import { AlbumCreation } from '../../../types';
 import AlbumForm from './AlbumForm';
 import { createAlbum } from '../../../redux/reducers/albumsSlice';
 import { CATEGORY_OTHER } from '../../../constants';
@@ -24,22 +22,9 @@ const AlbumAddDialog = ({ isOpen, onClose }: AlbumAddDialogProps) => {
   const dispatch = useAppDispatch();
 
   const addAndClose = async (albumValues: AlbumCreation) => {
-    try {
-      await dispatch(createAlbum(albumValues)).unwrap();
-
-      dispatch(addNotification({
-        type: NotificationType.SUCCESS,
-        title: 'Album added successfully',
-      }));
-      
+    const resultAction = await dispatch(createAlbum(albumValues));
+    if (createAlbum.fulfilled.match(resultAction)) {
       onClose();
-
-    } catch (error: unknown) {
-      dispatch(addNotification({
-        type: NotificationType.ERROR,
-        title: 'Album adding failed',
-        message: getThunkError(error),
-      }));
     }
   };
 

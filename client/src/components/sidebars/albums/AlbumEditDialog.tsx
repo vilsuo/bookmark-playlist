@@ -1,11 +1,9 @@
-import { Album, AlbumCreation, NotificationType } from '../../../types';
-import { getThunkError } from '../../../util/errorMessages';
+import { Album, AlbumCreation } from '../../../types';
 import DragDialog from '../../general/DragDialog';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { addNotification } from '../../../redux/reducers/notificationSlice';
 import AlbumForm from './AlbumForm';
 import { deleteAlbum, selectIsAloneInCategory, selectCategories, updateAlbum } from '../../../redux/reducers/albumsSlice';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
 import { selectIsQueued, queueRemove, queueUpdate } from '../../../redux/reducers/queueSlice';
 import { removeFilterCategoryIfSubsetSelected } from '../../../redux/reducers/filterSlice';
@@ -25,7 +23,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const isInQueue = useAppSelector(state => selectIsQueued(state, album));
 
-  const removeCategoryFromFilterIfLastOne = (category: string) => {
+  const dispatchRemoveCategoryFromFilterIfLastOne = (category: string) => {
     // remove category of the previous album value from the
     // filter if the category no longer exists
 
@@ -37,68 +35,43 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   };
 
   const updateAndClose = async (albumValues: AlbumCreation) => {
-    try {
-      const oldCategory = album.category;
+    const oldCategory = album.category;
 
-      const updatedAlbum = await dispatch(
-        updateAlbum({ ...album, ...albumValues })
-      ).unwrap();
-
-      dispatch(addNotification({
-        type: NotificationType.SUCCESS,
-        title: 'Album edited successfully',
-      }));
-
+    const resultAction = await dispatch(updateAlbum({ ...album, ...albumValues }));
+    if (updateAlbum.fulfilled.match(resultAction)) {
       // update the album if it is in the queue
+      const updatedAlbum = resultAction.payload;
+
       if (isInQueue) {
         dispatch(queueUpdate(updatedAlbum));
       }
 
       if (oldCategory !== updatedAlbum.category) {
-        removeCategoryFromFilterIfLastOne(oldCategory);
+        dispatchRemoveCategoryFromFilterIfLastOne(oldCategory);
       }
 
       onClose();
-
-    } catch (error: unknown) {
-      dispatch(addNotification({
-        type: NotificationType.ERROR,
-        title: 'Album edit failed',
-        message: getThunkError(error),
-      }));
     }
   };
 
   const removeAndClose = async () => {
-    try {
-      const oldCategory = album.category;
+    const oldCategory = album.category;
 
-      const removedAlbumId = await dispatch(deleteAlbum(album.id)).unwrap();
+    const resultAction = await dispatch(deleteAlbum(album.id));
+    if (deleteAlbum.fulfilled.match(resultAction)) {
+      const removedAlbumId = resultAction.payload;
 
-      dispatch(addNotification({
-        type: NotificationType.SUCCESS,
-        title: 'Album removed successfully',
-      }));
-
-      // remove from queue
       if (isInQueue) {
         dispatch(queueRemove(removedAlbumId));
       }
 
-      removeCategoryFromFilterIfLastOne(oldCategory);
+      dispatchRemoveCategoryFromFilterIfLastOne(oldCategory);
 
       onClose();
-
-    } catch (error: unknown) {
-      dispatch(addNotification({
-        type: NotificationType.ERROR,
-        title: 'Album deletion failed',
-        message: getThunkError(error),
-      }));
     }
   };
 
-  const confirmAndDelete = async () => {
+  const deleteAndClose = async () => {
     await removeAndClose();
     closeConfirmDialog();
   };
@@ -107,11 +80,11 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   const openConfirmDialog = () => { setIsRemoveOpen(true); };
 
   return (
-    <>
+    <React.Fragment>
       <ConfirmDialog
         title='Remove album'
         isOpen={isRemoveOpen}
-        onConfirm={confirmAndDelete}
+        onConfirm={deleteAndClose}
         onCancel={closeConfirmDialog}
       >
         <p>
@@ -134,7 +107,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
           <button type='button' onClick={onClose}>Cancel</button>
         </AlbumForm>
       </DragDialog>
-    </>
+    </React.Fragment>
   );
 };
 

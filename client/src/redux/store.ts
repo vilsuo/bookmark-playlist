@@ -49,3 +49,9 @@ export const setupStore = (preloadedState?: Partial<RootState>) => configureStor
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = AppStore["dispatch"];
+
+export type AppAsyncThunkConfig = {
+  getState: () => RootState,
+  dispatch: AppDispatch,
+  rejectValue: { message: string },
+};

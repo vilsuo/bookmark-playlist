@@ -1,9 +1,6 @@
 import { useRef, useState } from 'react';
-import { NotificationType } from '../../../types';
 import { useAppDispatch } from '../../../redux/hooks';
-import { addNotification } from '../../../redux/reducers/notificationSlice';
 import { createFromBookmarks } from '../../../redux/reducers/albumsSlice';
-import { getThunkError } from '../../../util/errorMessages';
 
 const BookmarkConverter = () => {
   const dispatch = useAppDispatch();
@@ -34,22 +31,9 @@ const BookmarkConverter = () => {
     if (file) { formData.append('file', file, file.name); }
     formData.append('name', name);
 
-    try {
-      await dispatch(createFromBookmarks(formData)).unwrap();
-
-      dispatch(addNotification({
-        type: NotificationType.SUCCESS,
-        title: 'Bookmarks imported',
-      }));
-      
+    const resultAction = await dispatch(createFromBookmarks(formData));
+    if (createFromBookmarks.fulfilled.match(resultAction)) {
       handleReset();
-
-    } catch (error) {
-      dispatch(addNotification({
-        type: NotificationType.ERROR,
-        title: 'Bookmark import failed',
-        message: getThunkError(error),
-      }));
     }
   };
 

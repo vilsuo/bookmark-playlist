@@ -1,6 +1,6 @@
 import { PayloadAction, ThunkAction, UnknownAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import { Album, AlbumCreation, PlayMode } from '../../types';
-import { RootState } from '../store';
+import { Album, AlbumCreation, NotificationType, PlayMode } from '../../types';
+import type { AppAsyncThunkConfig, RootState } from '../store';
 import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
 import { getErrorMessage } from '../../util/errorMessages';
@@ -8,6 +8,7 @@ import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '
 import { queuePop, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
 import { type selectFilters as SelectFilters } from './filterSlice';
+import { addNotification } from './notificationSlice';
 
 export interface AlbumsState {
   viewing: Album | null;
@@ -76,13 +77,6 @@ const albumsSlice = createSlice({
   },
 });
 
-type RejectedResponse = { errorMessage: string };
-
-export const isRejectedResponse = (error: unknown): error is RejectedResponse => {
-  return (typeof error === 'object' && error !== null) &&
-    ('errorMessage' in error && typeof error.errorMessage === 'string');
-};
-
 /*
 Thunk Use Cases
 - Moving complex logic out of components
@@ -117,26 +111,62 @@ export const fetchAlbums = createAsyncThunk(
 export const createFromBookmarks = createAsyncThunk<
   Album[],
   FormData,
-  { rejectValue: RejectedResponse }
+  AppAsyncThunkConfig
 >(
   'albums/createFromBookmarks',
-  async (formData: FormData, { rejectWithValue }) => {
+  async (formData: FormData, { dispatch, rejectWithValue }) => {
     try {
-      return await converterService.convertBookmarks(formData);
+      const result = await converterService.convertBookmarks(formData);
+
+      dispatch(addNotification({
+        type: NotificationType.SUCCESS,
+        title: 'Bookmarks imported',
+      }));
+
+      return result;
+
     } catch (error) {
-      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+      const message = getErrorMessage(error);
+
+      dispatch(addNotification({
+        type: NotificationType.ERROR,
+        title: 'Bookmark import failed',
+        message,
+      }));
+
+      return rejectWithValue({ message });
     }
   },
 );
 
 // CREATE
-export const createAlbum = createAsyncThunk(
+export const createAlbum = createAsyncThunk<
+  Album,
+  AlbumCreation,
+  AppAsyncThunkConfig
+>(
   'albums/create',
-  async (albumValues: AlbumCreation, { rejectWithValue }) => {
+  async (albumValues: AlbumCreation, { dispatch, rejectWithValue }) => {
     try {
-      return await albumService.create(albumValues);
+      const result = await albumService.create(albumValues);
+
+      dispatch(addNotification({
+        type: NotificationType.SUCCESS,
+        title: 'Album added successfully',
+      }));
+
+      return result;
+
     } catch (error) {
-      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+      const message = getErrorMessage(error);
+
+      dispatch(addNotification({
+        type: NotificationType.ERROR,
+        title: 'Album adding failed',
+        message,
+      }));
+
+      return rejectWithValue({ message });
     }
   }
 );
@@ -145,14 +175,30 @@ export const createAlbum = createAsyncThunk(
 export const updateAlbum = createAsyncThunk<
   Album,
   Album,
-  { rejectValue: RejectedResponse }
+  AppAsyncThunkConfig
 >(
   'albums/update',
-  async (album: Album, { rejectWithValue }) => {
+  async (album: Album, { dispatch, rejectWithValue }) => {
     try {
-      return await albumService.update(album);
+      const result = await albumService.update(album);
+
+      dispatch(addNotification({
+        type: NotificationType.SUCCESS,
+        title: 'Album edited successfully',
+      }));
+
+      return result;
+
     } catch (error) {
-      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+      const message = getErrorMessage(error);
+
+      dispatch(addNotification({
+        type: NotificationType.ERROR,
+        title: 'Album edit failed',
+        message,
+      }));
+
+      return rejectWithValue({ message });
     }
   }
 );
@@ -161,14 +207,30 @@ export const updateAlbum = createAsyncThunk<
 export const deleteAlbum = createAsyncThunk<
   Album['id'],
   Album['id'],
-  { rejectValue: RejectedResponse }
+  AppAsyncThunkConfig
 >(
   'albums/delete',
-  async (id: Album['id'], { rejectWithValue }) => {
+  async (id: Album['id'], { dispatch, rejectWithValue }) => {
     try {
-      return await albumService.remove(id);
+      const result = await albumService.remove(id);
+
+      dispatch(addNotification({
+        type: NotificationType.SUCCESS,
+        title: 'Album removed successfully',
+      }));
+
+      return result;
+
     } catch (error) {
-      return rejectWithValue({ errorMessage: getErrorMessage(error) });
+      const message = getErrorMessage(error);
+
+      dispatch(addNotification({
+        type: NotificationType.ERROR,
+        title: 'Album deletion failed',
+        message,
+      }));
+
+      return rejectWithValue({ message });
     }
   }
 );
@@ -229,11 +291,11 @@ export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
 const selectAlbums = (state: RootState) => state.albums.albums;
 
-export const selectCategories = createSelector(selectAlbums, (albums) => {
-  return Array.from(new Set(albums.map(album => album.category))).sort(
-    (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
-  );
-});
+export const selectCategories = createSelector(
+  selectAlbums,
+  (albums) => Array.from(new Set(albums.map(album => album.category)))
+    .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+);
 
 export const selectIsAloneInCategory = (category: Album["category"]) => createSelector(
   selectAlbums,
