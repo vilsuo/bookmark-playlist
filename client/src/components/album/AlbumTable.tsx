@@ -6,13 +6,11 @@ import { selectFilters, setSort } from '../../redux/reducers/filterSlice';
 import { selectSortedAndFilteredAlbums } from '../../redux/reducers/albumsSlice';
 
 interface AlbumTableProps {
-  playingAlbum: Album | null;
   viewingAlbum: Album | null;
   setViewingAlbum: (album: Album | null) => void;
 }
 
 const AlbumTable = ({
-  playingAlbum,
   viewingAlbum,
   setViewingAlbum,
 }: AlbumTableProps) => {
@@ -20,10 +18,6 @@ const AlbumTable = ({
   const filterState = useAppSelector(selectFilters);
 
   const dispatch = useAppDispatch();
-
-  const isPlaying = (album: Album) => {
-    return playingAlbum !== null && playingAlbum.videoId === album.videoId;
-  };
 
   const isViewing = (album: Album) => {
     return viewingAlbum !== null && viewingAlbum.videoId === album.videoId;
@@ -55,7 +49,6 @@ const AlbumTable = ({
           <AlbumRow
             key={album.videoId}
             album={album}
-            isPlayed={isPlaying(album)}
             isViewed={isViewing(album)}
             view={setViewingAlbum}
           />

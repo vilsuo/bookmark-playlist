@@ -1,20 +1,23 @@
+import { useAppSelector } from '../../redux/hooks';
+import { selectIsPlaying } from '../../redux/reducers/albumsSlice';
 import { Album } from '../../types';
 import { toDateString } from '../../util/dateConverter';
 
-const getExtraClassNames = (isPlayed: boolean, isViewed: boolean) => {
-  const playing = isPlayed ? 'playing' : '';
+const getExtraClassNames = (isPlaying: boolean, isViewed: boolean) => {
+  const playing = isPlaying ? 'playing' : '';
   const viewing = isViewed ? 'viewing': '';
   return `${playing} ${viewing}`;
 };
 
 interface AlbumRowProps {
   album: Album;
-  isPlayed: boolean;
   isViewed: boolean;
   view: (album: Album | null) => void;
 }
 
-const AlbumRow = ({ album, isPlayed, isViewed, view }: AlbumRowProps) => {
+const AlbumRow = ({ album, isViewed, view }: AlbumRowProps) => {
+
+  const isPlaying = useAppSelector(state => selectIsPlaying(state, album));
   
   const toggleView = () => {
     isViewed ? view(null) : view(album);
@@ -22,7 +25,7 @@ const AlbumRow = ({ album, isPlayed, isViewed, view }: AlbumRowProps) => {
 
   return (
     <tr
-      className={`album-row ${getExtraClassNames(isPlayed, isViewed)}`}
+      className={`album-row ${getExtraClassNames(isPlaying, isViewed)}`}
       onClick={toggleView}
     >
       <td>{album.artist}</td>

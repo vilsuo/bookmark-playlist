@@ -1,28 +1,31 @@
-import { useState } from 'react';
-import { useAppDispatch } from '../../../redux/hooks';
+import React, { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
 import AlbumEditDialog from './AlbumEditDialog';
+import { play, selectIsPlaying } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsViewProps {
   album: Album;
-  isPlaying: boolean;
   close: () => void;
-  play: () => void;
 }
 
-const AlbumsView = ({ album, isPlaying, close, play }: AlbumsViewProps) => {
+const AlbumsView = ({ album, close }: AlbumsViewProps) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
+  const isPlaying = useAppSelector(state => selectIsPlaying(state, album));
+
   const dispatch = useAppDispatch();
+
   const addToQueue = () => dispatch(queueAdd(album));
+  const playAlbum = () => dispatch(play(album));
 
   const openEdit = () => {
     setIsEditorOpen(!isEditorOpen);
   };
 
   return (
-    <>
+    <React.Fragment>
       { isEditorOpen && (
         <AlbumEditDialog
           album={album}
@@ -39,7 +42,7 @@ const AlbumsView = ({ album, isPlaying, close, play }: AlbumsViewProps) => {
 
         <div className="content">
           <div className="actions">
-            <button className="play-button" onClick={play} disabled={isPlaying}>
+            <button className="play-button" onClick={playAlbum} disabled={isPlaying}>
               Select
             </button>
             <button onClick={addToQueue}>Q</button>
@@ -52,7 +55,7 @@ const AlbumsView = ({ album, isPlaying, close, play }: AlbumsViewProps) => {
           </div>
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 

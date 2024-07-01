@@ -4,7 +4,7 @@ import AlbumTable from '../../album/AlbumTable';
 import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { play, selectPlaying, selectViewing, view } from '../../../redux/reducers/albumsSlice';
+import { selectViewing, view } from '../../../redux/reducers/albumsSlice';
 import AlbumAddDialog from './AlbumAddDialog';
 
 interface AlbumsBarProps {
@@ -13,11 +13,9 @@ interface AlbumsBarProps {
 }
 
 const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
-  const playingAlbum = useAppSelector(selectPlaying);
   const viewingAlbum = useAppSelector(selectViewing);
 
   const dispatch = useAppDispatch();
-  const setPlayingAlbum = (album: Album | null) => dispatch(play(album));
   const setViewingAlbum = (album: Album | null) => dispatch(view(album));
 
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -53,7 +51,6 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
           <AlbumFilter />
 
           <AlbumTable
-            playingAlbum={playingAlbum}
             viewingAlbum={viewingAlbum}
             setViewingAlbum={setViewingAlbum}
           />
@@ -63,9 +60,7 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
       { viewingAlbum && (
         <AlbumsView
           album={viewingAlbum}
-          isPlaying={playingAlbum !== null && viewingAlbum.id === playingAlbum.id}
           close={(() => setViewingAlbum(null))}
-          play={() => setPlayingAlbum(viewingAlbum)}
         />
       )}
 

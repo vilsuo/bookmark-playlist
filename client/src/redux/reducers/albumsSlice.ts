@@ -337,6 +337,11 @@ export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
 const selectAlbums = (state: RootState) => state.albums.albums;
 
+export const selectIsPlaying = (state: RootState, album: Album | null) => {
+  const playing = selectPlaying(state);
+  return album !== null && playing !== null && (album.id === playing.id);
+};
+
 export const selectCategories = createSelector(
   selectAlbums,
   (albums) => Array.from(new Set(albums.map(album => album.category)))
