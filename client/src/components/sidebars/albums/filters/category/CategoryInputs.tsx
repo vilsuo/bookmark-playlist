@@ -4,10 +4,10 @@ import { selectCategories } from "../../../../../redux/reducers/albumsSlice";
 import { selectIsCategoryFiltered, toggleFilterCategorySingle, toggleFilterCategoryAll, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filterSlice";
 
 interface CategoryInputAllProps {
-  isAllFiltered: boolean;
+  isAllSelected: boolean;
 };
 
-const CategoryInputAll = ({ isAllFiltered }: CategoryInputAllProps) => {
+const CategoryInputAll = ({ isAllSelected }: CategoryInputAllProps) => {
   const dispatch = useAppDispatch();
 
   const handleToggleAll = () => {
@@ -19,7 +19,7 @@ const CategoryInputAll = ({ isAllFiltered }: CategoryInputAllProps) => {
       <span>{CATEGORY_ALL}</span>
       <input type="checkbox"
         value={CATEGORY_ALL}
-        checked={isAllFiltered}
+        checked={isAllSelected}
         onChange={handleToggleAll}
       />
     </label>
@@ -28,10 +28,10 @@ const CategoryInputAll = ({ isAllFiltered }: CategoryInputAllProps) => {
 
 interface CategoryInputSinleProps {
   category: string;
-  isAllFiltered: boolean;
+  isAllSelected: boolean;
 };
 
-const CategoryInputSingle = ({ category, isAllFiltered }: CategoryInputSinleProps) => {
+const CategoryInputSingle = ({ category, isAllSelected }: CategoryInputSinleProps) => {
   const isCategoryFiltered = useAppSelector((state) => selectIsCategoryFiltered(state, category));
 
   const dispatch = useAppDispatch();
@@ -45,7 +45,7 @@ const CategoryInputSingle = ({ category, isAllFiltered }: CategoryInputSinleProp
       <span>{category}</span>
       <input type="checkbox"
         value={category}
-        checked={isAllFiltered || isCategoryFiltered}
+        checked={isAllSelected || isCategoryFiltered}
         onChange={handleToggleSingle}
       />
     </label>
@@ -58,12 +58,12 @@ const CategoryInputs = () => {
 
   return (
     <div className="category-inputs">
-      <CategoryInputAll isAllFiltered={isAllCategoriesFiltered} />
+      <CategoryInputAll isAllSelected={isAllCategoriesFiltered} />
 
       { allCategories.map(category => 
         <CategoryInputSingle key={category}
           category={category}
-          isAllFiltered={isAllCategoriesFiltered}
+          isAllSelected={isAllCategoriesFiltered}
         />
       )}
     </div>
