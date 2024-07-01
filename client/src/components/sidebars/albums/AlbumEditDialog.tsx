@@ -2,10 +2,10 @@ import { Album, AlbumCreation } from '../../../types';
 import DragDialog from '../../general/DragDialog';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import AlbumForm from './AlbumForm';
-import { deleteAlbum, selectIsAloneInCategory, selectCategories, updateAlbum } from '../../../redux/reducers/albumsSlice';
+import { deleteAlbum, selectIsAloneInCategory, updateAlbum } from '../../../redux/reducers/albumsSlice';
 import React, { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
-import { removeFilterCategoryIfSubsetSelected } from '../../../redux/reducers/filterSlice';
+import { removeFilterCategory } from '../../../redux/reducers/filterSlice';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -14,7 +14,6 @@ interface AlbumEditDialogProps {
 }
 
 const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
-  const categories = useAppSelector(selectCategories);
   const isAloneInCategory = useAppSelector(selectIsAloneInCategory(album.category));
 
   const dispatch = useAppDispatch();
@@ -26,9 +25,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
     // filter if the category no longer exists
 
     if (isAloneInCategory) {
-      dispatch(removeFilterCategoryIfSubsetSelected({
-        category, categories,
-      }));
+      dispatch(removeFilterCategory(category));
     }
   };
 

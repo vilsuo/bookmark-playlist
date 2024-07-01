@@ -30,11 +30,6 @@ export const initialState: FilterState = {
   categories: CATEGORY_ALL,
 };
 
-interface CategoryPayload {
-  category: string,
-  categories: string[];
-}
-
 const filtersSlice = createSlice({
   name: 'filters',
   initialState,
@@ -119,52 +114,18 @@ const filtersSlice = createSlice({
     },
     */
 
-    /**
-     * Used to update filtered categories state then editing or removing an album
-     * results in a category being deleted from the albums list
-     * 
-     * @param state 
-     * @param action 
-     */
-    removeFilterCategoryIfSubsetSelected: (state, action: PayloadAction<CategoryPayload>) => {
-      const { category, categories } = action.payload;
+    removeFilterCategory: (state, action: PayloadAction<string>) => {
+      const category = action.payload;
       if (state.categories !== CATEGORY_ALL) {
-        const newSelectedCategories = state.categories.filter(c => c !== category);
-
-        const setAll = justOneCategoryMissing(category, newSelectedCategories, categories);
-
-        state.categories = setAll
-          ? CATEGORY_ALL
-          : newSelectedCategories;
+        state.categories = state.categories.filter(c => c !== category);
       }
     },
   },
 });
 
-/**
- * 
- * @param value 
- * @param first 
- * @param second 
- * @returns true the arrays have the same elements (also the same number),
- *          when parameter value is appended to the first array
- */
-const justOneCategoryMissing = (value: string, first: string[], second: string[]) => {
-  if (first.length + 1 !== second.length) return false;
-
-  const source = [ ...first, value ].toSorted();
-  const target = second.toSorted();
-
-  for (let i = 0; i < target.length; i++) {
-    if (source[i] !== target[i]) return false;
-  }
-
-  return true;
-};
-
 export const {
   setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetColumnFilters,
-  setFilterCategories, toggleFilterCategoryAll, removeFilterCategoryIfSubsetSelected,
+  setFilterCategories, toggleFilterCategoryAll, removeFilterCategory,
 } = filtersSlice.actions;
 
 export const selectFilters = (state: RootState) => state.filters;
@@ -204,12 +165,7 @@ export const toggleFilterCategorySingle = (category: string): ThunkAction<
       
     } else {
       // add one
-      const setAll = justOneCategoryMissing(category, filterCategories, allCategories);
-      if (setAll) {
-        dispatch(setFilterCategories(CATEGORY_ALL));
-      } else {
-        dispatch(setFilterCategories([ ...filterCategories, category ]));
-      }
+      dispatch(setFilterCategories([ ...filterCategories, category ]));
     }
   }
 };
