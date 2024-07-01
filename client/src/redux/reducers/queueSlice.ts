@@ -61,8 +61,8 @@ export const selectQueueFirst = (state: RootState) => {
 };
 
 export const selectIsQueued = createSelector(
-  [selectQueue, (_state, album) => album],
-  (queue, album) => queue.find((q) => q.videoId === album.videoId) !== undefined,
+  [selectQueue, (_state: RootState, id: Album["id"]) => id],
+  (queue, id) => queue.find((album) => album.id === id) !== undefined,
 );
 
 export default queueSlice.reducer;

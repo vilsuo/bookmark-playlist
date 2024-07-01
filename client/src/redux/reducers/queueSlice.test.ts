@@ -166,13 +166,13 @@ describe("Queue slice", () => {
 
       test("should return true if album is in queue", () => {
         const state = createQueueRootState([first, second, third]);
-        const result = selectIsQueued(state, second);
+        const result = selectIsQueued(state, second.id);
         expect(result).toBeTruthy();
       });
 
       test("should return false if album is not in queue", () => {
         const state = createQueueRootState([first, second]);
-        const result = selectIsQueued(state, third);
+        const result = selectIsQueued(state, third.id);
         expect(result).toBeFalsy();
       });
 
@@ -180,9 +180,9 @@ describe("Queue slice", () => {
         const state = createQueueRootState([first]);
 
         selectIsQueued.resetRecomputations();
-        selectIsQueued(state, first);
+        selectIsQueued(state, first.id);
         expect(selectIsQueued.recomputations()).toBe(1);
-        selectIsQueued(state, first);
+        selectIsQueued(state, first.id);
         expect(selectIsQueued.recomputations()).toBe(1);
       });
 
@@ -190,9 +190,9 @@ describe("Queue slice", () => {
         const state = createQueueRootState([first]);
 
         selectIsQueued.resetRecomputations();
-        selectIsQueued(state, first);
+        selectIsQueued(state, first.id);
         expect(selectIsQueued.recomputations()).toBe(1);
-        selectIsQueued(state, second);
+        selectIsQueued(state, second.id);
         expect(selectIsQueued.recomputations()).toBe(2);
       });
     });

@@ -5,7 +5,7 @@ import * as albumService from '../../util/albumService';
 import * as converterService from '../../util/converterService';
 import { getErrorMessage } from '../../util/errorMessages';
 import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '../../util/albumHelpers';
-import { queuePop, selectQueueFirst } from './queueSlice';
+import { queuePop, queueRemove, queueUpdate, selectIsQueued, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
 import { type selectFilters as SelectFilters } from './filterSlice';
 import { addNotification } from './notificationSlice';
@@ -135,14 +135,14 @@ export const createFromBookmarks = createAsyncThunk<
   'albums/createFromBookmarks',
   async (formData: FormData, { dispatch, rejectWithValue }) => {
     try {
-      const result = await converterService.convertBookmarks(formData);
+      const convertedAlbums = await converterService.convertBookmarks(formData);
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Bookmarks imported',
       }));
 
-      return result;
+      return convertedAlbums;
 
     } catch (error) {
       const message = getErrorMessage(error);
@@ -167,14 +167,14 @@ export const createAlbum = createAsyncThunk<
   'albums/create',
   async (albumValues: AlbumCreation, { dispatch, rejectWithValue }) => {
     try {
-      const result = await albumService.create(albumValues);
+      const createdAlbum = await albumService.create(albumValues);
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album added successfully',
       }));
 
-      return result;
+      return createdAlbum;
 
     } catch (error) {
       const message = getErrorMessage(error);
@@ -197,16 +197,20 @@ export const updateAlbum = createAsyncThunk<
   AppAsyncThunkConfig
 >(
   'albums/update',
-  async (album: Album, { dispatch, rejectWithValue }) => {
+  async (album: Album, { getState, dispatch, rejectWithValue }) => {
+    const isQueued = selectIsQueued(getState(), album.id);
+
     try {
-      const result = await albumService.update(album);
+      const updatedAlbum = await albumService.update(album);
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album edited successfully',
       }));
 
-      return result;
+      if (isQueued) { dispatch(queueUpdate(updatedAlbum)); }
+
+      return updatedAlbum;
 
     } catch (error) {
       const message = getErrorMessage(error);
@@ -229,16 +233,20 @@ export const deleteAlbum = createAsyncThunk<
   AppAsyncThunkConfig
 >(
   'albums/delete',
-  async (id: Album['id'], { dispatch, rejectWithValue }) => {
+  async (id: Album['id'], { getState, dispatch, rejectWithValue }) => {
+    const isQueued = selectIsQueued(getState(), id);
+
     try {
-      const result = await albumService.remove(id);
+      const removedAlbumId = await albumService.remove(id);
+
+      if (isQueued) { dispatch(queueRemove(removedAlbumId)); }
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
 
-      return result;
+      return removedAlbumId;
 
     } catch (error) {
       const message = getErrorMessage(error);
