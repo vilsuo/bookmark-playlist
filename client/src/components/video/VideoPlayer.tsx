@@ -5,7 +5,7 @@ import VideoControls from './VideoControls';
 import { useRef, useState } from 'react';
 import { selectCanPlayNextAlbum } from '../../redux/reducers/albumsSlice';
 import { BASE_PLAYER_VARS } from '../../constants';
-import { addNotification } from '../../redux/reducers/notificationSlice';
+import { createNotification } from '../../redux/reducers/notificationSlice';
 import { NotificationType } from '../../types';
 import { createYoutubeErrorMessage } from '../../util/errorMessages';
 
@@ -60,7 +60,7 @@ const VideoPlayer = ({ videoId, playNext, close }: VideoPlayerProps) => {
    * @param event 
    */
   const onError: YouTubeProps['onError'] = (event) => {
-    dispatch(addNotification({
+    dispatch(createNotification({
       type: NotificationType.ERROR,
       title: "Youtube Error",
       message: createYoutubeErrorMessage(Number(event.data)),

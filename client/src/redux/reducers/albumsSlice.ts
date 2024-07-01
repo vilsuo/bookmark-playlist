@@ -8,7 +8,7 @@ import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '
 import { queuePop, queueRemove, queueUpdate, selectIsQueued, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
 import { removeFilterCategory, type selectFilters as SelectFilters } from './filterSlice';
-import { addNotification } from './notificationSlice';
+import { createNotification } from './notificationSlice';
 
 export interface AlbumsState {
   viewing: Album | null;
@@ -115,7 +115,7 @@ export const fetchAlbums = createAsyncThunk<
     } catch (error) {
       const message = getErrorMessage(error);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.ERROR,
         title: 'Loading albums failed',
         message,
@@ -137,7 +137,7 @@ export const createFromBookmarks = createAsyncThunk<
     try {
       const convertedAlbums = await converterService.convertBookmarks(formData);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.SUCCESS,
         title: 'Bookmarks imported',
       }));
@@ -147,7 +147,7 @@ export const createFromBookmarks = createAsyncThunk<
     } catch (error) {
       const message = getErrorMessage(error);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.ERROR,
         title: 'Bookmark import failed',
         message,
@@ -169,7 +169,7 @@ export const createAlbum = createAsyncThunk<
     try {
       const createdAlbum = await albumService.create(albumValues);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.SUCCESS,
         title: 'Album added successfully',
       }));
@@ -179,7 +179,7 @@ export const createAlbum = createAsyncThunk<
     } catch (error) {
       const message = getErrorMessage(error);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.ERROR,
         title: 'Album adding failed',
         message,
@@ -210,7 +210,7 @@ export const updateAlbum = createAsyncThunk<
         addDate, // keep the add date
       });
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.SUCCESS,
         title: 'Album edited successfully',
       }));
@@ -226,7 +226,7 @@ export const updateAlbum = createAsyncThunk<
     } catch (error) {
       const message = getErrorMessage(error);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.ERROR,
         title: 'Album edit failed',
         message,
@@ -254,7 +254,7 @@ export const deleteAlbum = createAsyncThunk<
     try {
       const removedAlbumId = await albumService.remove(id);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
@@ -270,7 +270,7 @@ export const deleteAlbum = createAsyncThunk<
     } catch (error) {
       const message = getErrorMessage(error);
 
-      dispatch(addNotification({
+      dispatch(createNotification({
         type: NotificationType.ERROR,
         title: 'Album deletion failed',
         message,

@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, ThunkAction, UnknownAction, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { NotificationType } from '../../types';
 import { RootState } from '../store';
@@ -22,14 +22,11 @@ const notificationSlice = createSlice({
   name: 'notifications',
   initialState,
   reducers: {
-    addNotification: (state, action: PayloadAction<Omit<Notification, 'id'>>) => {
+    addNotification: (state, action: PayloadAction<Notification>) => {
       const notification = action.payload;
-      state.notifications.push({
-        ...notification,
-        id: uuidv4(),
-      });
+      state.notifications.push(notification);
     },
-    removeNotification: (state, action: PayloadAction<string>) => {
+    removeNotification: (state, action: PayloadAction<Notification["id"]>) => {
       const id = action.payload;
       state.notifications = state.notifications
         .filter((notification) => notification.id !== id);
@@ -40,5 +37,19 @@ const notificationSlice = createSlice({
 export const { addNotification, removeNotification } = notificationSlice.actions;
 
 export const selectNotifications = (state: RootState) => state.notifications.notifications;
+
+// must be a thunk: contains a side-effect (generating random value)
+export const createNotification = (values: Omit<Notification, 'id'>): ThunkAction<
+  void,
+  RootState,
+  unknown,
+  UnknownAction
+> => (dispatch) => {
+  // Create a version 4 (random) UUID
+  const id = uuidv4();
+  const notification: Notification = { id, ...values };
+
+  dispatch(addNotification(notification));
+};
 
 export default notificationSlice.reducer;
