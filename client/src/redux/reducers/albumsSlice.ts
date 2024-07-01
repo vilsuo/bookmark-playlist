@@ -7,7 +7,7 @@ import { getErrorMessage } from '../../util/errorMessages';
 import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '../../util/albumHelpers';
 import { queuePop, queueRemove, queueUpdate, selectIsQueued, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
-import { removeFilterCategory, type selectFilters as SelectFilters } from './filterSlice';
+import { removeFilteringCategory, type selectSorting as SelectSorting, type selectFilters as SelectFilters } from './filterSlice';
 import { createNotification } from './notificationSlice';
 
 export interface AlbumsState {
@@ -104,7 +104,7 @@ you can call getState after a dispatch to get the updated state.
 // GET ALBUMS
 export const fetchAlbums = createAsyncThunk<
   Album[],
-  string,
+  void,
   AppAsyncThunkConfig
 >(
   'albums/fetchAlbums',
@@ -218,7 +218,7 @@ export const updateAlbum = createAsyncThunk<
       if (isQueued) { dispatch(queueUpdate(updatedAlbum)); }
 
       if (isAloneInCategory && updatedAlbum.category !== oldCategory) {
-        dispatch(removeFilterCategory(oldCategory));
+        dispatch(removeFilteringCategory(oldCategory));
       }
 
       return updatedAlbum;
@@ -262,7 +262,7 @@ export const deleteAlbum = createAsyncThunk<
       if (isQueued) { dispatch(queueRemove(removedAlbumId)); }
 
       if (isAloneInCategory) {
-        dispatch(removeFilterCategory(category));
+        dispatch(removeFilteringCategory(category));
       }
 
       return removedAlbumId;
@@ -334,7 +334,9 @@ export const playNext = (): ThunkAction<
 export const { setViewingAlbum, setPlayingAlbum } = albumsSlice.actions;
 
 export const selectViewing = (state: RootState) => state.albums.viewing;
+
 export const selectPlaying = (state: RootState) => state.albums.playing;
+
 const selectAlbums = (state: RootState) => state.albums.albums;
 
 export const selectIsPlaying = (state: RootState, album: Album | null) => {
@@ -362,17 +364,17 @@ export const selectIsAloneInCategory = (category: Album["category"]) => createSe
 );
 
 // avoid circular dependency, tests fail otherwise
-const selectFilters: typeof SelectFilters = (state: RootState) => state.filters;
+const selectSorting: typeof SelectSorting = (state: RootState) => state.filters.sorting;
+const selectFilters: typeof SelectFilters = (state: RootState) => state.filters.filters;
 
 export const selectSortedAndFilteredAlbums = createSelector(
   selectAlbums,
+  selectSorting,
   selectFilters,
-  (albums, filters) => {
-    const { sortColumn, sortOrder } = filters;
-
+  (albums, sorting, filters) => {
     return albums
       .filter(getFilterFn(filters))
-      .toSorted(getSortFn(sortColumn, sortOrder));
+      .toSorted(getSortFn(sorting));
   },
 );
 

@@ -1,19 +1,19 @@
 import { describe, expect, test } from "@jest/globals";
-import reducer, { FilterState, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilterCategoryAll } from "./filterSlice";
+import reducer, { Filter, FilterState, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilteringCategoryAll } from "./filterSlice";
 import { AlbumColumn, Order } from "../../types";
 import { CATEGORY_ALL } from "../../constants";
 import { categories } from "../../../test/constants";
 import { RootState } from "../store";
 import { createFilterState } from "../../../test/creators";
 
-const createSortingFilterState = (sortColumn: AlbumColumn, sortOrder: Order) =>
-  createFilterState({ sortColumn, sortOrder });
+const createSortingFilterState = (column: AlbumColumn, order: Order) =>
+  createFilterState({ column, order });
 
-const createCategoryFilterState = (categories: FilterState["categories"]) =>
-  createFilterState({ categories });
+const createCategoryFilterState = (categories: FilterState["filters"]["categories"]) =>
+  createFilterState({}, { categories });
 
 const createCategoryFilterRootState = (
-  filterCategories: FilterState["categories"],
+  filterCategories: Filter["categories"],
 ): RootState => (
   { filters: createCategoryFilterState(filterCategories) } as RootState
 );
@@ -27,12 +27,12 @@ describe("Filter slice", () => {
         const previousState = createSortingFilterState(sortColumn, sortOrder);
         
         const currentState = reducer(previousState, setSort(sortColumn));
-        expect(currentState.sortColumn).toBe(sortColumn);
-        expect(currentState.sortOrder).not.toBe(sortOrder);
+        expect(currentState.sorting.column).toBe(sortColumn);
+        expect(currentState.sorting.order).not.toBe(sortOrder);
 
         const nextState = reducer(currentState, setSort(sortColumn));
-        expect(nextState.sortColumn).toBe(sortColumn);
-        expect(nextState.sortOrder).toBe(sortOrder);
+        expect(nextState.sorting.column).toBe(sortColumn);
+        expect(nextState.sorting.order).toBe(sortOrder);
       });
 
       test("should keep the current order when changing column", () => {
@@ -41,32 +41,32 @@ describe("Filter slice", () => {
         const previousState = createSortingFilterState(sortColumn, sortOrder);
         
         const currentState = reducer(previousState, setSort(AlbumColumn.ALBUM));
-        expect(currentState.sortColumn).toBe(AlbumColumn.ALBUM);
-        expect(currentState.sortOrder).toBe(sortOrder);
+        expect(currentState.sorting.column).toBe(AlbumColumn.ALBUM);
+        expect(currentState.sorting.order).toBe(sortOrder);
       });
     });
 
     describe("toggleFilterCategoryAll", () => {
       test("should select none when all are selected", () => {
         const previousState = createCategoryFilterState(CATEGORY_ALL);
-        const currentState = reducer(previousState, toggleFilterCategoryAll());
+        const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
-        expect(currentState.categories).toBeInstanceOf(Array);
-        expect(currentState.categories).toHaveLength(0);
+        expect(currentState.filters.categories).toBeInstanceOf(Array);
+        expect(currentState.filters.categories).toHaveLength(0);
       });
 
       test("should select all when none are selected", () => {
         const previousState = createCategoryFilterState([]);
-        const currentState = reducer(previousState, toggleFilterCategoryAll());
+        const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
-        expect(currentState.categories).toBe(CATEGORY_ALL);
+        expect(currentState.filters.categories).toBe(CATEGORY_ALL);
       });
 
       test("should select all when some are selected", () => {
         const previousState = createCategoryFilterState([categories[0]]);
-        const currentState = reducer(previousState, toggleFilterCategoryAll());
+        const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
-        expect(currentState.categories).toBe(CATEGORY_ALL);
+        expect(currentState.filters.categories).toBe(CATEGORY_ALL);
       });
     });
   });

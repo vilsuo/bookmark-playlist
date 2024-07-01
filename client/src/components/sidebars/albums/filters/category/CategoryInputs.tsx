@@ -1,7 +1,7 @@
 import { CATEGORY_ALL } from "../../../../../constants";
 import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
 import { selectCategories } from "../../../../../redux/reducers/albumsSlice";
-import { selectIsCategoryFiltered, toggleFilterCategorySingle, toggleFilterCategoryAll, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filterSlice";
+import { selectIsCategoryFiltered, toggleFilterCategorySingle, toggleFilteringCategoryAll, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filterSlice";
 
 interface CategoryInputAllProps {
   isAllSelected: boolean;
@@ -11,7 +11,7 @@ const CategoryInputAll = ({ isAllSelected }: CategoryInputAllProps) => {
   const dispatch = useAppDispatch();
 
   const handleToggleAll = () => {
-    dispatch(toggleFilterCategoryAll());
+    dispatch(toggleFilteringCategoryAll());
   };
 
   return (

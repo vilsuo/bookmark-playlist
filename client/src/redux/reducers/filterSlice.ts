@@ -4,96 +4,106 @@ import { RootState } from '../store';
 import { CATEGORY_ALL } from '../../constants';
 import { selectCategories } from './albumsSlice';
 
-export interface FilterState {
-  // sorting
-  sortColumn: AlbumColumn;
-  sortOrder: Order;
-
-  // filters
+export type Sort = {
   column: AlbumColumn;
+  order: Order;
+};
+
+export type FilterInterval = Interval<string>;
+
+export type Filter = {
+  column: AlbumColumn;
+
   text: string;
-  publishInterval: Interval<string>;
-  addDateInterval: Interval<string>;
+  published: FilterInterval;
+  addDate: FilterInterval;
 
   categories: string[] | typeof CATEGORY_ALL;
-}
+};
+
+export interface FilterState {
+  sorting: Sort;
+  filters: Filter;
+};
 
 export const initialState: FilterState = {
-  sortColumn: AlbumColumn.ARTIST,
-  sortOrder: Order.ASC,
-  
-  column: AlbumColumn.ARTIST,
-  text: "",
-  publishInterval: { start: "", end: "" },
-  addDateInterval: { start: "", end: "" },
+  sorting: {
+    column: AlbumColumn.ARTIST,
+    order: Order.ASC,
+  },
+  filters: {
+    column: AlbumColumn.ARTIST,
 
-  categories: CATEGORY_ALL,
+    text: "",
+    published: { start: "", end: "" },
+    addDate: { start: "", end: "" },
+
+    categories: CATEGORY_ALL,
+  }
 };
 
 const filtersSlice = createSlice({
   name: 'filters',
   initialState,
   reducers: {
-    setFilterColumn: (state, action: PayloadAction<AlbumColumn>) => {
-      const newColumn = action.payload;
-      state.column = newColumn;
-    },
     setSort: (state, action: PayloadAction<AlbumColumn>) => {
       const newSortColumn = action.payload;
-      if (newSortColumn === state.sortColumn) {
-        state.sortOrder = (state.sortOrder === Order.ASC) ? Order.DESC : Order.ASC;
+      if (newSortColumn === state.sorting.column) {
+        state.sorting.order = (state.sorting.order === Order.ASC) ? Order.DESC : Order.ASC;
       }
-      state.sortColumn = newSortColumn;
+      state.sorting.column = newSortColumn;
     },
-    setFilterText: (state, action: PayloadAction<string>) => {
+    setFilteringColumn: (state, action: PayloadAction<AlbumColumn>) => {
+      const newColumn = action.payload;
+      state.filters.column = newColumn;
+    },
+    setFilteringText: (state, action: PayloadAction<string>) => {
       const text = action.payload;
-      state.text = text;
+      state.filters.text = text;
     },
-    setFilterPublishInterval: (state, action: PayloadAction<FilterState["publishInterval"]>) => {
+    setFilteringPublished: (state, action: PayloadAction<FilterInterval>) => {
       const interval = action.payload;
-      state.publishInterval = interval;
+      state.filters.published = interval;
     },
-    setFilterAddDateInterval: (state, action: PayloadAction<FilterState["addDateInterval"]>) => {
+    setFilteringAddDate: (state, action: PayloadAction<FilterInterval>) => {
       const interval = action.payload;
-      state.addDateInterval = interval;
+      state.filters.addDate = interval;
     },
-    /**
-     * @remark does not reset {@link FilterState.column}
-     * @param state 
-     */
-    resetColumnFilters: (state) => {
-      state.text = initialState.text;
-      state.publishInterval = initialState.publishInterval;
-      state.addDateInterval = initialState.addDateInterval;
+    resetFilteringFields: (state) => {
+      state.filters.text = initialState.filters.text;
+      state.filters.published = initialState.filters.published;
+      state.filters.addDate = initialState.filters.addDate;
     },
-
-    setFilterCategories: (state, action: PayloadAction<FilterState["categories"]>) => {
+    setFilteringCategories: (state, action: PayloadAction<Filter["categories"]>) => {
       const categories = action.payload;
-      state.categories = categories;
+      state.filters.categories = categories;
     },
-
-    toggleFilterCategoryAll: (state) => {
-      state.categories = (state.categories !== CATEGORY_ALL)
+    toggleFilteringCategoryAll: (state) => {
+      state.filters.categories = (state.filters.categories !== CATEGORY_ALL)
         ? CATEGORY_ALL
         : [];
     },
-
-    removeFilterCategory: (state, action: PayloadAction<string>) => {
+    removeFilteringCategory: (state, action: PayloadAction<string>) => {
       const category = action.payload;
-      if (state.categories !== CATEGORY_ALL) {
-        state.categories = state.categories.filter(c => c !== category);
+      if (state.filters.categories !== CATEGORY_ALL) {
+        state.filters.categories = state.filters.categories.filter(
+          c => c !== category
+        );
       }
     },
   },
 });
 
 export const {
-  setFilterColumn, setSort, setFilterText, setFilterPublishInterval, setFilterAddDateInterval, resetColumnFilters,
-  setFilterCategories, toggleFilterCategoryAll, removeFilterCategory,
+  setFilteringColumn, setSort, setFilteringText, setFilteringPublished, setFilteringAddDate, resetFilteringFields,
+  setFilteringCategories, toggleFilteringCategoryAll, removeFilteringCategory,
 } = filtersSlice.actions;
 
-export const selectFilters = (state: RootState) => state.filters;
-export const selectFilterCategories = (state: RootState) => state.filters.categories;
+export const selectSorting = (state: RootState) => state.filters.sorting;
+
+export const selectFilters = (state: RootState) => state.filters.filters;
+
+export const selectFilterCategories = (state: RootState) => state.filters.filters.categories;
 
 export const selectIsCategoryFiltered = (state: RootState, category: string) => {
   const categories = selectFilterCategories(state);
@@ -120,16 +130,16 @@ export const toggleFilterCategorySingle = (category: string): ThunkAction<
 
   if (filterCategories === CATEGORY_ALL) {
     // all categories was selected previously, so set all categories except one
-    dispatch(setFilterCategories(allCategories.filter(c => c !== category)));
+    dispatch(setFilteringCategories(allCategories.filter(c => c !== category)));
 
   } else {
     if (isFiltered) {
       // remove one
-      dispatch(setFilterCategories(filterCategories.filter(c => c !== category)));
+      dispatch(setFilteringCategories(filterCategories.filter(c => c !== category)));
       
     } else {
       // add one
-      dispatch(setFilterCategories([ ...filterCategories, category ]));
+      dispatch(setFilteringCategories([ ...filterCategories, category ]));
     }
   }
 };

@@ -1,6 +1,6 @@
 import { CATEGORY_ALL } from "../constants";
-import { FilterState } from "../redux/reducers/filterSlice";
-import { Album, AlbumColumn, Interval, Order } from "../types";
+import { Filter, FilterInterval, Sort } from "../redux/reducers/filterSlice";
+import { Album, AlbumColumn, Interval } from "../types";
 import { resetHours } from "./dateConverter";
 
 /**
@@ -54,12 +54,12 @@ export const getRandomAlbum = (albums: Album[]) => albums.length
  * then the album with earlier {@link Album.artist} value will ALWAYS be first
  * regardless of given {@link Order}.
  *
- * @param sortColumn the column to sort by
- * @param sortOrder the sorting order
+ * @param column the column to sort by
+ * @param order the sorting order
  * @returns the sorting function
  */
 export const getSortFn =
-  (sortColumn: AlbumColumn, sortOrder: Order) => (a: Album, b: Album) => {
+  ({ column, order }: Sort) => (a: Album, b: Album) => {
     // Note: return -1 if album 'a' goes before album 'b'
 
     const aArtist = a.artist.toLowerCase();
@@ -68,30 +68,30 @@ export const getSortFn =
     const aTitle = a.title.toLowerCase();
     const bTitle = b.title.toLowerCase();
 
-    switch (sortColumn) {
+    switch (column) {
       case AlbumColumn.ARTIST: {
         if (aArtist === bArtist) {
           return b.published - a.published;
         }
-        return sortOrder * (aArtist < bArtist ? -1 : 1);
+        return order * (aArtist < bArtist ? -1 : 1);
       }
       case AlbumColumn.ALBUM: {
         if (aTitle === bTitle) {
           return aArtist < bArtist ? -1 : 1;
         }
-        return sortOrder * (aTitle < bTitle ? -1 : 1);
+        return order * (aTitle < bTitle ? -1 : 1);
       }
       case AlbumColumn.PUBLISHED: {
         if (a.published === b.published) {
           return aArtist < bArtist ? -1 : 1;
         }
-        return sortOrder * (a.published - b.published);
+        return order * (a.published - b.published);
       }
       case AlbumColumn.ADD_DATE: {
-        return sortOrder * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
+        return order * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
       }
       default:
-        sortColumn satisfies never;
+        column satisfies never;
         return 1;
     };
   };
@@ -103,8 +103,14 @@ export const getSortFn =
  * always applied. The only other applied filter is specified by {@link FilterState.column}.
  * @returns the filter funtion
  */
-export const getFilterFn = (filterState: FilterState) => (album: Album) => {
-  const { text, column, publishInterval, addDateInterval, categories } = filterState;
+export const getFilterFn = (filters: Filter) => (album: Album) => {
+  const {
+    column,
+    text,
+    published: publishInterval,
+    addDate: addDateInterval,
+    categories
+  } = filters;
 
   if (categories !== CATEGORY_ALL && !categories.includes(album.category)) return false;
 
@@ -186,7 +192,7 @@ const filterByAddDate = (
  * @param interval number strings
  * @returns start: interval start published, end: interval end published
  */
-const parsePublishInterval = (interval: FilterState["publishInterval"])
+const parsePublishInterval = (interval: FilterInterval)
 : Interval<number | undefined> => {
   const { start, end } = interval;
   
@@ -205,7 +211,7 @@ const parsePublishInterval = (interval: FilterState["publishInterval"])
  * @returns start: interval start date with hour|min|sec|mm set to 0,
  * end: the next date of interval end date with hour|min|sec|mm set to 0
  */
-const parseDateInterval = (interval: FilterState["addDateInterval"])
+const parseDateInterval = (interval: FilterInterval)
 : Interval<Date | undefined> => {
   const { start, end } = interval;
 

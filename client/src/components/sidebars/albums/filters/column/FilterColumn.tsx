@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
-import { resetColumnFilters, selectFilters, setFilterColumn } from "../../../../../redux/reducers/filterSlice";
+import { resetFilteringFields, selectFilters, setFilteringColumn } from "../../../../../redux/reducers/filterSlice";
 import { AlbumColumn } from "../../../../../types";
 import ColumnOptions from "./ColumnOptions";
 import FilterColumnInputs from "./FilterColumnInputs";
@@ -10,11 +10,11 @@ const FilterColumn = () => {
   const { column } = useAppSelector(selectFilters);
 
   const handleColumnChange = (value: AlbumColumn) => {
-    dispatch(setFilterColumn(value));
+    dispatch(setFilteringColumn(value));
   };
 
   const handleFilterReset = () => {
-    dispatch(resetColumnFilters());
+    dispatch(resetFilteringFields());
   };
 
   return (

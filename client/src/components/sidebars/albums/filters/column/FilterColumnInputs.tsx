@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
-import { selectFilters, setFilterAddDateInterval, setFilterPublishInterval, setFilterText } from "../../../../../redux/reducers/filterSlice";
+import { selectFilters, setFilteringAddDate, setFilteringPublished, setFilteringText } from "../../../../../redux/reducers/filterSlice";
 import { AlbumColumn } from "../../../../../types";
 
 interface FilterColumnInputsProps {
@@ -8,26 +8,26 @@ interface FilterColumnInputsProps {
 
 const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
   const dispatch = useAppDispatch();
-  const { text, publishInterval, addDateInterval } = useAppSelector(selectFilters);
+  const { text, published: publishInterval, addDate: addDateInterval } = useAppSelector(selectFilters);
 
   const handleTextChange = (value: string) => {
-    dispatch(setFilterText(value));
+    dispatch(setFilteringText(value));
   };
 
   const handlePublishStartChange = (value: string) => {
-    dispatch(setFilterPublishInterval({ ...publishInterval, start: value }));
+    dispatch(setFilteringPublished({ ...publishInterval, start: value }));
   };
 
   const handlePublishEndChange = (value: string) => {
-    dispatch(setFilterPublishInterval({ ...publishInterval, end: value }));
+    dispatch(setFilteringPublished({ ...publishInterval, end: value }));
   };
 
   const handleAddDateStartChange = (value: string) => {
-    dispatch(setFilterAddDateInterval({ ...addDateInterval, start: value }));
+    dispatch(setFilteringAddDate({ ...addDateInterval, start: value }));
   };
 
   const handleAddDateEndChange = (value: string) => {
-    dispatch(setFilterAddDateInterval({ ...addDateInterval, end: value }));
+    dispatch(setFilteringAddDate({ ...addDateInterval, end: value }));
   };
 
   switch (column) {

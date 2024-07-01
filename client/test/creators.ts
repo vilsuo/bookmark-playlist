@@ -1,5 +1,5 @@
 import { AlbumsState, initialState as initialAlbumsState } from "../src/redux/reducers/albumsSlice";
-import { FilterState, initialState as initialFilterState } from "../src/redux/reducers/filterSlice";
+import { Filter, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filterSlice";
 import { QueueState } from "../src/redux/reducers/queueSlice";
 
 export const createAlbumsState = (
@@ -9,9 +9,10 @@ export const createAlbumsState = (
 );
 
 export const createFilterState = (
-  filters: Partial<FilterState> = initialFilterState
+  sorting: Partial<Sort> = initialFilterState.sorting,
+  filters: Partial<Filter> = initialFilterState.filters,
 ): FilterState => (
-  { ...filters } as FilterState
+  { sorting, filters } as FilterState
 );
 
 export const createQueueState = (albums: QueueState["queue"]): QueueState => (

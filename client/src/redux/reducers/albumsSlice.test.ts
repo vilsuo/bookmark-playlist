@@ -4,7 +4,7 @@ import { Album } from "../../types";
 import { RootState } from "../store";
 import { albums, categories } from "../../../test/constants";
 import { createAlbumsState, createFilterState } from "../../../test/creators";
-import { FilterState } from "./filterSlice";
+import { Filter, Sort } from "./filterSlice";
 
 const createAlbumWithCategory = (album: Album, category: string): Album => ({
   ...album, category,
@@ -15,14 +15,15 @@ const createAlbumsRootState = (albums: AlbumsState["albums"]): RootState => (
 );
 
 const createFilteringAndSortingRootState = (
-  { albumsState, filterState }: {
+  { albumsState, sorting, filters }: {
     albumsState?: Partial<AlbumsState>,
-    filterState?: Partial<FilterState>,
+    sorting?: Partial<Sort>,
+    filters?: Partial<Filter>
   } = {}
 ): RootState => (
   {
     albums: createAlbumsState(albumsState),
-    filters: createFilterState(filterState),
+    filters: createFilterState(sorting, filters),
   } as RootState
 );
 

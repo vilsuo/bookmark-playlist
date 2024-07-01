@@ -2,12 +2,12 @@ import { AlbumColumn } from '../../../../types';
 import AlbumRow from './AlbumRow';
 import SortableColumn from '../../../general/SortableColumn';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { selectFilters, setSort } from '../../../../redux/reducers/filterSlice';
+import { selectSorting, setSort } from '../../../../redux/reducers/filterSlice';
 import { selectSortedAndFilteredAlbums } from '../../../../redux/reducers/albumsSlice';
 
 const AlbumTable = () => {
   const filteredAndSortedAlbums = useAppSelector(selectSortedAndFilteredAlbums);
-  const filterState = useAppSelector(selectFilters);
+  const { column, order } = useAppSelector(selectSorting);
 
   const dispatch = useAppDispatch();
 
@@ -25,8 +25,8 @@ const AlbumTable = () => {
                 key={col}
                 value={col}
                 setValue={handleSortChange}
-                sortColumn={filterState.sortColumn}
-                sortOrder={filterState.sortOrder}
+                sortColumn={column}
+                sortOrder={order}
               />
             ),
           )}
