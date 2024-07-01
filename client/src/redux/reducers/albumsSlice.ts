@@ -7,7 +7,7 @@ import { getErrorMessage } from '../../util/errorMessages';
 import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '../../util/albumHelpers';
 import { queuePop, queueRemove, queueUpdate, selectIsQueued, selectQueueFirst } from './queueSlice';
 import { selectPlayMode } from './settingsSlice';
-import { type selectFilters as SelectFilters } from './filterSlice';
+import { removeFilterCategory, type selectFilters as SelectFilters } from './filterSlice';
 import { addNotification } from './notificationSlice';
 
 export interface AlbumsState {
@@ -193,15 +193,22 @@ export const createAlbum = createAsyncThunk<
 // UPDATE
 export const updateAlbum = createAsyncThunk<
   Album,
-  Album,
+  { oldAlbum: Album, newValues: AlbumCreation },
   AppAsyncThunkConfig
 >(
   'albums/update',
-  async (album: Album, { getState, dispatch, rejectWithValue }) => {
-    const isQueued = selectIsQueued(getState(), album.id);
+  async ({ oldAlbum, newValues }, { getState, dispatch, rejectWithValue }) => {
+    const state = getState();
+    const { id, category: oldCategory, addDate } = oldAlbum;
+
+    const isQueued = selectIsQueued(state, id);
+    const isAloneInCategory = selectIsAloneInCategory(oldCategory)(state);
 
     try {
-      const updatedAlbum = await albumService.update(album);
+      const updatedAlbum = await albumService.update(id, {
+        ...newValues,
+        addDate, // keep the add date
+      });
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
@@ -209,6 +216,10 @@ export const updateAlbum = createAsyncThunk<
       }));
 
       if (isQueued) { dispatch(queueUpdate(updatedAlbum)); }
+
+      if (isAloneInCategory && updatedAlbum.category !== oldCategory) {
+        dispatch(removeFilterCategory(oldCategory));
+      }
 
       return updatedAlbum;
 
@@ -229,22 +240,30 @@ export const updateAlbum = createAsyncThunk<
 // DELETE
 export const deleteAlbum = createAsyncThunk<
   Album['id'],
-  Album['id'],
+  Album,
   AppAsyncThunkConfig
 >(
   'albums/delete',
-  async (id: Album['id'], { getState, dispatch, rejectWithValue }) => {
-    const isQueued = selectIsQueued(getState(), id);
+  async (album, { getState, dispatch, rejectWithValue }) => {
+    const state = getState();
+    const { id, category } = album;
+
+    const isQueued = selectIsQueued(state, id);
+    const isAloneInCategory = selectIsAloneInCategory(category)(state);
 
     try {
       const removedAlbumId = await albumService.remove(id);
-
-      if (isQueued) { dispatch(queueRemove(removedAlbumId)); }
 
       dispatch(addNotification({
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
+
+      if (isQueued) { dispatch(queueRemove(removedAlbumId)); }
+
+      if (isAloneInCategory) {
+        dispatch(removeFilterCategory(category));
+      }
 
       return removedAlbumId;
 

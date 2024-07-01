@@ -53,3 +53,4 @@ export type Album = {
 };
 
 export type AlbumCreation = Omit<Album, 'id' | 'addDate'>;
+export type AlbumUpdate = Omit<Album, 'id'>;

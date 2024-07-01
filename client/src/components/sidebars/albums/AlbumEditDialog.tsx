@@ -1,11 +1,10 @@
 import { Album, AlbumCreation } from '../../../types';
 import DragDialog from '../../general/DragDialog';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch } from '../../../redux/hooks';
 import AlbumForm from './AlbumForm';
-import { deleteAlbum, selectIsAloneInCategory, updateAlbum } from '../../../redux/reducers/albumsSlice';
+import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albumsSlice';
 import React, { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
-import { removeFilterCategory } from '../../../redux/reducers/filterSlice';
 
 interface AlbumEditDialogProps {
   album: Album;
@@ -14,44 +13,25 @@ interface AlbumEditDialogProps {
 }
 
 const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
-  const isAloneInCategory = useAppSelector(selectIsAloneInCategory(album.category));
 
   const dispatch = useAppDispatch();
 
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
 
-  const dispatchRemoveCategoryFromFilterIfLastOne = (category: string) => {
-    // remove category of the previous album value from the
-    // filter if the category no longer exists
-
-    if (isAloneInCategory) {
-      dispatch(removeFilterCategory(category));
-    }
-  };
-
   const updateAndClose = async (albumValues: AlbumCreation) => {
-    const oldCategory = album.category;
+    const resultAction = await dispatch(updateAlbum({
+      oldAlbum: album,
+      newValues: albumValues
+    }));
 
-    const resultAction = await dispatch(updateAlbum({ ...album, ...albumValues }));
     if (updateAlbum.fulfilled.match(resultAction)) {
-      // update the album if it is in the queue
-      const updatedAlbum = resultAction.payload;
-
-      if (oldCategory !== updatedAlbum.category) {
-        dispatchRemoveCategoryFromFilterIfLastOne(oldCategory);
-      }
-
       onClose();
     }
   };
 
   const removeAndClose = async () => {
-    const oldCategory = album.category;
-
-    const resultAction = await dispatch(deleteAlbum(album.id));
+    const resultAction = await dispatch(deleteAlbum(album));
     if (deleteAlbum.fulfilled.match(resultAction)) {
-      dispatchRemoveCategoryFromFilterIfLastOne(oldCategory);
-
       onClose();
     }
   };

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Album, AlbumCreation } from '../types';
+import { Album, AlbumCreation, AlbumUpdate } from '../types';
 
 const BASE_URL = '/api/albums';
 
@@ -13,8 +13,9 @@ export const create = async (values: AlbumCreation): Promise<Album> => {
   return data;
 };
 
-export const update = async (album: Album): Promise<Album> => {
-  const { data } = await axios.put(`${BASE_URL}/${album.id}`, album);
+export const update = async (id: Album["id"], values: AlbumUpdate)
+: Promise<Album> => {
+  const { data } = await axios.put(`${BASE_URL}/${id}`, values);
   return data;
 };
 
