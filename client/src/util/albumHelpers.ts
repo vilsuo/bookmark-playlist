@@ -1,7 +1,7 @@
 import { CATEGORY_ALL } from "../constants";
 import { FilterState } from "../redux/reducers/filterSlice";
-import { Album, AlbumColumn, Order } from "../types";
-import { parseDateInterval } from "./dateConverter";
+import { Album, AlbumColumn, Interval, Order } from "../types";
+import { resetHours } from "./dateConverter";
 
 /**
  * 
@@ -115,10 +115,10 @@ export const getFilterFn = (filterState: FilterState) => (album: Album) => {
       return filterByText(text, column, album);
     }
     case AlbumColumn.PUBLISHED: {
-      return filterByPublished(publishInterval, album);
+      return filterByPublished(parsePublishInterval(publishInterval), album);
     }
     case AlbumColumn.ADD_DATE: {
-      return filterByAddDate(addDateInterval, album);
+      return filterByAddDate(parseDateInterval(addDateInterval), album);
     }
     default:
       column satisfies never;
@@ -137,39 +137,88 @@ const filterByText = (text: string, column: AlbumColumn, album: Album) => {
   }
 };
 
-const filterByPublished = (publishInterval: FilterState["publishInterval"], album: Album) => {
+const filterByPublished = (
+  { start, end }: ReturnType<typeof parsePublishInterval>,
+  album: Album,
+) => {
   const { published } = album;
-  const { start, end } = publishInterval;
 
   if (start === undefined && end === undefined) {
     return true; // no interval filter
 
   } else if (start !== undefined && end !== undefined) {
-    return Number(start) <= published && published <= Number(end);
+    return start <= published && published <= end;
 
   } else if (start !== undefined) {
-    return published >= Number(start);
+    return published >= start;
     
   } else {
     // end !== undefined
-    return published <= Number(end);
+    return published <= end!;
   }
 };
 
-const filterByAddDate = (addDateInterval: FilterState["addDateInterval"], album: Album) => {
+const filterByAddDate = (
+  { start, end }: ReturnType<typeof parseDateInterval>,
+  album: Album,
+) => {
   const date = new Date(album.addDate);
-  const { startDate, endDate } = parseDateInterval(addDateInterval);
 
-  if (startDate && endDate) {
-    return startDate <= date && date < endDate;
+  if (start && end) {
+    return start <= date && date < end;
 
-  } else if (startDate) {
-    return date >= startDate;
+  } else if (start) {
+    return date >= start;
 
-  } else if (endDate) {
-    return date < endDate;
+  } else if (end) {
+    return date < end;
 
   } else {
     return true; // no interval filter
   }
+};
+
+/**
+ * Convert string interval to number interval to be used in filtering
+ * 
+ * @remarks empty string is converter to undefined
+ * 
+ * @param interval number strings
+ * @returns start: interval start published, end: interval end published
+ */
+const parsePublishInterval = (interval: FilterState["publishInterval"])
+: Interval<number | undefined> => {
+  const { start, end } = interval;
+  
+  const startPublish = start ? Number(start) : undefined;
+  const endPublish = end ? Number(end) : undefined;
+
+  return { start: startPublish, end: endPublish };
+};
+
+/**
+ * Convert string date interval to date interval to be used in filtering
+ * 
+ * @remarks empty string is converter to undefined
+ * 
+ * @param interval Date strings
+ * @returns start: interval start date with hour|min|sec|mm set to 0,
+ * end: the next date of interval end date with hour|min|sec|mm set to 0
+ */
+const parseDateInterval = (interval: FilterState["addDateInterval"])
+: Interval<Date | undefined> => {
+  const { start, end } = interval;
+
+  const startDate = start ? new Date(start) : undefined;
+  if (startDate) {
+    resetHours(startDate);
+  }
+
+  const endDate = end ? new Date(end) : undefined;
+  if (endDate) {
+    resetHours(endDate);
+    endDate.setDate(endDate.getDate() + 1);
+  }
+
+  return { start: startDate, end: endDate };
 };

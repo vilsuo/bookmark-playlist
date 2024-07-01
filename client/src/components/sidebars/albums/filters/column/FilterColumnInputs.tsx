@@ -15,13 +15,11 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
   };
 
   const handlePublishStartChange = (value: string) => {
-    const newStart = value !== "" ? Number(value) : undefined;
-    dispatch(setFilterPublishInterval({ ...publishInterval, start: newStart }));
+    dispatch(setFilterPublishInterval({ ...publishInterval, start: value }));
   };
 
   const handlePublishEndChange = (value: string) => {
-    const newEnd = value !== "" ? Number(value) : undefined;
-    dispatch(setFilterPublishInterval({ ...publishInterval, end: newEnd }));
+    dispatch(setFilterPublishInterval({ ...publishInterval, end: value }));
   };
 
   const handleAddDateStartChange = (value: string) => {
@@ -55,7 +53,7 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
             <input
               id="publish-start"
               type="number"
-              value={publishInterval.start !== undefined ? publishInterval.start : ""}
+              value={publishInterval.start}
               onChange={({ target }) => handlePublishStartChange(target.value)}
             />
           </div>
@@ -65,7 +63,7 @@ const FilterColumnInputs = ({ column }: FilterColumnInputsProps) => {
             <input
               id="publish-end"
               type="number"
-              value={publishInterval.end !== undefined ? publishInterval.end : ""}
+              value={publishInterval.end}
               onChange={({ target }) => handlePublishEndChange(target.value)}
             />
           </div>

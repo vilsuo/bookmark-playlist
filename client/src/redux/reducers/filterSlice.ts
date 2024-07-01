@@ -12,7 +12,7 @@ export interface FilterState {
   // filters
   column: AlbumColumn;
   text: string;
-  publishInterval: Interval<number | undefined>;
+  publishInterval: Interval<string>;
   addDateInterval: Interval<string>;
 
   categories: string[] | typeof CATEGORY_ALL;
@@ -23,9 +23,9 @@ export const initialState: FilterState = {
   sortOrder: Order.ASC,
   
   column: AlbumColumn.ARTIST,
-  text: '',
-  publishInterval: { start: undefined, end: undefined },
-  addDateInterval: { start: '', end: '' },
+  text: "",
+  publishInterval: { start: "", end: "" },
+  addDateInterval: { start: "", end: "" },
 
   categories: CATEGORY_ALL,
 };
@@ -49,11 +49,11 @@ const filtersSlice = createSlice({
       const text = action.payload;
       state.text = text;
     },
-    setFilterPublishInterval: (state, action: PayloadAction<Interval<number | undefined>>) => {
+    setFilterPublishInterval: (state, action: PayloadAction<FilterState["publishInterval"]>) => {
       const interval = action.payload;
       state.publishInterval = interval;
     },
-    setFilterAddDateInterval: (state, action: PayloadAction<Interval<string>>) => {
+    setFilterAddDateInterval: (state, action: PayloadAction<FilterState["addDateInterval"]>) => {
       const interval = action.payload;
       state.addDateInterval = interval;
     },
@@ -77,42 +77,6 @@ const filtersSlice = createSlice({
         ? CATEGORY_ALL
         : [];
     },
-
-    /*
-    toggleFilterCategory: (state, action: PayloadAction<CategoryPayload>) => {
-      const { category, categories } = action.payload;
-
-      if (category === CATEGORY_ALL) {
-        // toggle all on/off
-        state.categories = (state.categories === CATEGORY_ALL) ? [] : CATEGORY_ALL;
-
-      } else {
-        // toggle single on/off
-
-        if (state.categories === CATEGORY_ALL) {
-          // all categories was selected previously, so set all categories except one
-          state.categories = categories.filter(c => c !== category);
-    
-        } else {
-          const selectedCategories = state.categories;
-          
-          if (!selectedCategories.includes(category)) {
-            // add one
-
-            const setAll = justOneCategoryMissing(category, selectedCategories, categories);
-
-            state.categories = setAll
-              ? CATEGORY_ALL
-              : [ ...selectedCategories, category ];
-      
-          } else {
-            // remove one
-            state.categories = selectedCategories.filter(c => c !== category);
-          }
-        }
-      }
-    },
-    */
 
     removeFilterCategory: (state, action: PayloadAction<string>) => {
       const category = action.payload;
