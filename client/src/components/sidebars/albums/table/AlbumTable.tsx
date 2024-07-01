@@ -1,9 +1,9 @@
-import { AlbumColumn } from '../../types';
+import { AlbumColumn } from '../../../../types';
 import AlbumRow from './AlbumRow';
-import SortableColumn from '../general/SortableColumn';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectFilters, setSort } from '../../redux/reducers/filterSlice';
-import { selectSortedAndFilteredAlbums } from '../../redux/reducers/albumsSlice';
+import SortableColumn from '../../../general/SortableColumn';
+import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
+import { selectFilters, setSort } from '../../../../redux/reducers/filterSlice';
+import { selectSortedAndFilteredAlbums } from '../../../../redux/reducers/albumsSlice';
 
 const AlbumTable = () => {
   const filteredAndSortedAlbums = useAppSelector(selectSortedAndFilteredAlbums);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AlbumFilter from './filters/AlbumFilter';
-import AlbumTable from '../../album/AlbumTable';
+import AlbumTable from './table/AlbumTable';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { selectViewing, setViewingAlbum } from '../../../redux/reducers/albumsSlice';
