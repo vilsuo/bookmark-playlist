@@ -102,9 +102,28 @@ you can call getState after a dispatch to get the updated state.
 */
 
 // GET ALBUMS
-export const fetchAlbums = createAsyncThunk(
+export const fetchAlbums = createAsyncThunk<
+  Album[],
+  string,
+  AppAsyncThunkConfig
+>(
   'albums/fetchAlbums',
-  async () => albumService.getAlbums(),
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      return await albumService.getAlbums();
+      
+    } catch (error) {
+      const message = getErrorMessage(error);
+
+      dispatch(addNotification({
+        type: NotificationType.ERROR,
+        title: 'Loading albums failed',
+        message,
+      }));
+
+      return rejectWithValue({ message });
+    }
+  }
 );
 
 // CREATE FROM BOOKMARKS
