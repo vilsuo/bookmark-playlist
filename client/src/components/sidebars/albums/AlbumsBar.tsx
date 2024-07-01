@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AlbumFilter from './filters/AlbumFilter';
 import AlbumTable from '../../album/AlbumTable';
-import { Album } from '../../../types';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { selectViewing, view } from '../../../redux/reducers/albumsSlice';
+import { selectViewing, setViewingAlbum } from '../../../redux/reducers/albumsSlice';
 import AlbumAddDialog from './AlbumAddDialog';
 
 interface AlbumsBarProps {
@@ -16,7 +15,6 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
   const viewingAlbum = useAppSelector(selectViewing);
 
   const dispatch = useAppDispatch();
-  const setViewingAlbum = (album: Album | null) => dispatch(view(album));
 
   const [isAddOpen, setIsAddOpen] = useState(false);
 
@@ -50,17 +48,14 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
         <div id="start-ref" ref={startRef} />
           <AlbumFilter />
 
-          <AlbumTable
-            viewingAlbum={viewingAlbum}
-            setViewingAlbum={setViewingAlbum}
-          />
+          <AlbumTable />
         <div id="end-ref" ref={endRef} />
       </div>
 
       { viewingAlbum && (
         <AlbumsView
           album={viewingAlbum}
-          close={(() => setViewingAlbum(null))}
+          close={(() => dispatch(setViewingAlbum(null)))}
         />
       )}
 

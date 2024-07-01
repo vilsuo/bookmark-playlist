@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { play } from '../../redux/reducers/albumsSlice';
+import { setPlayingAlbum } from '../../redux/reducers/albumsSlice';
 import { queuePrepend, queueRemove, selectQueue } from '../../redux/reducers/queueSlice';
 import { Album } from '../../types';
 
@@ -8,7 +8,7 @@ const QueueTable = () => {
   const queue = useAppSelector(selectQueue);
 
   const playAndRemoveFromQueue = (album: Album) => {
-    dispatch(play(album));
+    dispatch(setPlayingAlbum(album));
     removeFromQueue(album);
   };
 

@@ -26,11 +26,11 @@ const albumsSlice = createSlice({
   name: 'albums',
   initialState,
   reducers: {
-    view: (state, action: PayloadAction<Album | null>) => {
+    setViewingAlbum: (state, action: PayloadAction<Album | null>) => {
       const album = action.payload;
       state.viewing = album;
     },
-    play: (state, action: PayloadAction<Album | null>) => {
+    setPlayingAlbum: (state, action: PayloadAction<Album | null>) => {
       const album = action.payload;
       state.playing = album;
     },
@@ -307,22 +307,22 @@ export const playNext = (): ThunkAction<
 
   if (nextAlbumInQueue) { 
     // always prioritize queue
-    dispatch(play(nextAlbumInQueue));
+    dispatch(setPlayingAlbum(nextAlbumInQueue));
     dispatch(queuePop());
 
   } else {
     // no albums are queued
     switch (playMode) {
       case PlayMode.MANUAL: {
-        dispatch(play(null));
+        dispatch(setPlayingAlbum(null));
         break;
       }
       case PlayMode.SEQUENCE: {
-        dispatch(play(getNextAlbumInSequence(albums, playingAlbum)));
+        dispatch(setPlayingAlbum(getNextAlbumInSequence(albums, playingAlbum)));
         break;
       }
       case PlayMode.SHUFFLE: {
-        dispatch(play(getRandomAlbum(albums)));
+        dispatch(setPlayingAlbum(getRandomAlbum(albums)));
         break;
       }
       default:
@@ -331,7 +331,7 @@ export const playNext = (): ThunkAction<
   }
 };
 
-export const { view, play } = albumsSlice.actions;
+export const { setViewingAlbum, setPlayingAlbum } = albumsSlice.actions;
 
 export const selectViewing = (state: RootState) => state.albums.viewing;
 export const selectPlaying = (state: RootState) => state.albums.playing;
@@ -340,6 +340,11 @@ const selectAlbums = (state: RootState) => state.albums.albums;
 export const selectIsPlaying = (state: RootState, album: Album | null) => {
   const playing = selectPlaying(state);
   return album !== null && playing !== null && (album.id === playing.id);
+};
+
+export const selectIsViewing = (state: RootState, album: Album | null) => {
+  const viewing = selectViewing(state);
+  return album !== null && viewing !== null && (album.id === viewing.id);
 };
 
 export const selectCategories = createSelector(

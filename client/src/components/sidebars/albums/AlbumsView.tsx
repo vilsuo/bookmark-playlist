@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
 import AlbumEditDialog from './AlbumEditDialog';
-import { play, selectIsPlaying } from '../../../redux/reducers/albumsSlice';
+import { setPlayingAlbum, selectIsPlaying } from '../../../redux/reducers/albumsSlice';
 
 interface AlbumsViewProps {
   album: Album;
@@ -18,7 +18,7 @@ const AlbumsView = ({ album, close }: AlbumsViewProps) => {
   const dispatch = useAppDispatch();
 
   const addToQueue = () => dispatch(queueAdd(album));
-  const playAlbum = () => dispatch(play(album));
+  const playAlbum = () => dispatch(setPlayingAlbum(album));
 
   const openEdit = () => {
     setIsEditorOpen(!isEditorOpen);

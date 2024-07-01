@@ -1,27 +1,15 @@
-import { Album, AlbumColumn } from '../../types';
+import { AlbumColumn } from '../../types';
 import AlbumRow from './AlbumRow';
 import SortableColumn from '../general/SortableColumn';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectFilters, setSort } from '../../redux/reducers/filterSlice';
 import { selectSortedAndFilteredAlbums } from '../../redux/reducers/albumsSlice';
 
-interface AlbumTableProps {
-  viewingAlbum: Album | null;
-  setViewingAlbum: (album: Album | null) => void;
-}
-
-const AlbumTable = ({
-  viewingAlbum,
-  setViewingAlbum,
-}: AlbumTableProps) => {
+const AlbumTable = () => {
   const filteredAndSortedAlbums = useAppSelector(selectSortedAndFilteredAlbums);
   const filterState = useAppSelector(selectFilters);
 
   const dispatch = useAppDispatch();
-
-  const isViewing = (album: Album) => {
-    return viewingAlbum !== null && viewingAlbum.videoId === album.videoId;
-  };
 
   const handleSortChange = (column: AlbumColumn) => {
     dispatch(setSort(column));
@@ -49,8 +37,6 @@ const AlbumTable = ({
           <AlbumRow
             key={album.videoId}
             album={album}
-            isViewed={isViewing(album)}
-            view={setViewingAlbum}
           />
         )}
       </tbody>

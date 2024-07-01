@@ -3,7 +3,7 @@ import VideoPlayer from './VideoPlayer';
 import VideoDetails from './VideoDetails';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShowVideoDetails } from '../../redux/reducers/settingsSlice';
-import { play, playNext, selectPlaying } from '../../redux/reducers/albumsSlice';
+import { setPlayingAlbum, playNext, selectPlaying } from '../../redux/reducers/albumsSlice';
 
 const formatVideoTitle = (album: Album) => {
   const { artist, title, published } = album;
@@ -27,7 +27,7 @@ const VideoContainer = () => {
       <VideoPlayer
         videoId={playingAlbum.videoId}
         playNext={() => { dispatch(playNext()); }}
-        close={() => { dispatch(play(null)); } }
+        close={() => { dispatch(setPlayingAlbum(null)); } }
       />
 
       { showVideoDetails && <VideoDetails album={playingAlbum} /> }
