@@ -1,5 +1,6 @@
 import { AlbumsState, initialState as initialAlbumsState } from "../src/redux/reducers/albums/albumsSlice";
 import { Filter, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filters/filterSlice";
+import { Notification, NotificationState } from "../src/redux/reducers/notificationSlice";
 import { QueueState } from "../src/redux/reducers/queueSlice";
 
 export const createAlbumsState = (
@@ -18,3 +19,6 @@ export const createFilterState = (
 export const createQueueState = (albums: QueueState["queue"]): QueueState => (
   { queue: albums }
 );
+
+export const createNotificationState = (notifications: Notification[] = [])
+: NotificationState => ({ notifications });

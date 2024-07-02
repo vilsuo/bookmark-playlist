@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { NotificationType } from '../../types';
 import { RootState } from '../store';
 
-type Notification = {
+export type Notification = {
   id: string;
   type: NotificationType;
   title: string;
