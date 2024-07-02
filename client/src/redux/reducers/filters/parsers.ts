@@ -12,8 +12,8 @@ export type ParsedFilter = Omit<Filter, "published" | "addDate"> & {
 };
 
 /**
- * Create a memoized selector for converting filters to a form that allows
- * filtering of albums
+ * Create a memoized selector for converting filters to a form that allows 
+ * albums to be filtered
  */
 export const selectParsedFilters = createSelector(
   selectFilters,

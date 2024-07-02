@@ -5,6 +5,10 @@ import { ParsedAddDateFilterInterval, ParsedFilter, ParsedPublishedFilterInterva
 import { createSelector } from "@reduxjs/toolkit";
 import { selectAlbums } from "./albumsSlice";
 
+/**
+ * Creates a memoized selector for selecting all albums based on the current
+ * filters and sorting orders
+ */
 export const selectSortedAndFilteredAlbums = createSelector(
   selectAlbums,
   selectSorting,
@@ -17,11 +21,11 @@ export const selectSortedAndFilteredAlbums = createSelector(
 );
 
 /**
- * Create a {@link Album} filter function.
+ * Create a album filter function.
  *
- * @param filterState current filter options. The filter {@link FilterState.categories} is
- * always applied. The only other applied filter is specified by {@link FilterState.column}.
- * @returns the filter funtion
+ * @param filters current filter options. The filter categories are always applied. 
+ * The only other applied filter is specified by filter column.
+ * @returns
  */
 const getFilterFn = (filters: ParsedFilter) => (album: Album) => {
   const {
@@ -101,9 +105,9 @@ const filterByAddDate = ({ start, end }: ParsedAddDateFilterInterval, album: Alb
 };
 
 /**
- * Create a {@link Album} sorting funtion. The sorting function will sort
- * the albums by the given property and order, with the following
- * exceptions regarding the sorting column:
+ * Create an album sorting funtion. The sorting function will sort
+ * the albums by the given column and order, with the following
+ * exceptions regarding the column:
  *
  * {@link AlbumColumn.ARTIST}: If two {@link Album.artist} are equal, then
  * the album with greater {@link Album.published} value will ALWAYS be first
@@ -117,9 +121,9 @@ const filterByAddDate = ({ start, end }: ParsedAddDateFilterInterval, album: Alb
  * then the album with earlier {@link Album.artist} value will ALWAYS be first
  * regardless of given {@link Order}.
  *
- * @param column the column to sort by
+ * @param column the album property to sort by
  * @param order the sorting order
- * @returns the sorting function
+ * @returns
  */
 const getSortFn = ({ column, order }: Sort) => (a: Album, b: Album) => {
   // Note: return -1 if album 'a' goes before album 'b'

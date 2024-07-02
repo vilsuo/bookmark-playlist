@@ -8,7 +8,7 @@ export interface SettingsState {
   autoqueue: boolean;
   showVideoDetails: boolean;
   playMode: PlayMode;
-}
+};
 
 export const initialState: SettingsState = {
   autoplay: true,

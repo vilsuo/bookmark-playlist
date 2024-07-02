@@ -101,12 +101,33 @@ export default filtersSlice.reducer;
 
 // SELECTORS
 
+/**
+ * Select sorting options
+ * @param state 
+ * @returns 
+ */
 export const selectSorting = (state: RootState) => state.filters.sorting;
 
+/**
+ * Select raw filtering options. Used in controlled inputs.
+ * @param state 
+ * @returns 
+ */
 export const selectFilters = (state: RootState) => state.filters.filters;
 
+/**
+ * Select filtering categories
+ * @param state 
+ * @returns 
+ */
 export const selectFilterCategories = (state: RootState) => selectFilters(state).categories;
 
+/**
+ * Selector for checking if a given category is included in the category filter
+ * @param state 
+ * @param category 
+ * @returns 
+ */
 export const selectIsCategoryFiltered = (state: RootState, category: string) => {
   const categories = selectFilterCategories(state);
 
@@ -115,11 +136,24 @@ export const selectIsCategoryFiltered = (state: RootState, category: string) => 
     : true;
 };
 
+/**
+ * Selector for checking if all categories option is toggled on in the filter
+ * 
+ * @remarks Does not check the case where all categories are toggled on separately
+ * 
+ * @param state 
+ * @returns 
+ */
 export const selectIsAllCategoriesFiltered = (state: RootState) =>
   selectFilterCategories(state) === CATEGORY_ALL;
 
 // THUNKS
 
+/**
+ * Thunk for toggling a single filter category on/off
+ * @param category 
+ * @returns 
+ */
 export const toggleFilterCategorySingle = (category: string): ThunkAction<
   void,
   RootState,

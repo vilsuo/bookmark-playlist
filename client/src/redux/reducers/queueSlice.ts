@@ -58,14 +58,30 @@ export default queueSlice.reducer;
 
 // SELECTORS
 
+/**
+ * Select all queued albums
+ * @param state 
+ * @returns 
+ */
 export const selectQueue = (state: RootState) => state.queue.queue;
 
+/**
+ * Select the first album in a queue if it exists
+ * @param state 
+ * @returns 
+ */
 export const selectQueueFirst = (state: RootState) => {
   const queue = selectQueue(state);
   return (queue.length > 0) ? queue[0]: null;
 };
 
+/**
+ * Creates a memoized selector for checking if a certain album is in queue
+ */
 export const selectIsQueued = createSelector(
-  [selectQueue, (_state: RootState, id: Album["id"]) => id],
+  [
+    selectQueue,
+    (_state, id: Album["id"]) => id,
+  ],
   (queue, id) => queue.find((album) => album.id === id) !== undefined,
 );

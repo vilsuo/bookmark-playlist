@@ -49,7 +49,7 @@ export const selectCanPlayNextAlbum = createSelector(
  * 
  * Queued albums are always prioritized. Othervise, the next album
  * is choosen from the filtered and sorted albums list based on current
- * {@link PlayMode}.
+ * {@link PlayMode} and the playing album.
  * 
  * @remarks
  * When the play mode is {@link PlayMode.SEQUENCE}, 
@@ -98,19 +98,23 @@ export const playNext = (): ThunkAction<
  * Select the next album based on the current album
  * 
  * @param albums array to choose from
- * @param currentAlbum the given album
- * @returns null if album list is empty or the album is the last album;
- * the first album in the list if album is not given or not found in the list;
- * else the album after the given album in the array
+ * @param album the given album
+ * @returns
+ * - null if {@link albums} is empty or the {@link album} is the last entity
+ *   in {@link albums}.
+ * - the first entity in the {@link albums} if {@link album} is not given or
+ *   not found in the {@link albums}
+ * - the next entity in {@link albums} after the given {@link album} in the
+ *   {@link albums} if the {@link album} is found in the {@link albums}
  */
-const getNextAlbumInSequence = (albums: Album[], currentAlbum: Album | null) => {
+const getNextAlbumInSequence = (albums: Album[], album: Album | null) => {
   // no albums and/or match the filter
   if (!albums.length) { return null; }
 
   // no album selected, play the first
-  if (!currentAlbum) { return albums[0]; }
+  if (!album) { return albums[0]; }
 
-  const playingAlbumIdx = albums.findIndex((album) => album.id === currentAlbum.id);
+  const playingAlbumIdx = albums.findIndex((a) => a.id === album.id);
   if (playingAlbumIdx === -1) {
     // album not found, user likely changed filters...
     return albums[0];
@@ -128,8 +132,8 @@ const getNextAlbumInSequence = (albums: Album[], currentAlbum: Album | null) => 
 /**
  * Select a random album
  * 
- * @param albums array to choose from
- * @returns a random album
+ * @param albums
+ * @returns a random entity from {@link albums} if {@link albums} is non-empty
  */
 const getRandomAlbum = (albums: Album[]) => albums.length
   ? albums[Math.floor(albums.length * Math.random())]

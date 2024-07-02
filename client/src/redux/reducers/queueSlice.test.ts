@@ -5,8 +5,8 @@ import { Album } from "../../types";
 import { RootState } from "../store";
 import { createQueueState } from "../../../test/creators";
 
-const createQueueRootState = (queued: Album[]): RootState => (
-  { queue: createQueueState(queued) } as RootState
+const createQueueRootState = (queue: Album[]): RootState => (
+  { queue: createQueueState(queue) } as RootState
 );
 
 const getAlbumPosition = (state: QueueState, id: Album["id"]) =>

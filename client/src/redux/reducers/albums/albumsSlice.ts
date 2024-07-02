@@ -81,31 +81,68 @@ export default albumsSlice.reducer;
 
 // SELECTORS
 
+/**
+ * Select the current viewed album
+ * @param state 
+ * @returns 
+ */
 export const selectViewing = (state: RootState) => state.albums.viewing;
 
+/**
+ * Select the current playing album
+ * @param state 
+ * @returns 
+ */
 export const selectPlaying = (state: RootState) => state.albums.playing;
 
+/**
+ * Select all albums
+ * @param state 
+ * @returns 
+ */
 export const selectAlbums = (state: RootState) => state.albums.albums;
 
+/**
+ * Selector for checking if a certain album is playing
+ * @param state 
+ * @param album 
+ * @returns 
+ */
 export const selectIsPlaying = (state: RootState, album: Album | null) => {
   const playing = selectPlaying(state);
   return album !== null && playing !== null && (album.id === playing.id);
 };
 
+/**
+ * Selector for checking if a certain album is viewed
+ * @param state
+ * @param album 
+ * @returns 
+ */
 export const selectIsViewing = (state: RootState, album: Album | null) => {
   const viewing = selectViewing(state);
   return album !== null && viewing !== null && (album.id === viewing.id);
 };
 
+/**
+ * Creates a memoized selector selecting all album categories
+ */
 export const selectAlbumCategories = createSelector(
-  selectAlbums,
+  [selectAlbums],
   (albums) => Array.from(new Set(albums.map(album => album.category)))
     .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
 );
 
-export const selectIsAloneInCategory = (category: Album["category"]) => createSelector(
-  selectAlbums,
-  (albums) => albums.reduce(
+/**
+ * Creates a memoized selector checking if there is only is single
+ * album in a given category
+ */
+export const selectIsAloneInCategory = createSelector(
+  [
+    selectAlbums,
+    (_state, category: string) => category,
+  ],
+  (albums, category) => albums.reduce(
     (prev, curr) => prev + (curr.category === category ? 1 : 0),
     0,
   ) === 1,
@@ -238,7 +275,7 @@ export const updateAlbum = createAsyncThunk<
     const { id, category: oldCategory, addDate } = oldAlbum;
 
     const isQueued = selectIsQueued(state, id);
-    const isAloneInCategory = selectIsAloneInCategory(oldCategory)(state);
+    const isAloneInCategory = selectIsAloneInCategory(state, oldCategory);
 
     try {
       const updatedAlbum = await albumService.update(id, {
@@ -285,7 +322,7 @@ export const deleteAlbum = createAsyncThunk<
     const { id, category } = album;
 
     const isQueued = selectIsQueued(state, id);
-    const isAloneInCategory = selectIsAloneInCategory(category)(state);
+    const isAloneInCategory = selectIsAloneInCategory(state, category);
 
     try {
       const removedAlbumId = await albumService.remove(id);

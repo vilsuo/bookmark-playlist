@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
-import reducer, { Filter, FilterState, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilteringCategoryAll } from "./filterSlice";
+import reducer, { FilterCategories, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilteringCategoryAll } from "./filterSlice";
 import { AlbumColumn, Order } from "../../../types";
 import { CATEGORY_ALL } from "../../../constants";
 import { categories } from "../../../../test/constants";
@@ -9,11 +9,11 @@ import { createFilterState } from "../../../../test/creators";
 const createSortingFilterState = (column: AlbumColumn, order: Order) =>
   createFilterState({ column, order });
 
-const createCategoryFilterState = (categories: FilterState["filters"]["categories"]) =>
+const createCategoryFilterState = (categories: FilterCategories) =>
   createFilterState({}, { categories });
 
 const createCategoryFilterRootState = (
-  filterCategories: Filter["categories"],
+  filterCategories: FilterCategories,
 ): RootState => (
   { filters: createCategoryFilterState(filterCategories) } as RootState
 );
