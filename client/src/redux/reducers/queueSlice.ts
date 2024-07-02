@@ -1,6 +1,7 @@
 import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import { Album } from '../../types';
 import { RootState } from '../store';
+import { AlbumUpdatePayload } from './albums/albumsSlice';
 
 export interface QueueState {
   queue: Album[];
@@ -41,12 +42,9 @@ const queueSlice = createSlice({
       const [, ...others] = state.queue;
       state.queue = others;
     },
-    queueUpdate: (state, action: PayloadAction<Album>) => {
-      const updatedAlbum = action.payload;
-
-      state.queue = state.queue.map(
-        (album) => (album.id === updatedAlbum.id) ? updatedAlbum : album,
-      );
+    queueUpdate: (state, action: PayloadAction<AlbumUpdatePayload>) => {
+      const { id, album } = action.payload;
+      state.queue = state.queue.map((a) => (a.id === id) ? album : a);
     },
   },
 });

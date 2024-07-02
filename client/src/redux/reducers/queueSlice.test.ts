@@ -129,7 +129,9 @@ describe("Queue slice", () => {
         const { id, addDate } = second;
         const newAlbum: Album = { id, addDate, ...newAlbumValues };
 
-        const currentState = reducer(previousState, queueUpdate(newAlbum));
+        const currentState = reducer(previousState, queueUpdate({
+          id, album: newAlbum,
+        }));
 
         // updated album values are changed
         expect(currentState.queue[1]).toStrictEqual(newAlbum);

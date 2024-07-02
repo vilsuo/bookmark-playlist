@@ -19,7 +19,6 @@ export const update = async (id: Album["id"], values: AlbumUpdate)
   return data;
 };
 
-export const remove = async (id: Album['id']): Promise<Album['id']> => {
+export const remove = async (id: Album['id']): Promise<void> => {
   await axios.delete(`${BASE_URL}/${id}`);
-  return id;
 };

@@ -49,26 +49,21 @@ const albumsSlice = createSlice({
         state.albums = [ ...state.albums, newAlbum ];
       })
       .addCase(updateAlbum.fulfilled, (state, action) => {
-        const updatedAlbum = action.payload;
-        state.albums = state.albums.map((album) => 
-          (album.id === updatedAlbum.id) ? updatedAlbum : album
-        );
+        const { id, album } = action.payload;
+        state.albums = state.albums.map((a) => (a.id === id) ? album : a);
+
         // update viewing & playing
         const { viewing, playing } = state;
-        if (viewing && viewing.id === updatedAlbum.id) {
-          state.viewing = updatedAlbum;
-        }
-        if (playing && playing.id === updatedAlbum.id) {
-          state.playing = updatedAlbum;
-        }
+        if (viewing && viewing.id === id) { state.viewing = album; }
+        if (playing && playing.id === id) { state.playing = album; }
       })
       .addCase(deleteAlbum.fulfilled, (state, action) => {
-        const removedAlbumId = action.payload;
-        state.albums = state.albums.filter((album) => album.id !== removedAlbumId);
+        const id = action.payload;
+        state.albums = state.albums.filter((album) => album.id !== id);
 
-        // update viewing, keep the current playing
+        // update viewing, keep the removed album playing if it was
         const { viewing } = state;
-        if (viewing && viewing.id === removedAlbumId) {
+        if (viewing && viewing.id === id) {
           state.viewing = null;
         }
       })
@@ -264,18 +259,24 @@ export const createAlbum = createAsyncThunk<
 );
 
 // UPDATE
+
+export type AlbumUpdatePayload = {
+  id: Album["id"];  // "old" id
+  album: Album;     // new values
+};
+
 export const updateAlbum = createAsyncThunk<
-  Album,
+  AlbumUpdatePayload,
   { oldAlbum: Album, newValues: AlbumCreation },
   AppAsyncThunkConfig
 >(
   'albums/update',
   async ({ oldAlbum, newValues }, { getState, dispatch, rejectWithValue }) => {
     const state = getState();
-    const { id, category: oldCategory, addDate } = oldAlbum;
+    const { id, category, addDate } = oldAlbum;
 
     const isQueued = selectIsQueued(state, id);
-    const isAloneInCategory = selectIsAloneInCategory(state, oldCategory);
+    const isAloneInCategory = selectIsAloneInCategory(state, category);
 
     try {
       const updatedAlbum = await albumService.update(id, {
@@ -283,18 +284,20 @@ export const updateAlbum = createAsyncThunk<
         addDate, // keep the add date
       });
 
+      const updatePayload = { id, album: updatedAlbum };
+
       dispatch(createNotification({
         type: NotificationType.SUCCESS,
         title: 'Album edited successfully',
       }));
 
-      if (isQueued) { dispatch(queueUpdate(updatedAlbum)); }
+      if (isQueued) { dispatch(queueUpdate(updatePayload)); }
 
-      if (isAloneInCategory && updatedAlbum.category !== oldCategory) {
-        dispatch(removeFilteringCategory(oldCategory));
+      if (isAloneInCategory && updatedAlbum.category !== category) {
+        dispatch(removeFilteringCategory(category));
       }
 
-      return updatedAlbum;
+      return updatePayload;
 
     } catch (error) {
       const message = getErrorMessage(error);
@@ -325,20 +328,20 @@ export const deleteAlbum = createAsyncThunk<
     const isAloneInCategory = selectIsAloneInCategory(state, category);
 
     try {
-      const removedAlbumId = await albumService.remove(id);
+      await albumService.remove(id);
 
       dispatch(createNotification({
         type: NotificationType.SUCCESS,
         title: 'Album removed successfully',
       }));
 
-      if (isQueued) { dispatch(queueRemove(removedAlbumId)); }
+      if (isQueued) { dispatch(queueRemove(id)); }
 
       if (isAloneInCategory) {
         dispatch(removeFilteringCategory(category));
       }
 
-      return removedAlbumId;
+      return id;
 
     } catch (error) {
       const message = getErrorMessage(error);
