@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useAppDispatch } from '../../../redux/hooks';
-import { createFromBookmarks } from '../../../redux/reducers/albumsSlice';
+import { createFromBookmarks } from '../../../redux/reducers/albums/albumsSlice';
 
 const BookmarkConverter = () => {
   const dispatch = useAppDispatch();

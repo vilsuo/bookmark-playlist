@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { queueAdd } from '../../../redux/reducers/queueSlice';
 import { Album } from '../../../types';
 import AlbumEditDialog from './AlbumEditDialog';
-import { setPlayingAlbum, selectIsPlaying } from '../../../redux/reducers/albumsSlice';
+import { setPlayingAlbum, selectIsPlaying } from '../../../redux/reducers/albums/albumsSlice';
 
 interface AlbumsViewProps {
   album: Album;

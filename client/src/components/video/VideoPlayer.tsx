@@ -3,11 +3,11 @@ import { selectAutoplay, selectAutoqueue } from '../../redux/reducers/settingsSl
 import YouTube, { YouTubeProps } from 'react-youtube';
 import VideoControls from './VideoControls';
 import { useRef, useState } from 'react';
-import { selectCanPlayNextAlbum } from '../../redux/reducers/albumsSlice';
 import { BASE_PLAYER_VARS } from '../../constants';
 import { createNotification } from '../../redux/reducers/notificationSlice';
 import { NotificationType } from '../../types';
 import { createYoutubeErrorMessage } from '../../util/errorMessages';
+import { selectCanPlayNextAlbum } from '../../redux/reducers/albums/playing';
 
 enum PlayerState {
   UNSTARTED = -1,

@@ -3,7 +3,7 @@ import AlbumFilter from './filters/AlbumFilter';
 import AlbumTable from './table/AlbumTable';
 import AlbumsView from './AlbumsView';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { selectViewing, setViewingAlbum } from '../../../redux/reducers/albumsSlice';
+import { selectViewing, setViewingAlbum } from '../../../redux/reducers/albums/albumsSlice';
 import AlbumAddDialog from './AlbumAddDialog';
 
 interface AlbumsBarProps {

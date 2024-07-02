@@ -2,7 +2,7 @@ import DragDialog from '../../general/DragDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import { AlbumCreation } from '../../../types';
 import AlbumForm from './AlbumForm';
-import { createAlbum } from '../../../redux/reducers/albumsSlice';
+import { createAlbum } from '../../../redux/reducers/albums/albumsSlice';
 import { CATEGORY_OTHER } from '../../../constants';
 
 interface AlbumAddDialogProps {

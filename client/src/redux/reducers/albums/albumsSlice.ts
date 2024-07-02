@@ -1,14 +1,12 @@
-import { PayloadAction, ThunkAction, UnknownAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import { Album, AlbumCreation, NotificationType, PlayMode } from '../../types';
-import type { AppAsyncThunkConfig, RootState } from '../store';
-import * as albumService from '../../util/albumService';
-import * as converterService from '../../util/converterService';
-import { getErrorMessage } from '../../util/errorMessages';
-import { getFilterFn, getNextAlbumInSequence, getRandomAlbum, getSortFn } from '../../util/albumHelpers';
-import { queuePop, queueRemove, queueUpdate, selectIsQueued, selectQueueFirst } from './queueSlice';
-import { selectPlayMode } from './settingsSlice';
-import { removeFilteringCategory, type selectSorting as SelectSorting, type selectFilters as SelectFilters } from './filterSlice';
-import { createNotification } from './notificationSlice';
+import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
+import { Album, AlbumCreation, NotificationType } from '../../../types';
+import type { AppAsyncThunkConfig, RootState } from '../../store';
+import * as albumService from '../../../util/albumService';
+import * as converterService from '../../../util/converterService';
+import { getErrorMessage } from '../../../util/errorMessages';
+import { queueRemove, queueUpdate, selectIsQueued } from '../queueSlice';
+import { removeFilteringCategory } from '../filters/filterSlice';
+import { createNotification } from '../notificationSlice';
 
 export interface AlbumsState {
   viewing: Album | null;
@@ -36,6 +34,7 @@ const albumsSlice = createSlice({
     },
   },
   extraReducers: builder => {
+    // async thunks
     builder
       .addCase(fetchAlbums.fulfilled, (state, action) => {
         const albums = action.payload;
@@ -54,7 +53,6 @@ const albumsSlice = createSlice({
         state.albums = state.albums.map((album) => 
           (album.id === updatedAlbum.id) ? updatedAlbum : album
         );
-
         // update viewing & playing
         const { viewing, playing } = state;
         if (viewing && viewing.id === updatedAlbum.id) {
@@ -76,6 +74,42 @@ const albumsSlice = createSlice({
       })
   },
 });
+
+export const { setViewingAlbum, setPlayingAlbum } = albumsSlice.actions;
+
+export default albumsSlice.reducer;
+
+// SELECTORS
+
+export const selectViewing = (state: RootState) => state.albums.viewing;
+
+export const selectPlaying = (state: RootState) => state.albums.playing;
+
+export const selectAlbums = (state: RootState) => state.albums.albums;
+
+export const selectIsPlaying = (state: RootState, album: Album | null) => {
+  const playing = selectPlaying(state);
+  return album !== null && playing !== null && (album.id === playing.id);
+};
+
+export const selectIsViewing = (state: RootState, album: Album | null) => {
+  const viewing = selectViewing(state);
+  return album !== null && viewing !== null && (album.id === viewing.id);
+};
+
+export const selectAlbumCategories = createSelector(
+  selectAlbums,
+  (albums) => Array.from(new Set(albums.map(album => album.category)))
+    .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+);
+
+export const selectIsAloneInCategory = (category: Album["category"]) => createSelector(
+  selectAlbums,
+  (albums) => albums.reduce(
+    (prev, curr) => prev + (curr.category === category ? 1 : 0),
+    0,
+  ) === 1,
+);
 
 /*
 Thunk Use Cases
@@ -100,6 +134,8 @@ fields directly, but either approach is fine.
 Since the state is synchronously updated as soon as the reducers process an action, 
 you can call getState after a dispatch to get the updated state.
 */
+
+// ASYNC THUNKS
 
 // GET ALBUMS
 export const fetchAlbums = createAsyncThunk<
@@ -280,136 +316,3 @@ export const deleteAlbum = createAsyncThunk<
     }
   }
 );
-
-/**
- * Play next album.
- * 
- * Queued albums are always prioritized. Othervise, the next album
- * is choosen from the filtered and sorted albums list based on current
- * {@link PlayMode}.
- * 
- * @remarks
- * When the play mode is {@link PlayMode.SEQUENCE}, 
- * sequence will start over from the final queued album
- */
-export const playNext = (): ThunkAction<
-  void,         // Return type of the thunk function
-  RootState,    // state type used by getState
-  unknown,      // any "extra argument" injected into the thunk
-  UnknownAction // known types of actions that can be dispatched
-> => (dispatch, getState) => {
-
-  const state = getState();
-  const albums = selectSortedAndFilteredAlbums(state);
-  const nextAlbumInQueue = selectQueueFirst(state);
-  const playMode = selectPlayMode(state);
-  const playingAlbum = selectPlaying(state);
-
-  if (nextAlbumInQueue) { 
-    // always prioritize queue
-    dispatch(setPlayingAlbum(nextAlbumInQueue));
-    dispatch(queuePop());
-
-  } else {
-    // no albums are queued
-    switch (playMode) {
-      case PlayMode.MANUAL: {
-        dispatch(setPlayingAlbum(null));
-        break;
-      }
-      case PlayMode.SEQUENCE: {
-        dispatch(setPlayingAlbum(getNextAlbumInSequence(albums, playingAlbum)));
-        break;
-      }
-      case PlayMode.SHUFFLE: {
-        dispatch(setPlayingAlbum(getRandomAlbum(albums)));
-        break;
-      }
-      default:
-        playMode satisfies never;
-    }
-  }
-};
-
-export const { setViewingAlbum, setPlayingAlbum } = albumsSlice.actions;
-
-export const selectViewing = (state: RootState) => state.albums.viewing;
-
-export const selectPlaying = (state: RootState) => state.albums.playing;
-
-const selectAlbums = (state: RootState) => state.albums.albums;
-
-export const selectIsPlaying = (state: RootState, album: Album | null) => {
-  const playing = selectPlaying(state);
-  return album !== null && playing !== null && (album.id === playing.id);
-};
-
-export const selectIsViewing = (state: RootState, album: Album | null) => {
-  const viewing = selectViewing(state);
-  return album !== null && viewing !== null && (album.id === viewing.id);
-};
-
-export const selectCategories = createSelector(
-  selectAlbums,
-  (albums) => Array.from(new Set(albums.map(album => album.category)))
-    .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
-);
-
-export const selectIsAloneInCategory = (category: Album["category"]) => createSelector(
-  selectAlbums,
-  (albums) => albums.reduce(
-    (prev, curr) => prev + (curr.category === category ? 1 : 0),
-    0,
-  ) === 1,
-);
-
-// avoid circular dependency, tests fail otherwise
-const selectSorting: typeof SelectSorting = (state: RootState) => state.filters.sorting;
-const selectFilters: typeof SelectFilters = (state: RootState) => state.filters.filters;
-
-export const selectSortedAndFilteredAlbums = createSelector(
-  selectAlbums,
-  selectSorting,
-  selectFilters,
-  (albums, sorting, filters) => {
-    return albums
-      .filter(getFilterFn(filters))
-      .toSorted(getSortFn(sorting));
-  },
-);
-
-export const selectCanPlayNextAlbum = createSelector(
-  selectSortedAndFilteredAlbums,
-  selectQueueFirst,
-  selectPlayMode,
-  selectPlaying,
-  (albums, nextAlbumInQueue, playMode, playingAlbum) => {
-    // can play next from queue
-    if (nextAlbumInQueue) { return true; }
-
-    switch (playMode) {
-      case PlayMode.MANUAL: {
-        // can only play from queue
-        return false;
-      }
-      case PlayMode.SEQUENCE: {
-        // no sequence to play
-        if (albums.length === 0) { return false; }
-
-        // playing last album in sequence?
-        return playingAlbum
-          ? (albums[albums.length - 1].id !== playingAlbum.id)
-          : false;
-      }
-      case PlayMode.SHUFFLE: {
-        // only if there are albums
-        return (albums.length > 0);
-      }
-      default:
-        playMode satisfies never;
-        return false;
-    }
-  },
-);
-
-export default albumsSlice.reducer;

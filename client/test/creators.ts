@@ -1,5 +1,5 @@
-import { AlbumsState, initialState as initialAlbumsState } from "../src/redux/reducers/albumsSlice";
-import { Filter, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filterSlice";
+import { AlbumsState, initialState as initialAlbumsState } from "../src/redux/reducers/albums/albumsSlice";
+import { Filter, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filters/filterSlice";
 import { QueueState } from "../src/redux/reducers/queueSlice";
 
 export const createAlbumsState = (

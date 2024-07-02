@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { selectIsPlaying, selectIsViewing, setViewingAlbum } from '../../../../redux/reducers/albumsSlice';
+import { selectIsPlaying, selectIsViewing, setViewingAlbum } from '../../../../redux/reducers/albums/albumsSlice';
 import { Album } from '../../../../types';
 import { toDateString } from '../../../../util/dateConverter';
 

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setPlayingAlbum } from '../../redux/reducers/albumsSlice';
+import { setPlayingAlbum } from '../../redux/reducers/albums/albumsSlice';
 import { queuePrepend, queueRemove, selectQueue } from '../../redux/reducers/queueSlice';
 import { Album } from '../../types';
 

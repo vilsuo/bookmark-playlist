@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../../../../redux/hooks";
-import { selectFilterCategories, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filterSlice";
+import { selectFilterCategories, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filters/filterSlice";
 
 interface CategoryDisplayProps {
   showList: boolean;

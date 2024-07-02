@@ -36,7 +36,13 @@ const notificationSlice = createSlice({
 
 export const { addNotification, removeNotification } = notificationSlice.actions;
 
+export default notificationSlice.reducer;
+
+// SELECTORS
+
 export const selectNotifications = (state: RootState) => state.notifications.notifications;
+
+// THUNKS 
 
 // must be a thunk: contains a side-effect (generating random value)
 export const createNotification = (values: Omit<Notification, 'id'>): ThunkAction<
@@ -51,5 +57,3 @@ export const createNotification = (values: Omit<Notification, 'id'>): ThunkActio
 
   dispatch(addNotification(notification));
 };
-
-export default notificationSlice.reducer;

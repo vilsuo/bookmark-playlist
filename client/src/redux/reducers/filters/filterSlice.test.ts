@@ -1,10 +1,10 @@
 import { describe, expect, test } from "@jest/globals";
 import reducer, { Filter, FilterState, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilteringCategoryAll } from "./filterSlice";
-import { AlbumColumn, Order } from "../../types";
-import { CATEGORY_ALL } from "../../constants";
-import { categories } from "../../../test/constants";
-import { RootState } from "../store";
-import { createFilterState } from "../../../test/creators";
+import { AlbumColumn, Order } from "../../../types";
+import { CATEGORY_ALL } from "../../../constants";
+import { categories } from "../../../../test/constants";
+import { RootState } from "../../store";
+import { createFilterState } from "../../../../test/creators";
 
 const createSortingFilterState = (column: AlbumColumn, order: Order) =>
   createFilterState({ column, order });
@@ -46,7 +46,7 @@ describe("Filter slice", () => {
       });
     });
 
-    describe("toggleFilterCategoryAll", () => {
+    describe("toggleFilteringCategoryAll", () => {
       test("should select none when all are selected", () => {
         const previousState = createCategoryFilterState(CATEGORY_ALL);
         const currentState = reducer(previousState, toggleFilteringCategoryAll());

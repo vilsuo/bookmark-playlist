@@ -1,11 +1,11 @@
 import { combineReducers, configureStore, isAnyOf } from '@reduxjs/toolkit';
 
 import settingsReducer, { setPlayMode, toggleAutoplay, toggleAutoqueue, toggleShowVideoDetails } from './reducers/settingsSlice.ts';
-import filterReducer from './reducers/filterSlice.ts';
+import filterReducer from './reducers/filters/filterSlice.ts';
 
 import { loadSettingsState, saveSettingsState } from './localStorage.ts';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware.ts';
-import albumsSlice from './reducers/albumsSlice.ts';
+import albumsSlice from './reducers/albums/albumsSlice.ts';
 import queueSlice from './reducers/queueSlice.ts';
 import { initialState as initialSettingsState } from './reducers/settingsSlice.ts';
 import notificationSlice from './reducers/notificationSlice.ts';

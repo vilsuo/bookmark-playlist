@@ -40,9 +40,15 @@ const settingsSlice = createSlice({
 
 export const { toggleAutoplay, toggleAutoqueue, toggleShowVideoDetails, setPlayMode } = settingsSlice.actions;
 
+export default settingsSlice.reducer;
+
+// SELECTORS
+
 export const selectAutoplay = (state: RootState) => state.settings.autoplay;
+
 export const selectAutoqueue = (state: RootState) => state.settings.autoqueue;
+
 export const selectShowVideoDetails = (state: RootState) => state.settings.showVideoDetails;
+
 export const selectPlayMode = (state: RootState) => state.settings.playMode;
 
-export default settingsSlice.reducer;

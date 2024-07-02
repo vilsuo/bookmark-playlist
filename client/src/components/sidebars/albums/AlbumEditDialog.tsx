@@ -2,7 +2,7 @@ import { Album, AlbumCreation } from '../../../types';
 import DragDialog from '../../general/DragDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import AlbumForm from './AlbumForm';
-import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albumsSlice';
+import { deleteAlbum, updateAlbum } from '../../../redux/reducers/albums/albumsSlice';
 import React, { useState } from 'react';
 import ConfirmDialog from '../../general/ConfirmDialog';
 

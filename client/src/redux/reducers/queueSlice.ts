@@ -53,6 +53,11 @@ const queueSlice = createSlice({
 
 export const { queueAdd, queueRemove, queuePrepend, queuePop, queueUpdate } = queueSlice.actions;
 
+
+export default queueSlice.reducer;
+
+// SELECTORS
+
 export const selectQueue = (state: RootState) => state.queue.queue;
 
 export const selectQueueFirst = (state: RootState) => {
@@ -64,5 +69,3 @@ export const selectIsQueued = createSelector(
   [selectQueue, (_state: RootState, id: Album["id"]) => id],
   (queue, id) => queue.find((album) => album.id === id) !== undefined,
 );
-
-export default queueSlice.reducer;

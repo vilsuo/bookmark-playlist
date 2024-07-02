@@ -1,10 +1,11 @@
 import { describe, expect, test } from "@jest/globals";
-import { AlbumsState, selectCategories, selectIsAloneInCategory, selectSortedAndFilteredAlbums } from "./albumsSlice";
-import { Album } from "../../types";
-import { RootState } from "../store";
-import { albums, categories } from "../../../test/constants";
-import { createAlbumsState, createFilterState } from "../../../test/creators";
-import { Filter, Sort } from "./filterSlice";
+import { AlbumsState, selectAlbumCategories, selectIsAloneInCategory } from "./albumsSlice";
+import { Album } from "../../../types";
+import { RootState } from "../../store";
+import { albums, categories } from "../../../../test/constants";
+import { createAlbumsState, createFilterState } from "../../../../test/creators";
+import { Filter, Sort } from "../filters/filterSlice";
+import { selectSortedAndFilteredAlbums } from "./filterSort";
 
 const createAlbumWithCategory = (album: Album, category: string): Album => ({
   ...album, category,
@@ -36,10 +37,10 @@ describe("Albums slice", () => {
     const sameSecond = createAlbumWithCategory(albums[1], targetCategory);
     const other = createAlbumWithCategory(albums[2], otherCategory);
 
-    describe("selectCategories", () => {
+    describe("selectAlbumCategories", () => {
       test("should contain exactly one of each category", () => {
         const previousState = createAlbumsRootState([sameFirst, sameSecond, other]);
-        const result = selectCategories(previousState);
+        const result = selectAlbumCategories(previousState);
 
         expect(result).toHaveLength(2);
         expect(result).toContain(sameFirst.category);

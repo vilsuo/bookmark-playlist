@@ -1,7 +1,7 @@
 import { CATEGORY_ALL } from "../../../../../constants";
 import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
-import { selectCategories } from "../../../../../redux/reducers/albumsSlice";
-import { selectIsCategoryFiltered, toggleFilterCategorySingle, toggleFilteringCategoryAll, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filterSlice";
+import { selectAlbumCategories } from "../../../../../redux/reducers/albums/albumsSlice";
+import { selectIsCategoryFiltered, toggleFilterCategorySingle, toggleFilteringCategoryAll, selectIsAllCategoriesFiltered } from "../../../../../redux/reducers/filters/filterSlice";
 
 interface CategoryInputAllProps {
   isAllSelected: boolean;
@@ -53,14 +53,14 @@ const CategoryInputSingle = ({ category, isAllSelected }: CategoryInputSinleProp
 };
 
 const CategoryInputs = () => {
-  const allCategories = useAppSelector(selectCategories);
+  const albumCategories = useAppSelector(selectAlbumCategories);
   const isAllCategoriesFiltered = useAppSelector(selectIsAllCategoriesFiltered);
 
   return (
     <div className="category-inputs">
       <CategoryInputAll isAllSelected={isAllCategoriesFiltered} />
 
-      { allCategories.map(category => 
+      { albumCategories.map(category => 
         <CategoryInputSingle key={category}
           category={category}
           isAllSelected={isAllCategoriesFiltered}

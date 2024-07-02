@@ -1,8 +1,8 @@
 import { PayloadAction, ThunkAction, UnknownAction, createSlice } from '@reduxjs/toolkit';
-import { AlbumColumn, Interval, Order } from '../../types';
-import { RootState } from '../store';
-import { CATEGORY_ALL } from '../../constants';
-import { selectCategories } from './albumsSlice';
+import { AlbumColumn, Interval, Order } from '../../../types';
+import { RootState } from '../../store';
+import { CATEGORY_ALL } from '../../../constants';
+import { selectAlbumCategories } from '../albums/albumsSlice';
 
 export type Sort = {
   column: AlbumColumn;
@@ -10,15 +10,14 @@ export type Sort = {
 };
 
 export type FilterInterval = Interval<string>;
+export type FilterCategories = string[] | typeof CATEGORY_ALL;
 
 export type Filter = {
   column: AlbumColumn;
-
   text: string;
   published: FilterInterval;
   addDate: FilterInterval;
-
-  categories: string[] | typeof CATEGORY_ALL;
+  categories: FilterCategories;
 };
 
 export interface FilterState {
@@ -33,13 +32,11 @@ export const initialState: FilterState = {
   },
   filters: {
     column: AlbumColumn.ARTIST,
-
     text: "",
     published: { start: "", end: "" },
     addDate: { start: "", end: "" },
-
     categories: CATEGORY_ALL,
-  }
+  },
 };
 
 const filtersSlice = createSlice({
@@ -74,7 +71,7 @@ const filtersSlice = createSlice({
       state.filters.published = initialState.filters.published;
       state.filters.addDate = initialState.filters.addDate;
     },
-    setFilteringCategories: (state, action: PayloadAction<Filter["categories"]>) => {
+    setFilteringCategories: (state, action: PayloadAction<FilterCategories>) => {
       const categories = action.payload;
       state.filters.categories = categories;
     },
@@ -95,15 +92,20 @@ const filtersSlice = createSlice({
 });
 
 export const {
-  setFilteringColumn, setSort, setFilteringText, setFilteringPublished, setFilteringAddDate, resetFilteringFields,
-  setFilteringCategories, toggleFilteringCategoryAll, removeFilteringCategory,
+  setFilteringColumn, setSort, setFilteringText, setFilteringPublished, 
+  setFilteringAddDate, resetFilteringFields, setFilteringCategories, 
+  toggleFilteringCategoryAll, removeFilteringCategory,
 } = filtersSlice.actions;
+
+export default filtersSlice.reducer;
+
+// SELECTORS
 
 export const selectSorting = (state: RootState) => state.filters.sorting;
 
 export const selectFilters = (state: RootState) => state.filters.filters;
 
-export const selectFilterCategories = (state: RootState) => state.filters.filters.categories;
+export const selectFilterCategories = (state: RootState) => selectFilters(state).categories;
 
 export const selectIsCategoryFiltered = (state: RootState, category: string) => {
   const categories = selectFilterCategories(state);
@@ -116,6 +118,8 @@ export const selectIsCategoryFiltered = (state: RootState, category: string) => 
 export const selectIsAllCategoriesFiltered = (state: RootState) =>
   selectFilterCategories(state) === CATEGORY_ALL;
 
+// THUNKS
+
 export const toggleFilterCategorySingle = (category: string): ThunkAction<
   void,
   RootState,
@@ -124,13 +128,13 @@ export const toggleFilterCategorySingle = (category: string): ThunkAction<
 > => (dispatch, getState) => {
 
   const rootState = getState();
-  const allCategories = selectCategories(rootState);
+  const albumCategories = selectAlbumCategories(rootState);
   const filterCategories = selectFilterCategories(rootState);
   const isFiltered = selectIsCategoryFiltered(rootState, category);
 
   if (filterCategories === CATEGORY_ALL) {
     // all categories was selected previously, so set all categories except one
-    dispatch(setFilteringCategories(allCategories.filter(c => c !== category)));
+    dispatch(setFilteringCategories(albumCategories.filter(c => c !== category)));
 
   } else {
     if (isFiltered) {
@@ -143,5 +147,3 @@ export const toggleFilterCategorySingle = (category: string): ThunkAction<
     }
   }
 };
-
-export default filtersSlice.reducer;

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
-import { resetFilteringFields, selectFilters, setFilteringColumn } from "../../../../../redux/reducers/filterSlice";
+import { resetFilteringFields, selectFilters, setFilteringColumn } from "../../../../../redux/reducers/filters/filterSlice";
 import { AlbumColumn } from "../../../../../types";
 import ColumnOptions from "./ColumnOptions";
 import FilterColumnInputs from "./FilterColumnInputs";
