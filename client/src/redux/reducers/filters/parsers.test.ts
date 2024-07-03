@@ -103,5 +103,30 @@ describe("Filter Slice parsers", () => {
         });
       });
     });
+
+    test("should not compute again with the same state", () => {
+      const state = createParsingFilterRootState();
+
+      selectParsedFilters.resetRecomputations();
+      selectParsedFilters(state);
+      expect(selectParsedFilters.recomputations()).toBe(1);
+      selectParsedFilters(state);
+      expect(selectParsedFilters.recomputations()).toBe(1);
+    });
+
+    test("should recompute with a new state", () => {
+      const firstState = createParsingFilterRootState();
+
+      selectParsedFilters.resetRecomputations();
+      selectParsedFilters(firstState);
+      expect(selectParsedFilters.recomputations()).toBe(1);
+
+      const secondState = createParsingFilterRootState(
+        { published: { start: "1990", end: "1991" } },
+      );
+
+      selectParsedFilters(secondState);
+      expect(selectParsedFilters.recomputations()).toBe(2);
+    });
   });
 });
