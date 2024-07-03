@@ -16,7 +16,7 @@ export type Filter = {
   column: AlbumColumn;
   text: string;
   published: FilterInterval;
-  addDate: FilterInterval;
+  addDate: FilterInterval; // A string representing a date in YYYY-MM-DD format, or empty
   categories: FilterCategories;
 };
 

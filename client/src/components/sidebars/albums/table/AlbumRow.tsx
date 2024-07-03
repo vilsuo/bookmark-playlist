@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { selectIsPlaying, selectIsViewing, setViewingAlbum } from '../../../../redux/reducers/albums/albumsSlice';
 import { Album } from '../../../../types';
-import { toDateString } from '../../../../util/dateConverter';
+import { toLocaleDateString } from '../../../../util/dateConverter';
 
 const getExtraClassNames = (isPlaying: boolean, isViewing: boolean) => {
   const playing = isPlaying ? 'playing' : '';
@@ -31,7 +31,7 @@ const AlbumRow = ({ album }: AlbumRowProps) => {
       <td>{album.artist}</td>
       <td>{album.title}</td>
       <td>{album.published}</td>
-      <td>{toDateString(album.addDate)}</td>
+      <td>{toLocaleDateString(album.addDate)}</td>
     </tr>
   );
 };

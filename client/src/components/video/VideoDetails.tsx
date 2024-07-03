@@ -1,5 +1,5 @@
 import { Album } from "../../types";
-import { toDateString } from "../../util/dateConverter";
+import { toLocaleDateString } from "../../util/dateConverter";
 import { getAlbumSearchLink, getArtistSearchLink, getYoutubeSearchLink } from "../../util/links";
 import { MaLink, YtLink } from "../general/Links";
 import Chip from "./Chip";
@@ -16,7 +16,7 @@ const VideoDetails = ({ album }: VideoDetailsProps) => {
       />
 
       <Chip 
-        className="add-date" text="Added" value={toDateString(album.addDate)}
+        className="add-date" text="Added" value={toLocaleDateString(album.addDate)}
       />
 
       <MaLink

@@ -43,11 +43,13 @@ const parsePublishedFilterInterval = ({ start, end }: FilterInterval)
 /**
  * Convert string date interval to date interval to be used in filtering
  * 
- * @remarks empty string is converter to undefined
+ * @remarks
+ * * empty strings are converter to undefined
+ * * time is set to 00:00:00.000 of the current timezone for each date
+ * * end date is incremented by one
  * 
  * @param interval Date strings
- * @returns start: interval start date with hour|min|sec|mm set to 0,
- * end: the next date of interval end date with hour|min|sec|mm set to 0
+ * @returns parsed date interval
  */
 const parseAddDateFilterInterval = ({ start, end }: FilterInterval)
 : ParsedAddDateFilterInterval => {

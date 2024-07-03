@@ -153,6 +153,7 @@ const getSortFn = ({ column, order }: Sort) => (a: Album, b: Album) => {
       return order * (a.published - b.published);
     }
     case AlbumColumn.ADD_DATE: {
+      // locale does not matter
       return order * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
     }
     default:
