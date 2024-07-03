@@ -2,6 +2,13 @@ import { AlbumsState, initialState as initialAlbumsState } from "../src/redux/re
 import { Filter, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filters/filterSlice";
 import { Notification, NotificationState } from "../src/redux/reducers/notificationSlice";
 import { QueueState } from "../src/redux/reducers/queueSlice";
+import { Album } from "../src/types";
+
+export const createAlbumWithCategory = (album: Album, category: string): Album => ({
+  ...album, category,
+});
+
+// STATES
 
 export const createAlbumsState = (
   values: Partial<AlbumsState> = initialAlbumsState

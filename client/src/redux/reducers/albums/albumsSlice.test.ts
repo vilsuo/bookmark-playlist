@@ -3,11 +3,7 @@ import { selectAlbumCategories, selectIsAloneInCategory } from "./albumsSlice";
 import { Album } from "../../../types";
 import { RootState } from "../../store";
 import { albums, categories } from "../../../../test/constants";
-import { createAlbumsState } from "../../../../test/creators";
-
-const createAlbumWithCategory = (album: Album, category: string): Album => ({
-  ...album, category,
-});
+import { createAlbumWithCategory, createAlbumsState } from "../../../../test/creators";
 
 const createAlbumsRootState = (albums: Album[]): RootState => (
   { albums: createAlbumsState({ albums }) } as RootState
