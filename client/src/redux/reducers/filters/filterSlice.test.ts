@@ -7,7 +7,7 @@ import { RootState, setupStore } from "../../store";
 import { createAlbumWithCategory, createAlbumsState, createFilterState } from "../../../../test/creators";
 
 const createSortingFilterState = (column: AlbumColumn, order: Order) =>
-  createFilterState({ column, order });
+  createFilterState({ column, order }, {});
 
 const createCategoryFilterState = (categories: FilterCategories) =>
   createFilterState({}, { categories });
@@ -159,7 +159,7 @@ describe("Filter slice", () => {
     });
   });
 
-  describe.only("thunks", () => {
+  describe("thunks", () => {
     describe("toggleFilterCategorySingle", () => {
       const initialCategories = [ categories[0], categories[1], categories[2] ];
 

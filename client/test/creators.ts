@@ -11,16 +11,19 @@ export const createAlbumWithCategory = (album: Album, category: string): Album =
 // STATES
 
 export const createAlbumsState = (
-  values: Partial<AlbumsState> = initialAlbumsState
+  values: Partial<AlbumsState>
 ): AlbumsState => (
-  { ...values } as AlbumsState
+  { ...initialAlbumsState, ...values } as AlbumsState
 );
 
 export const createFilterState = (
-  sorting: Partial<Sort> = initialFilterState.sorting,
-  filters: Partial<Filter> = initialFilterState.filters,
+  sorting: Partial<Sort>,
+  filters: Partial<Filter>,
 ): FilterState => (
-  { sorting, filters } as FilterState
+  {
+    sorting: { ...initialFilterState.sorting, ...sorting },
+    filters: { ...initialFilterState.filters, ...filters },
+  } as FilterState
 );
 
 export const createQueueState = (albums: QueueState["queue"]): QueueState => (
