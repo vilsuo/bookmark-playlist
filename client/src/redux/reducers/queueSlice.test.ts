@@ -189,6 +189,19 @@ describe("Queue slice", () => {
       });
 
       test("should recompute with a new state", () => {
+        const firstState = createQueueRootState([first]);
+        const secondState = createQueueRootState([first, second]);
+
+        selectIsQueued.resetRecomputations();
+
+        selectIsQueued(firstState, first.id);
+        expect(selectIsQueued.recomputations()).toBe(1);
+
+        selectIsQueued(secondState, first.id);
+        expect(selectIsQueued.recomputations()).toBe(2);
+      });
+
+      test("should recompute with a new parameter", () => {
         const state = createQueueRootState([first]);
 
         selectIsQueued.resetRecomputations();

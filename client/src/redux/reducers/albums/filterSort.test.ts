@@ -38,7 +38,10 @@ const createDateInputString = (year: number, month: number, date: number) => {
 describe("Albums slice filtering and sorting albums", () => {
   describe("selectSortedAndFilteredAlbums", () => {
     test("should return empty array when there are no albums", () => {
-      const state = createFilteringAndSortingRootState();
+      const state = createFilteringAndSortingRootState({
+        albums: [],
+        filters: { categories: CATEGORY_ALL },
+      });
 
       const result = selectSortedAndFilteredAlbums(state);
       expect(result).toHaveLength(0);
@@ -576,6 +579,41 @@ describe("Albums slice filtering and sorting albums", () => {
           albums[3],
         ]);
       });
+    });
+
+    test("should not compute again with the same state", () => {
+      const state = createFilteringAndSortingRootState({ albums });
+
+      selectSortedAndFilteredAlbums.resetRecomputations();
+
+      selectSortedAndFilteredAlbums(state);
+      expect(selectSortedAndFilteredAlbums.recomputations()).toBe(1);
+
+      selectSortedAndFilteredAlbums(state);
+      expect(selectSortedAndFilteredAlbums.recomputations()).toBe(1);
+    });
+
+    test("should recompute with a new state", () => {
+      const firstState = createFilteringAndSortingRootState({
+        albums,
+        sorting: { column: AlbumColumn.ARTIST, order: Order.ASC },
+        filters: { text: "test" },
+      });
+
+      // change sort column
+      const secondState = createFilteringAndSortingRootState({ 
+        albums,
+        sorting: { column: AlbumColumn.ALBUM, order: Order.ASC },
+        filters: { text: "test" },
+      });
+
+      selectSortedAndFilteredAlbums.resetRecomputations();
+
+      selectSortedAndFilteredAlbums(firstState);
+      expect(selectSortedAndFilteredAlbums.recomputations()).toBe(1);
+
+      selectSortedAndFilteredAlbums(secondState);
+      expect(selectSortedAndFilteredAlbums.recomputations()).toBe(2);
     });
   });
 });
