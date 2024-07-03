@@ -5,25 +5,9 @@ import { RootState } from "../../store";
 import { albums, categories } from "../../../../test/constants";
 import { createAlbumWithCategory, createAlbumsState } from "../../../../test/creators";
 
-const createAlbumsRootState = (albums: Album[]): RootState => (
+const createAlbumsRootState = (albums: Album[] = []): RootState => (
   { albums: createAlbumsState({ albums }) } as RootState
 );
-
-/*
-const createFilteringAndSortingRootState = (
-  { albumsState, sorting, filters }: {
-    albumsState?: Partial<AlbumsState>,
-    sorting?: Partial<Sort>,
-    filters?: Partial<Filter>
-  } = {}
-): RootState => (
-  {
-    albums: createAlbumsState(albumsState),
-    filters: createFilterState(sorting, filters),
-  } as RootState
-);
-*/
-
 
 describe("Albums slice", () => {
   describe("selectors", () => {
@@ -46,7 +30,7 @@ describe("Albums slice", () => {
 
     describe("selectIsAloneInCategory", () => {
       test("should be false without any albums", () => {
-        const previousState = createAlbumsRootState([]);
+        const previousState = createAlbumsRootState();
         const result = selectIsAloneInCategory(previousState, targetCategory);
 
         expect(result).toBeFalsy();
@@ -101,17 +85,6 @@ describe("Albums slice", () => {
     });
 
     /*
-    describe("selectSortedAndFilteredAlbums", () => {
-      test("should return empty array when there are no albums", () => {
-        const state = createFilteringAndSortingRootState();
-
-        const result = selectSortedAndFilteredAlbums(state);
-        expect(result).toHaveLength(0);
-      });  
-    });
-    */
-
-    /*
     describe("selectCanPlayNextAlbum", () => {
       describe(PlayMode.MANUAL, () => {
         test("should return true if queue is not empty", () => {
@@ -135,7 +108,7 @@ describe("Albums slice", () => {
   });
 
   /*
-  describe("thunks", () => {
+  describe("async thunks", () => {
   });
   */
 });

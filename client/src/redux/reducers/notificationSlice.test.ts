@@ -7,7 +7,7 @@ import { NotificationType } from "../../types";
 
 jest.mock("uuid", () => ({ v4: () => "randomid" }));
 
-const createNotificationRootState = (notifications: Notification[]): RootState => (
+const createNotificationRootState = (notifications?: Notification[]): RootState => (
   { notifications: createNotificationState(notifications) } as RootState
 );
 
@@ -26,7 +26,7 @@ describe("Notification slice", () => {
       };
       
       test("should add a notification", () => {
-        const state: RootState = createNotificationRootState([]);
+        const state: RootState = createNotificationRootState();
         const store = setupStore(state);
         
         store.dispatch(createNotification(notificationBase));

@@ -5,7 +5,7 @@ import { Album } from "../../types";
 import { RootState } from "../store";
 import { createQueueState } from "../../../test/creators";
 
-const createQueueRootState = (queue: Album[]): RootState => (
+const createQueueRootState = (queue?: Album[]): RootState => (
   { queue: createQueueState(queue) } as RootState
 );
 
@@ -17,7 +17,7 @@ describe("Queue slice", () => {
     describe("queueAdd", () => {
       test("should add to an empty queue", () => {
         const album = albums[0];
-        const previousState = createQueueState([]);
+        const previousState = createQueueState();
 
         const currentState = reducer(previousState, queueAdd(album));
         expect(currentState.queue).toStrictEqual([album]);
@@ -114,7 +114,7 @@ describe("Queue slice", () => {
       });
 
       test("should not change the state when the queue is empty", () => {
-        const previousState = createQueueState([]);
+        const previousState = createQueueState();
         const currentState =  reducer(previousState, queuePop());
 
         expect(previousState).toStrictEqual(currentState);
@@ -150,7 +150,7 @@ describe("Queue slice", () => {
   describe("selectors", () => {
     describe("selectQueueFirst", () => {
       test("should not return an album when queue is empty", () => {
-        const state = createQueueRootState([]);
+        const state = createQueueRootState();
         const result = selectQueueFirst(state);
         expect(result).toBe(null);
       });

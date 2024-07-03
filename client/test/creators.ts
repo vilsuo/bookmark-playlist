@@ -10,23 +10,19 @@ export const createAlbumWithCategory = (album: Album, category: string): Album =
 
 // STATES
 
-export const createAlbumsState = (
-  values: Partial<AlbumsState>
-): AlbumsState => (
+export const createAlbumsState = (values?: Partial<AlbumsState>): AlbumsState => (
   { ...initialAlbumsState, ...values } as AlbumsState
 );
 
-export const createFilterState = (
-  sorting: Partial<Sort>,
-  filters: Partial<Filter>,
-): FilterState => (
-  {
-    sorting: { ...initialFilterState.sorting, ...sorting },
-    filters: { ...initialFilterState.filters, ...filters },
-  } as FilterState
-);
+export const createFilterState = ({ sorting, filters }: {
+  sorting?: Partial<Sort>,
+  filters?: Partial<Filter>,
+}): FilterState => ({
+  sorting: { ...initialFilterState.sorting, ...sorting },
+  filters: { ...initialFilterState.filters, ...filters },
+});
 
-export const createQueueState = (albums: QueueState["queue"]): QueueState => (
+export const createQueueState = (albums: Album[] = []): QueueState => (
   { queue: albums }
 );
 

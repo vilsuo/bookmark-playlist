@@ -7,10 +7,10 @@ import { RootState, setupStore } from "../../store";
 import { createAlbumWithCategory, createAlbumsState, createFilterState } from "../../../../test/creators";
 
 const createSortingFilterState = (column: AlbumColumn, order: Order) =>
-  createFilterState({ column, order }, {});
+  createFilterState({ sorting: { column, order } });
 
 const createCategoryFilterState = (categories: FilterCategories) =>
-  createFilterState({}, { categories });
+  createFilterState({ filters: { categories } });
 
 const createCategoryFilterRootState = (
   filterCategories: FilterCategories,

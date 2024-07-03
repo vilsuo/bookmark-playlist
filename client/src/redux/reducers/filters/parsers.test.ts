@@ -4,8 +4,10 @@ import { Filter } from "./filterSlice";
 import { createFilterState } from "../../../../test/creators";
 import { selectParsedFilters } from "./parsers";
 
-const createParsingFilterRootState = (filters: Partial<Filter> = {}): RootState => (
-  { filters: createFilterState({}, filters) } as RootState
+const createParsingFilterRootState = (
+  filters?: Partial<Filter>
+): RootState => (
+  { filters: createFilterState({ filters }) } as RootState
 );
 
 describe("Filter Slice parsers", () => {
