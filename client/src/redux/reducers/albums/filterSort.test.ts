@@ -28,14 +28,12 @@ const expectEqualAlbumsWithoutOrder = (result: Album[], expected: Album[]) => {
     .toStrictEqual(expected.toSorted(tempSortfn));
 };
 
-/*
 const createDateInputString = (year: number, month: number, date: number) => {
   const YYYY = year;
   const MM = ["0" + month].splice(-2);
   const DD = ["0" + date].splice(-2);
   return `${YYYY}-${MM}-${DD}`;
 };
-*/
 
 describe("Albums slice filtering and sorting albums", () => {
   describe("selectSortedAndFilteredAlbums", () => {
@@ -281,7 +279,167 @@ describe("Albums slice filtering and sorting albums", () => {
             });
           });
 
+          describe("start and end filter", () => {
+            test("should include edge cases", () => {
+              const start = "1991";
+              const end = "1992"
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start,  end },
+                  column,
+                  categories,
+                },
+              });
+
+              const result = selectSortedAndFilteredAlbums(state);
+
+              expect(result).toContainEqual(albums[2]);
+              expect(albums[2].published).toBe(Number(start));
+        
+              expect(result).toContainEqual(albums[0]);
+              expect(albums[0].published).toBe(Number(end));
+            });
+
+            test("should not include any when start is later than end", () => {
+              const start = "1993";
+              const end = "1991"
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start,  end },
+                  column,
+                  categories,
+                },
+              });
+
+              expect(Number(start)).toBeGreaterThan(Number(end));
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toHaveLength(0);
+            });
+
+            test("should include only exacts when start is equal to end", () => {
+              const value = "1991";
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start: value,  end: value },
+                  column,
+                  categories,
+                },
+              });
+
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toHaveLength(1);
+              expect(result[0]).toStrictEqual(albums[2]);
+              expect(albums[2].published).toBe(Number(value));
+            });
+
+            test("should include all when range is wide", () => {
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start: small,  end: large },
+                  column,
+                  categories,
+                },
+              });
+
+              const result = selectSortedAndFilteredAlbums(state);
+              expectEqualAlbumsWithoutOrder(result, albums);
+            });
+          });
+        });
+
+        describe(AlbumColumn.ADD_DATE, () => {
+          const column = AlbumColumn.ADD_DATE;
+
+          const small = createDateInputString(1900, 1, 1);
+          const large = createDateInputString(2100, 1, 1);
+
+          describe("just start filter", () => {
+            test("should return all with a small start filter", () => {
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: small,  end: "" },
+                  column,
+                  categories,
+                },
+              });
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expectEqualAlbumsWithoutOrder(result, albums);
+            });
+
+            test("should return none with a large start filter", () => {
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: large,  end: "" },
+                  column,
+                  categories,
+                },
+              });
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toHaveLength(0);
+            });
+
+            /*
+            test("should include the start filter", () => {
+              const start = "1993"
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start,  end: "" },
+                  column,
+                  categories,
+                },
+              });
+
+              const containedAlbum = albums[3];
+              expect(containedAlbum.published).toBe(Number(start));
+
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toContainEqual(containedAlbum);
+            });
+
+            test("should not include earlier than the start filter", () => {
+              const start = "1991"
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start,  end: "" },
+                  column,
+                  categories,
+                },
+              });
+
+              const notContainedAlbum = albums[1];
+              expect(notContainedAlbum.published).toBeLessThan(Number(start));
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).not.toContainEqual(notContainedAlbum);
+            });
+
+            test("should include all later than the start filter", () => {
+              const start = "1991"
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  published: { start,  end: "" },
+                  column,
+                  categories,
+                },
+              });
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toContainEqual(albums[3]);
+              expect(albums[3].published).toBeGreaterThan(Number(start));
+
+              expect(result).toContainEqual(albums[4]);
+              expect(albums[4].published).toBeGreaterThan(Number(start));
+            });
+            */
+          });
+
           /*
+          describe("just end filter", () => {
+
+          });
+
           describe("start and end filter", () => {
 
           });
