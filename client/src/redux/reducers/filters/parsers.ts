@@ -2,13 +2,11 @@ import { createSelector } from "@reduxjs/toolkit";
 import { Interval } from "../../../types";
 import { Filter, FilterInterval, selectFilters } from "./filterSlice";
 
-export type ParsedPublishedFilterInterval = Interval<number | undefined>;
-
-export type ParsedAddDateFilterInterval = Interval<Date | undefined>;
+export type ParsedFilterInterval = Interval<number | undefined>;
 
 export type ParsedFilter = Omit<Filter, "published" | "addDate"> & {
-  published: ParsedPublishedFilterInterval;
-  addDate: ParsedAddDateFilterInterval;
+  published: ParsedFilterInterval;
+  addDate: ParsedFilterInterval;
 };
 
 /**
@@ -33,7 +31,7 @@ export const selectParsedFilters = createSelector(
  * @returns start: interval start published, end: interval end published
  */
 const parsePublishedFilterInterval = ({ start, end }: FilterInterval)
-: ParsedPublishedFilterInterval => {
+: ParsedFilterInterval => {
   const startPublish = start ? Number(start) : undefined;
   const endPublish = end ? Number(end) : undefined;
 
@@ -41,28 +39,35 @@ const parsePublishedFilterInterval = ({ start, end }: FilterInterval)
 };
 
 /**
- * Convert string date interval to date interval to be used in filtering
+ * Convert date string interval to local time interval be used in filtering
  * 
  * @remarks
  * * empty strings are converter to undefined
  * * time is set to 00:00:00.000 of the current timezone for each date
  * * end date is incremented by one
  * 
- * @param interval Date strings
- * @returns parsed date interval
+ * @param start interval start date string in format YYYY-MM-DD
+ * @param end interval end date string in format YYYY-MM-DD
+ * 
+ * @returns date interval values converted to milliseconds since midnight,
+ *          January 1, 1970 UTC
  */
 const parseAddDateFilterInterval = ({ start, end }: FilterInterval)
-: ParsedAddDateFilterInterval => {
-  const startDate = start ? new Date(start) : undefined;
-  if (startDate) {
-    startDate.setHours(0, 0, 0, 0);
+: ParsedFilterInterval => {
+  let startTime;
+  let endTime;
+
+  if (start) {
+    const [yyyy, mm, dd] = start.split("-");
+    // local time midnight
+    startTime = new Date(Number(yyyy), Number(mm) - 1, Number(dd)).getTime();
   }
 
-  const endDate = end ? new Date(end) : undefined;
-  if (endDate) {
-    endDate.setHours(0, 0, 0, 0);
-    endDate.setDate(endDate.getDate() + 1);
+  if (end) {
+    const [yyyy, mm, dd] = end.split("-");
+    // local time next day midnight
+    endTime = new Date(Number(yyyy), Number(mm) - 1, Number(dd) + 1).getTime();
   }
 
-  return { start: startDate, end: endDate };
+  return { start: startTime, end: endTime };
 };

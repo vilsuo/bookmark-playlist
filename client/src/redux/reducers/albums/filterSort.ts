@@ -1,7 +1,7 @@
 import { CATEGORY_ALL } from "../../../constants";
 import { Sort, selectSorting } from "../filters/filterSlice";
 import { Album, AlbumColumn } from "../../../types";
-import { ParsedAddDateFilterInterval, ParsedFilter, ParsedPublishedFilterInterval, selectParsedFilters } from "../filters/parsers";
+import { ParsedFilter, ParsedFilterInterval, selectParsedFilters } from "../filters/parsers";
 import { createSelector } from "@reduxjs/toolkit";
 import { selectAlbums } from "./albumsSlice";
 
@@ -58,7 +58,7 @@ const getFilterFn = (filters: ParsedFilter) => (album: Album) => {
   };
 };
 
-const filterByText = (text: string, column: AlbumColumn, album: Album) => {
+const filterByText = (text: string, column: AlbumColumn.ARTIST | AlbumColumn.ALBUM, album: Album) => {
   if (!text) return true;
 
   const searchText = text.toLowerCase();
@@ -69,7 +69,7 @@ const filterByText = (text: string, column: AlbumColumn, album: Album) => {
   }
 };
 
-const filterByPublished = ({ start, end }: ParsedPublishedFilterInterval, album: Album) => {
+const filterByPublished = ({ start, end }: ParsedFilterInterval, album: Album) => {
   const { published } = album;
 
   if (start === undefined && end === undefined) {
@@ -87,17 +87,17 @@ const filterByPublished = ({ start, end }: ParsedPublishedFilterInterval, album:
   }
 };
 
-const filterByAddDate = ({ start, end }: ParsedAddDateFilterInterval, album: Album) => {
-  const date = new Date(album.addDate);
+const filterByAddDate = ({ start, end }: ParsedFilterInterval, album: Album) => {
+  const time = Date.parse(album.addDate);
 
   if (start && end) {
-    return start <= date && date < end;
+    return start <= time && time <= end;
 
   } else if (start) {
-    return date >= start;
+    return time >= start;
 
   } else if (end) {
-    return date < end;
+    return time <= end;
 
   } else {
     return true; // no interval filter
@@ -153,8 +153,7 @@ const getSortFn = ({ column, order }: Sort) => (a: Album, b: Album) => {
       return order * (a.published - b.published);
     }
     case AlbumColumn.ADD_DATE: {
-      // locale does not matter
-      return order * ((new Date(a.addDate) > new Date(b.addDate)) ? 1 : -1);
+      return order * (Date.parse(a.addDate) - Date.parse(b.addDate));
     }
     default:
       column satisfies never;

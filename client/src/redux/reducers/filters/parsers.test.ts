@@ -51,9 +51,7 @@ describe("Filter Slice parsers", () => {
           const state = createParsingFilterRootState({ addDate });
 
           const result = selectParsedFilters(state);
-          const resultParsedStart = result.addDate.start;
-
-          expect(resultParsedStart).toBeInstanceOf(Date);
+          const resultParsedStart = new Date(result.addDate.start!);
 
           expect(resultParsedStart?.getFullYear()).toEqual(2024);
           expect(resultParsedStart?.getMonth()).toEqual(7 - 1); // zero based
@@ -65,7 +63,7 @@ describe("Filter Slice parsers", () => {
           const state = createParsingFilterRootState({ addDate });
 
           const result = selectParsedFilters(state);
-          const resultParsedStart = result.addDate.start;
+          const resultParsedStart = new Date(result.addDate.start!);
 
           expect(resultParsedStart?.getHours()).toEqual(0);
           expect(resultParsedStart?.getMinutes()).toEqual(0);
@@ -80,9 +78,7 @@ describe("Filter Slice parsers", () => {
           const state = createParsingFilterRootState({ addDate });
 
           const result = selectParsedFilters(state);
-          const resultParsedEnd = result.addDate.end;
-
-          expect(resultParsedEnd).toBeInstanceOf(Date);
+          const resultParsedEnd = new Date(result.addDate.end!);
 
           expect(resultParsedEnd?.getFullYear()).toEqual(2024);
           expect(resultParsedEnd?.getMonth()).toEqual(7 - 1); // zero based
@@ -94,7 +90,7 @@ describe("Filter Slice parsers", () => {
           const state = createParsingFilterRootState({ addDate });
 
           const result = selectParsedFilters(state);
-          const resultParsedEnd = result.addDate.end;
+          const resultParsedEnd = new Date(result.addDate.end!);
 
           expect(resultParsedEnd?.getHours()).toEqual(0);
           expect(resultParsedEnd?.getMinutes()).toEqual(0);
