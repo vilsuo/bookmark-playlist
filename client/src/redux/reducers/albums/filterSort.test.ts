@@ -28,10 +28,18 @@ const expectEqualAlbumsWithoutOrder = (result: Album[], expected: Album[]) => {
     .toStrictEqual(expected.toSorted(tempSortfn));
 };
 
-const createDateInputString = (year: number, month: number, date: number) => {
-  const YYYY = year;
-  const MM = `0${month}`.slice(-2);
-  const DD = `0${date}`.slice(-2);
+/**
+ * Create date string in form YYYY-MM-DD
+ * 
+ * @param year the year, with four digits (0000 to 9999)
+ * @param month the month, with two digits (01 to 12). Defaults to 1
+ * @param date the day of the month, with two digits (01 to 31). Defaults to 1
+ * @returns 
+ */
+const createDateString = (year: number, month: number = 1, date: number = 1) => {
+  const YYYY = `0000${year}`.slice(-4);
+  const MM = `00${month}`.slice(-2);
+  const DD = `00${date}`.slice(-2);
   return `${YYYY}-${MM}-${DD}`;
 };
 
@@ -288,7 +296,7 @@ describe("Albums slice filtering and sorting albums", () => {
               const end = "1992"
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start,  end },
+                  published: { start, end },
                   column,
                   categories,
                 },
@@ -308,7 +316,7 @@ describe("Albums slice filtering and sorting albums", () => {
               const end = "1991"
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start,  end },
+                  published: { start, end },
                   column,
                   categories,
                 },
@@ -323,7 +331,7 @@ describe("Albums slice filtering and sorting albums", () => {
               const value = "1991";
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start: value,  end: value },
+                  published: { start: value, end: value },
                   column,
                   categories,
                 },
@@ -338,7 +346,7 @@ describe("Albums slice filtering and sorting albums", () => {
             test("should include all when range is wide", () => {
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start: small,  end: large },
+                  published: { start: small, end: large },
                   column,
                   categories,
                 },
@@ -353,8 +361,8 @@ describe("Albums slice filtering and sorting albums", () => {
         describe(AlbumColumn.ADD_DATE, () => {
           const column = AlbumColumn.ADD_DATE;
 
-          const small = createDateInputString(1900, 1, 1);
-          const large = createDateInputString(2100, 12, 31);
+          const small = createDateString(1900, 1, 1);
+          const large = createDateString(2100, 12, 31);
 
           describe("just start filter", () => {
             test("should return all with a small start filter", () => {
@@ -384,45 +392,122 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include the start filter", () => {
-              const start = "1993"
+              const start = createDateString(2022, 5, 28);
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start,  end: "" },
+                  addDate: { start,  end: "" },
                   column,
                   categories,
                 },
               });
 
-              const containedAlbum = albums[3];
-              expect(containedAlbum.published).toBe(Number(start));
+              const containedAlbum = albums[2];
 
               const result = selectSortedAndFilteredAlbums(state);
               expect(result).toContainEqual(containedAlbum);
             });
 
-            /*
             test("should not include earlier than the start filter", () => {
-              const start = "1991"
+              const start = createDateString(2022, 5, 28);
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start,  end: "" },
+                  addDate: { start,  end: "" },
                   column,
                   categories,
                 },
               });
 
-              const notContainedAlbum = albums[1];
-              expect(notContainedAlbum.published).toBeLessThan(Number(start));
+
+              const notContainedAlbum = albums[3];
+              expect(Date.parse(notContainedAlbum.addDate))
+                .toBeLessThan(Date.parse(start));
         
               const result = selectSortedAndFilteredAlbums(state);
               expect(result).not.toContainEqual(notContainedAlbum);
             });
 
             test("should include all later than the start filter", () => {
-              const start = "1991"
+              const start = createDateString(2022, 5, 28);
               const state = createFilteringAndSortingRootState({
                 albums, filters: {
-                  published: { start,  end: "" },
+                  addDate: { start,  end: "" },
+                  column,
+                  categories,
+                },
+              });
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toContainEqual(albums[0]);
+            });
+          });
+
+          describe("just end filter", () => {
+            test("should return none with a small end filter", () => {
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: "",  end: small },
+                  column,
+                  categories,
+                },
+              });
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toHaveLength(0);
+            });
+
+            test("should return all with a large end filter", () => {
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: "",  end: large },
+                  column,
+                  categories,
+                },
+              });
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expectEqualAlbumsWithoutOrder(result, albums);
+            });
+
+            test("should include the end filter", () => {
+              const end = createDateString(2022, 5, 28);
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: "",  end },
+                  column,
+                  categories,
+                },
+              });
+
+              const containedAlbum = albums[2];
+
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toContainEqual(containedAlbum);
+            });
+
+            test("should not include later than the end filter", () => {
+              const end = createDateString(2022, 5, 28);
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: "",  end },
+                  column,
+                  categories,
+                },
+              });
+
+
+              const notContainedAlbum = albums[0];
+              expect(Date.parse(notContainedAlbum.addDate))
+                .toBeGreaterThan(Date.parse(end));
+        
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).not.toContainEqual(notContainedAlbum);
+            });
+
+            test("should include all earlier than the end filter", () => {
+              const end = createDateString(2022, 5, 28);
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: "",  end },
                   column,
                   categories,
                 },
@@ -430,23 +515,75 @@ describe("Albums slice filtering and sorting albums", () => {
         
               const result = selectSortedAndFilteredAlbums(state);
               expect(result).toContainEqual(albums[3]);
-              expect(albums[3].published).toBeGreaterThan(Number(start));
-
               expect(result).toContainEqual(albums[4]);
-              expect(albums[4].published).toBeGreaterThan(Number(start));
             });
-            */
           });
-
-          /*
-          describe("just end filter", () => {
-
-          });
-
+          
           describe("start and end filter", () => {
+            test("should include edge cases", () => {
+              const start = createDateString(2022, 5, 7);
+              const end = createDateString(2022, 5, 28);
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start,  end },
+                  column,
+                  categories,
+                },
+              });
 
+              const result = selectSortedAndFilteredAlbums(state);
+
+              expect(result).toContainEqual(albums[1]);
+              expect(result).toContainEqual(albums[3]);
+            });
+
+            test("should not include any when start is later than end", () => {
+              const start = createDateString(2022, 5, 29);
+              const end = createDateString(2022, 5, 27);
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start, end },
+                  column,
+                  categories,
+                },
+              });
+
+              expect(Date.parse(albums[1].addDate)).toBeLessThan(Date.parse(start));
+              expect(Date.parse(albums[1].addDate)).toBeGreaterThan(Date.parse(end));
+
+              expect(Date.parse(start)).toBeGreaterThan(Date.parse(end));
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toHaveLength(0);
+            });
+
+            test("should include only exacts when start is equal to end", () => {
+              const value = createDateString(2022, 6, 20);
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: value, end: value },
+                  column,
+                  categories,
+                },
+              });
+
+              const result = selectSortedAndFilteredAlbums(state);
+              expect(result).toHaveLength(1);
+              expect(result[0]).toStrictEqual(albums[0]);
+            });
+
+            test("should include all when range is wide", () => {
+              const state = createFilteringAndSortingRootState({
+                albums, filters: {
+                  addDate: { start: small,  end: large },
+                  column,
+                  categories,
+                },
+              });
+
+              const result = selectSortedAndFilteredAlbums(state);
+              expectEqualAlbumsWithoutOrder(result, albums);
+            });
           });
-          */
         });
       });
     });
