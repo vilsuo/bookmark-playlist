@@ -1,6 +1,6 @@
 import express from 'express';
 import * as albumService from '../album/album.service';
-import { AlbumBase } from '../types';
+import { AlbumBodyBase } from '../types';
 
 const router = express();
 
@@ -9,7 +9,7 @@ router.get('/', async (_req, res) => {
   return res.send(albums);
 });
 
-const toAlbumBase = (body: unknown): AlbumBase => {
+const toAlbumBodyBase = (body: unknown): AlbumBodyBase => {
   if (!body || typeof body !== 'object') {
     throw new Error('Body is invalid or missing');
   }
@@ -21,7 +21,7 @@ const toAlbumBase = (body: unknown): AlbumBase => {
     throw new Error('missing required values');
   }
 
-  const { videoId, artist, title, published, category, addDate } = body;
+  const { videoId, artist, title, published, category } = body;
 
   if (typeof videoId !== 'string') {
     throw new Error("Invalid property 'videoId'");
@@ -43,17 +43,13 @@ const toAlbumBase = (body: unknown): AlbumBase => {
     throw new Error("Invalid property 'category'");
   }
 
-  if (typeof addDate !== 'string' && !(addDate instanceof Date)) {
-    throw new Error("Invalid property 'addDate'");
-  }
-
-  return { videoId, artist, title, published, category, addDate: new Date(addDate) };
+  return { videoId, artist, title, published, category };
 };
 
 router.post('/', async (req, res) => {
   const addDate = new Date();
-  const newBase = toAlbumBase({ ...req.body, addDate });
-  const created = await albumService.createIfNotExists(newBase);
+  const newBase = toAlbumBodyBase(req.body);
+  const created = await albumService.createIfNotExists({ ...newBase, addDate });
   return res.status(201).send(created);
 });
 
@@ -63,7 +59,7 @@ router.put('/:id', async (req, res) => {
     return res.status(400).send({ message: 'Invalid path variable' });
   }
 
-  const updateBase = toAlbumBase(req.body);
+  const updateBase = toAlbumBodyBase(req.body);
   const result = await albumService.update(id, updateBase);
   return res.send(result);
 });

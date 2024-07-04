@@ -130,17 +130,22 @@ describe('albumService', () => {
     });
 
     it('can update album', async () => {
+      const { addDate, ...newValues } = bases[1];
       const result = await albumService.update(album!.id, bases[1]);
+
       expect(result).toStrictEqual(
         expect.objectContaining({
-          id: album!.id,  // old id
-          ...bases[1],  // new values
+          id: album!.id, // old id
+          ...newValues,  // new values
         })
       );
+    });
 
-      const albums = await albumService.findAll();
-      expect(albums).toHaveLength(1);
-      expect(albums[0]).toStrictEqual(result);
+    it('should not update add date', async () => {
+      const result = await albumService.update(album!.id, bases[1]);
+
+      expect(result.addDate).toStrictEqual(album?.addDate);
+      expect(result.addDate).not.toStrictEqual(bases[1].addDate);
     });
 
     it('can not update album with bad values', async () => {

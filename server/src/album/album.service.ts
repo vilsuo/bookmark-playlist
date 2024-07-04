@@ -1,4 +1,4 @@
-import { AlbumBase } from '../types';
+import { AlbumBase, AlbumBodyBase } from '../types';
 import { AlbumRepository } from './album.repository';
 import { Album } from './album.entity';
 import { AppDataSource } from '../util/dataSource';
@@ -44,19 +44,18 @@ export const createIfNotExistsMany = async (bases: AlbumBase[]): Promise<Album[]
   });
 };
 
-export const update = async (id: number, values: AlbumBase) => {
+export const update = async (id: number, values: AlbumBodyBase) => {
   const album = await AlbumRepository.findOneBy({ id });
   if (!album) {
     throw new Error('Album does not exist');
   }
 
-  const { videoId, artist, title, published, category, addDate } = values;
+  const { videoId, artist, title, published, category } = values;
   album.videoId = videoId;
   album.artist = artist;
   album.title = title;
   album.published = published;
   album.category = category;
-  album.addDate = addDate;
 
   return await AlbumRepository.validateAndSave(album);
 };

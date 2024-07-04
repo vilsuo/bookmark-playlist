@@ -14,3 +14,8 @@ export type FolderLink = Link & {
  * type for creating a new {@link Album}
  */
 export type AlbumBase = Omit<Album, 'id'>;
+
+/**
+ * type for updating an existing {@link Album}
+ */
+export type AlbumBodyBase = Omit<AlbumBase, 'addDate'>;

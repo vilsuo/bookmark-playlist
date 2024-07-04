@@ -273,16 +273,13 @@ export const updateAlbum = createAsyncThunk<
   'albums/update',
   async ({ oldAlbum, newValues }, { getState, dispatch, rejectWithValue }) => {
     const state = getState();
-    const { id, category, addDate } = oldAlbum;
+    const { id, category } = oldAlbum;
 
     const isQueued = selectIsQueued(state, id);
     const isAloneInCategory = selectIsAloneInCategory(state, category);
 
     try {
-      const updatedAlbum = await albumService.update(id, {
-        ...newValues,
-        addDate, // keep the add date
-      });
+      const updatedAlbum = await albumService.update(id, newValues);
 
       const updatePayload = { id, album: updatedAlbum };
 
