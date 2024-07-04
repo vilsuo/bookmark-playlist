@@ -30,8 +30,8 @@ const expectEqualAlbumsWithoutOrder = (result: Album[], expected: Album[]) => {
 
 const createDateInputString = (year: number, month: number, date: number) => {
   const YYYY = year;
-  const MM = ["0" + month].splice(-2);
-  const DD = ["0" + date].splice(-2);
+  const MM = `0${month}`.slice(-2);
+  const DD = `0${date}`.slice(-2);
   return `${YYYY}-${MM}-${DD}`;
 };
 
@@ -354,7 +354,7 @@ describe("Albums slice filtering and sorting albums", () => {
           const column = AlbumColumn.ADD_DATE;
 
           const small = createDateInputString(1900, 1, 1);
-          const large = createDateInputString(2100, 1, 1);
+          const large = createDateInputString(2100, 12, 31);
 
           describe("just start filter", () => {
             test("should return all with a small start filter", () => {
@@ -383,7 +383,6 @@ describe("Albums slice filtering and sorting albums", () => {
               expect(result).toHaveLength(0);
             });
 
-            /*
             test("should include the start filter", () => {
               const start = "1993"
               const state = createFilteringAndSortingRootState({
@@ -401,6 +400,7 @@ describe("Albums slice filtering and sorting albums", () => {
               expect(result).toContainEqual(containedAlbum);
             });
 
+            /*
             test("should not include earlier than the start filter", () => {
               const start = "1991"
               const state = createFilteringAndSortingRootState({
