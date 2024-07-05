@@ -5,14 +5,16 @@ interface SideBarBaseProps {
   minWidth?: number
   width?: number;
   close: () => void;
-  header: ReactNode;
+  header?: ReactNode;
   content: ReactNode;
-}
+};
 
-const SideBarBase = ({ minWidth, width = 500, close, header, content }: SideBarBaseProps) => {
+const SideBarBase = (
+  { minWidth, width = 500, close, header, content }: SideBarBaseProps
+) => {
   return (
     <Resizeable minWidth={minWidth} width={width}>
-      <div className="resizeable-sidebar-container">
+      <div className="resizeable-sidebar">
         <div className="resizeable-sidebar-toolbar">
           { header }
 

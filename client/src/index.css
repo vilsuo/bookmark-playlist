@@ -135,6 +135,8 @@ dialog .dialog-body .options {
 .resizeable-sidebar {
   display: flex;
   flex-flow: column;
+
+  overflow: hidden;
 }
 .resizeable-sidebar-toolbar {
   position: sticky;
@@ -153,11 +155,8 @@ dialog .dialog-body .options {
   margin: 0 auto;
 }
 .resizeable-sidebar-content {
-  /*
-  overflow-y: auto;
-  gap: 10px;
-  */
   padding: 10px;
+  overflow-y: auto;
 }
 
 /* Container */
@@ -167,13 +166,6 @@ dialog .dialog-body .options {
   background-color: black;
   color: white;
   text-shadow: 1px 1px 1px black;
-}
-.container .sidebar {
-  overflow: hidden;
-  width: 550px; /* +50 */
-  
-  background-color: var(--ma-selected);
-  border-right: 2px solid white;
 }
 .container .sidebar-opener {
   display: flex;
@@ -195,43 +187,34 @@ dialog .dialog-body .options {
   margin: 10px
 }
 
-/* Sidebars */
-.sidebar .sidebar-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  flex-flow: row nowrap;
-  background-color: black;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
-
-  height: 30px;
-}
-.sidebar .sidebar-toolbar button {
-  padding: 2px 6px;
-}
-.sidebar .sidebar-toolbar h2 {
-  margin: 0 auto;
-}
-.sidebar .sidebar-container {
-  height: calc(100% - 30px);
-  overflow-y: auto;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 10px;
-
-  padding: 10px;
+/* Sidebar opener */
+.sidebar-opener button {
+  width: 44px;
+  height: 44px;
 }
 
 /* Album sidebar */
-#albums-bar #start-ref,
-#albums-bar #end-ref {
+#start-ref,
+#end-ref {
   margin-top: -10px; /* to fix the flex gaps */
 }
-#albums-bar .sidebar-container.album-viewed {
-  height: calc(100% - 150px);
+/* Albums bar content */
+.albums-bar-content {
+  display: flex;
+  flex-flow: column nowrap;
 }
+.albums-bar-content .album-filter-list {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}
+.albums-bar-content .album-filter-list.viewed {
+  height: calc(100vh - 169px);
+}
+.albums-bar-content .album-filter-list.viewed > :last-child {
+  padding-bottom: 10px;
+}
+
 /* Albums view */
 .albums-view {
   display: flex;
@@ -239,10 +222,9 @@ dialog .dialog-body .options {
 
   position: fixed;
   bottom: 0;
-  width: 550px;
+  left: 0;
+  width: 900px;
   height: 120px;
-
-  border-right: 2px solid white;
 }
 .albums-view .header {
   display: flex;
@@ -302,12 +284,6 @@ dialog .dialog-body .options {
 }
 .albums-view .details .title {
   font-style: italic;
-}
-
-/* Sidebar opener */
-.sidebar-opener button {
-  width: 44px;
-  height: 44px;
 }
 
 /* Settings sidebar */
@@ -564,6 +540,7 @@ dialog .dialog-body .options {
   border: 2px solid black;
   background-color: var(--ma);
 }
+/* Filter category display */
 .filter-category .category-display {
   flex: 1;
   display: flex;
@@ -594,7 +571,7 @@ dialog .dialog-body .options {
 .filter-category .category-display button {
   align-self: start;
 }
-
+/* Filter category inputs */
 .filter-category .category-inputs {
   display: flex;
   flex-flow: column nowrap;
@@ -757,6 +734,8 @@ table thead th.sortable:hover .sortable-icon.desc:after {
 .album-table {
   table-layout: fixed;
   width: 100%;
+
+  padding-bottom: 10px;
 }
 .album-table tbody tr {
   cursor: pointer;
