@@ -1,4 +1,4 @@
-import SideBarBase from '../SideBarBase';
+import SideBarBase from '../SidebarBase';
 import SettingsPlayMode from './SettingsPlayMode';
 import SettingsToggleOptions from './SettingsToggles';
 
@@ -10,15 +10,14 @@ const SettingsBarContent = () => {
       <SettingsToggleOptions />
       <SettingsPlayMode />
     </div>
-  )
+  );
 };
 
 interface SettingsBarProps {
   close: () => void;
-}
+};
 
 const SettingsBar = ({ close }: SettingsBarProps) => {
-
   return(
     <SideBarBase
       close={close}

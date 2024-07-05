@@ -10,7 +10,6 @@ interface SideBarBaseProps {
 }
 
 const SideBarBase = ({ minWidth, width = 500, close, header, content }: SideBarBaseProps) => {
-
   return (
     <Resizeable minWidth={minWidth} width={width}>
       <div className="resizeable-sidebar-container">

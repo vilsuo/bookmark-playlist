@@ -304,6 +304,12 @@ dialog .dialog-body .options {
   font-style: italic;
 }
 
+/* Sidebar opener */
+.sidebar-opener button {
+  width: 44px;
+  height: 44px;
+}
+
 /* Settings sidebar */
 .settings-bar-content {
   display: flex;
@@ -350,14 +356,67 @@ dialog .dialog-body .options {
 }
 
 /* Tools sidebar */
-#tools-bar {
-  width: 400px;
+.tools-bar-content {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
 }
+/* Tools bar bookmark converter */
+.bookmark-converter {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
 
-/* Sidebar opener */
-.sidebar-opener button {
-  width: 44px;
-  height: 44px;
+  padding: 4px;
+  border: 2px solid black;
+  background-color: var(--ma);
+}
+.bookmark-converter p.info {
+  text-align: justify;
+  font-style: italic;
+}
+.bookmark-converter p.info .format {
+  display: block;
+  color: orange;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 4px;
+}
+.bookmark-converter form {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}
+.bookmark-converter form label + span {
+  font-size: smaller;
+  font-style: italic;
+}
+.bookmark-converter form input {
+  width: 100%;
+  margin-top: 4px;
+  color: black;
+}
+.bookmark-converter form input[type='file'] {
+  cursor: pointer;
+
+  text-align: center;
+  padding: 10px;
+
+  border: 1px dashed black;
+  background-color: white;
+}
+.bookmark-converter form .actions {
+  display: flex;
+  justify-content: end;
+}
+/* Tools bar album download */
+.album-downloader {
+  display: flex;
+  justify-content: space-between;
+  
+  padding: 4px;
+  border: 2px solid black;
+  background-color: var(--ma);
 }
 
 /* Video player */
@@ -454,63 +513,6 @@ dialog .dialog-body .options {
 }
 .chip .add-date {
   color: lightgreen;
-}
-
-/* Bookmark converter */
-.bookmark-converter {
-  display: flex;
-  flex-flow: column;
-  gap: 10px;
-
-  padding: 4px;
-  border: 2px solid black;
-  background-color: var(--ma);
-}
-p.info {
-  text-align: justify;
-  font-style: italic;
-}
-p.info .format {
-  display: block;
-  color: orange;
-  text-transform: uppercase;
-  text-align: center;
-  margin: 4px;
-}
-.bookmark-converter form {
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 10px;
-}
-.bookmark-converter form label + span {
-  font-size: smaller;
-  font-style: italic;
-}
-.bookmark-converter form input {
-  width: 100%;
-  margin-top: 4px;
-  color: black;
-}
-.bookmark-converter form input[type='file'] {
-  cursor: pointer;
-
-  text-align: center;
-  padding: 10px;
-
-  border: 1px dashed black;
-  background-color: white;
-}
-.bookmark-converter form .actions {
-  display: flex;
-  justify-content: end;
-}
-.album-downloader {
-  display: flex;
-  justify-content: space-between;
-  
-  padding: 4px;
-  border: 2px solid black;
-  background-color: var(--ma);
 }
 
 /* Filter column */

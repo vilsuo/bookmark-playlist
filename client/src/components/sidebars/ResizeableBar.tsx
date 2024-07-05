@@ -1,4 +1,4 @@
-import SideBarBase from "./SideBarBase";
+import SideBarBase from "./SidebarBase";
 
 interface ResizeableBarProps {
   close: () => void;

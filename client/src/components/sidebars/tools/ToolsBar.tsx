@@ -1,24 +1,29 @@
+import SideBarBase from '../SidebarBase';
 import AlbumDownloader from './AlbumDownloader';
 import BookmarkConverter from './BookmarkConverter';
 
-interface ToolsBar {
-  close: () => void;
-}
+const ToolsBarHeader = () => <h2>Tools</h2>;
 
-const ToolsBar = ({ close }: ToolsBar) => {
+const ToolsBarContent = () => {
   return (
-    <div id="tools-bar" className="sidebar">
-      <div className="sidebar-toolbar">
-        <h2>Tools</h2>
-        <button onClick={close}>&#x2715;</button>
-      </div>
-
-      <div className="sidebar-container">
-        <BookmarkConverter />
-        
-        <AlbumDownloader />
-      </div>
+    <div className="tools-bar-content">
+      <BookmarkConverter />
+      <AlbumDownloader />
     </div>
+  );
+};
+
+interface ToolsBarProps {
+  close: () => void;
+};
+
+const ToolsBar = ({ close }: ToolsBarProps) => {
+  return(
+    <SideBarBase
+      close={close}
+      header={ <ToolsBarHeader /> }
+      content={ <ToolsBarContent /> }
+    />
   );
 };
 
