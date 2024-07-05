@@ -2,14 +2,14 @@ import { ReactNode } from "react";
 import Resizeable from "../general/Resizeable";
 
 interface SideBarBaseProps {
-  minWidth: number
-  width: number;
+  minWidth?: number
+  width?: number;
   close: () => void;
   header: ReactNode;
   content: ReactNode;
 }
 
-const SideBarBase = ({ minWidth, width, close, header, content }: SideBarBaseProps) => {
+const SideBarBase = ({ minWidth, width = 500, close, header, content }: SideBarBaseProps) => {
 
   return (
     <Resizeable minWidth={minWidth} width={width}>

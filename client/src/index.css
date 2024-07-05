@@ -110,6 +110,7 @@ dialog .dialog-body .options {
 .resizeable {
   display: flex;
   flex-flow: row nowrap;
+  min-width: min-content;
 }
 .resizeable .resizeable-container {
   flex: 1;
@@ -131,6 +132,10 @@ dialog .dialog-body .options {
 }
 
 /* Resizeable Sidebar */
+.resizeable-sidebar {
+  display: flex;
+  flex-flow: column;
+}
 .resizeable-sidebar-toolbar {
   position: sticky;
   top: 0;
@@ -140,7 +145,6 @@ dialog .dialog-body .options {
   background-color: black;
   border-top: 1px solid white;
   border-bottom: 1px solid white;
-  height: 30px;
 }
 .resizeable-sidebar-toolbar button {
   padding: 2px 6px;
@@ -148,8 +152,12 @@ dialog .dialog-body .options {
 .resizeable-sidebar-toolbar h2 {
   margin: 0 auto;
 }
-.resizeable-sidebar-container {
-  background-color: yellow;
+.resizeable-sidebar-content {
+  /*
+  overflow-y: auto;
+  gap: 10px;
+  */
+  padding: 10px;
 }
 
 /* Container */
@@ -297,42 +305,48 @@ dialog .dialog-body .options {
 }
 
 /* Settings sidebar */
-#settings-bar {
-  width: 400px;
-}
-#settings-bar .settings {
+.settings-bar-content {
   display: flex;
   flex-flow: column;
   gap: 10px;
 }
-/* Settings options */
-.settings-select,
+/* Settings playmode selection */
+.settings-playmode {
+  padding: 4px;
+  border: 2px solid black;
+  background-color: var(--ma);
+}
+.settings-playmode label {
+  font-size: larger;
+}
+.settings-playmode p {
+  font-style: italic;
+}
+.settings-playmode div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.settings-playmode ul {
+  margin-left: 20px;
+}
+.settings-playmode ul span {
+  color: orange;
+}
+/* Settings toggle option */
 .settings-checkbox {
   padding: 4px;
   border: 2px solid black;
   background-color: var(--ma);
 }
-.settings-select label,
+.settings-checkbox p {
+  font-style: italic;
+}
 .settings-checkbox label {
   font-size: larger;
 }
 .settings-checkbox input {
   margin-right: 4px;
-}
-.settings-select p,
-.settings-checkbox p {
-  font-style: italic;
-}
-.settings-select div {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-.settings-select ul {
-  margin-left: 20px;
-}
-.settings-select ul span {
-  color: orange;
 }
 
 /* Tools sidebar */

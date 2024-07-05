@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 interface ResizeableProps {
-  minWidth: number;
+  minWidth?: number;
   width: number;
   children: React.ReactNode;
 };
 
 // https://stackoverflow.com/a/62437093
-const Resizeable = ({ minWidth, width, children }: ResizeableProps) => {
+const Resizeable = ({ minWidth = 0, width, children }: ResizeableProps) => {
   const [sizeX, setSizeX] = useState(width);
 
   const handler = (mouseDownEvent: React.MouseEvent) => {
