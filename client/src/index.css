@@ -106,6 +106,52 @@ dialog .dialog-body .options {
   gap: 4px;
 }
 
+/* Resizeable */
+.resizeable {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.resizeable .resizeable-container {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+
+  background-color: var(--ma-selected);
+}
+.resizeable #draghandle {
+  background-color: white;
+  width: 4px;
+  user-select: none;
+}
+.resizeable #draghandle:hover {
+  cursor: col-resize;
+}
+.resizeable #draghandle:active {
+  cursor: grab;
+}
+
+/* Resizeable Sidebar */
+.resizeable-sidebar-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: black;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+  height: 30px;
+}
+.resizeable-sidebar-toolbar button {
+  padding: 2px 6px;
+}
+.resizeable-sidebar-toolbar h2 {
+  margin: 0 auto;
+}
+.resizeable-sidebar-container {
+  background-color: yellow;
+}
+
 /* Container */
 .container {
   display: flex;
