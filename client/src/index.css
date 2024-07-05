@@ -120,15 +120,19 @@ dialog .dialog-body .options {
   background-color: var(--ma-selected);
 }
 .resizeable #draghandle {
+  width: 2px;
   background-color: white;
-  width: 4px;
   user-select: none;
 }
 .resizeable #draghandle:hover {
   cursor: col-resize;
 }
-.resizeable #draghandle:active {
-  cursor: grab;
+.resizeable #draghandle::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 100%;
+  background: none;
 }
 
 /* Resizeable Sidebar */
