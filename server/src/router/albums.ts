@@ -16,7 +16,7 @@ const toAlbumBodyBase = (body: unknown): AlbumBodyBase => {
 
   if (
     !('videoId' in body) || !('artist' in body) || !('title' in body) ||
-    !('published' in body) || !('category' in body) || !('addDate' in body)
+    !('published' in body) || !('category' in body)
   ) {
     throw new Error('missing required values');
   }
