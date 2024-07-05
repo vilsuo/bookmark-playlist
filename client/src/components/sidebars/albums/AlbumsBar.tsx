@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import AlbumFilter from './filters/AlbumFilter';
 import AlbumTable from './table/AlbumTable';
 import AlbumsView from './AlbumsView';
@@ -27,7 +27,6 @@ const AlbumsBarHeader = (
 };
 
 interface AlbumsBarContentProps {
-  listRef: React.MutableRefObject<HTMLDivElement | null>;
   startRef: React.MutableRefObject<HTMLDivElement | null>;
   endRef: React.MutableRefObject<HTMLDivElement | null>;
   isAddOpen: boolean;
@@ -35,7 +34,7 @@ interface AlbumsBarContentProps {
 };
 
 const AlbumsBarContent = (
-  { listRef, startRef, endRef, isAddOpen, closeAdd }: AlbumsBarContentProps
+  { startRef, endRef, isAddOpen, closeAdd }: AlbumsBarContentProps
 ) => {
   const viewingAlbum = useAppSelector(selectViewing);
 
@@ -43,7 +42,7 @@ const AlbumsBarContent = (
 
   return (
     <div className="albums-bar-content">
-      <div ref={listRef} className={`album-filter-list ${viewingAlbum ? 'viewed' : ''}`}>
+      <div className={`album-filter-list ${viewingAlbum ? 'viewed' : ''}`}>
         <div id="start-ref" ref={startRef} />
 
         <AlbumFilter />
@@ -77,19 +76,9 @@ interface AlbumsBarProps {
 
 const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
   const [isAddOpen, setIsAddOpen] = useState(false);
-
-  const listRef = useRef<null | HTMLDivElement>(null);
   
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
-
-  useEffect(() => {
-    listRef.current?.scrollTo({ top: pos, behavior: 'instant' });
-  }, [pos]);
-
-  const getScrollPosition = () => {
-    return listRef.current?.scrollTop;
-  };
 
   const scrollTo = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
@@ -97,8 +86,9 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
 
   return (
     <SideBarBase
+      pos={pos}
       width={600}
-      close={() => close(getScrollPosition())}
+      close={close}
       header={
         <AlbumsBarHeader
           scrollToStart={() => scrollTo(startRef)}
@@ -108,7 +98,6 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
       }
       content={
         <AlbumsBarContent
-          listRef={listRef}
           startRef={startRef}
           endRef={endRef}
           isAddOpen={isAddOpen}

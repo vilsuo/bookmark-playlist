@@ -14,12 +14,14 @@ const SettingsBarContent = () => {
 };
 
 interface SettingsBarProps {
-  close: () => void;
+  close: (pos: number | undefined) => void;
+  pos: number;
 };
 
-const SettingsBar = ({ close }: SettingsBarProps) => {
+const SettingsBar = ({ close, pos }: SettingsBarProps) => {
   return(
     <SideBarBase
+      pos={pos}
       close={close}
       header={ <SettingsBarHeader /> }
       content={ <SettingsBarContent /> }

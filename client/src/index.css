@@ -202,14 +202,19 @@ dialog .dialog-body .options {
 .albums-bar-content {
   display: flex;
   flex-flow: column nowrap;
+
+  /*overflow: hidden;*/
 }
 .albums-bar-content .album-filter-list {
   display: flex;
   flex-flow: column nowrap;
   gap: 10px;
+
+  /*overflow-y: auto;*/
 }
 .albums-bar-content .album-filter-list.viewed {
   height: calc(100vh - 169px);
+  /*height: calc(100vh - 159px);*/
 }
 .albums-bar-content .album-filter-list.viewed > :last-child {
   padding-bottom: 10px;

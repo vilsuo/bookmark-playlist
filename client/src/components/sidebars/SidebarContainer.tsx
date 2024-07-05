@@ -7,7 +7,15 @@ const SidebarContainer = () => {
   // the current opened sidebar
   const [sidebarType, setSidebarType] = useState<SidebarType | null>(null);
 
-  const [scrollPos, setScrollPos] = useState(0);
+  // remember sidebar scroll positions
+  const [scrollPos, setScrollPos] = useState<Partial<Record<SidebarType, number>>>({});
+
+  const addScrollPos = (type: SidebarType, pos: number | undefined) => {
+    setScrollPos((positions) => ({
+      ...positions,
+      [type]: pos || 0,
+    }));
+  };
 
   const closeSidebar = () => setSidebarType(null);
 
@@ -23,7 +31,7 @@ const SidebarContainer = () => {
         sidebarType={sidebarType}
         close={closeSidebar}
         scrollPos={scrollPos}
-        setScrollPos={setScrollPos}
+        addScrollPos={addScrollPos}
       />
     );
   }

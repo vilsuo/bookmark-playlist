@@ -6,23 +6,25 @@ import SettingsBar from './settings/SettingsBar';
 interface SidebarProps {
   sidebarType: SidebarType;
   close: () => void;
-  scrollPos: number;
-  setScrollPos: (val: number) => void;
+  scrollPos: Partial<Record<SidebarType, number>>;
+  addScrollPos: (type: SidebarType, pos: number | undefined) => void;
 };
 
-const Sidebar = ({ sidebarType, close, scrollPos, setScrollPos }: SidebarProps) => {
+const Sidebar = ({ sidebarType, close, scrollPos, addScrollPos }: SidebarProps) => {
 
   const closeAndSaveScrollPos = (pos: number | undefined) => {
-    setScrollPos(pos || 0);
+    addScrollPos(sidebarType, pos);
     close();
   };
+
+  const pos = scrollPos[sidebarType] ? scrollPos[sidebarType] : 0;
 
   switch(sidebarType) {
     case SidebarType.ALBUMS: {
       return (
         <AlbumsBar
           close={closeAndSaveScrollPos}
-          pos={scrollPos}
+          pos={pos}
         />
       );
     }
@@ -36,7 +38,8 @@ const Sidebar = ({ sidebarType, close, scrollPos, setScrollPos }: SidebarProps) 
     case SidebarType.SETTINGS: {
       return (
         <SettingsBar 
-          close={close}
+          close={closeAndSaveScrollPos}
+          pos={pos}
         />
       );
     }
