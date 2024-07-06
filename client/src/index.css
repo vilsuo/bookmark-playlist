@@ -216,23 +216,11 @@ dialog .dialog-body .options {
 
   /*overflow-y: auto;*/
 }
-.albums-bar-content .album-filter-list.viewed {
-  height: calc(100vh - 169px);
-  /*height: calc(100vh - 159px);*/
-}
-.albums-bar-content .album-filter-list.viewed > :last-child {
-  padding-bottom: 10px;
-}
 
 /* Albums view */
 .albums-view {
   display: flex;
   flex-flow: column nowrap;
-
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 900px;
   height: 120px;
 }
 .albums-view .header {

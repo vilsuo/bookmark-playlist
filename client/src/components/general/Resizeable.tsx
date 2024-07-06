@@ -11,20 +11,17 @@ const Resizeable = ({ minWidth = 0, width, children }: ResizeableProps) => {
   const [sizeX, setSizeX] = useState(width);
 
   const handler = (mouseDownEvent: React.MouseEvent) => {
-    const startSizeX = sizeX;
     const startPosition = mouseDownEvent.pageX;
     
     const onMouseMove = (mouseMoveEvent: MouseEvent) => {
-      setSizeX(//currentSize => ({
-        Math.max(minWidth, startSizeX - startPosition + mouseMoveEvent.pageX)
-      );
-    }
+      setSizeX(Math.max(minWidth, sizeX - startPosition + mouseMoveEvent.pageX));
+    };
 
     const onMouseUp = () => {
       document.body.removeEventListener("mousemove", onMouseMove);
       // uncomment the following line if not using `{ once: true }`
       // document.body.removeEventListener("mouseup", onMouseUp);
-    }
+    };
     
     document.body.addEventListener("mousemove", onMouseMove);
     document.body.addEventListener("mouseup", onMouseUp, { once: true });

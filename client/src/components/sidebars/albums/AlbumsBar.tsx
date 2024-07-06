@@ -36,13 +36,9 @@ interface AlbumsBarContentProps {
 const AlbumsBarContent = (
   { startRef, endRef, isAddOpen, closeAdd }: AlbumsBarContentProps
 ) => {
-  const viewingAlbum = useAppSelector(selectViewing);
-
-  const dispatch = useAppDispatch();
-
   return (
     <div className="albums-bar-content">
-      <div className={`album-filter-list ${viewingAlbum ? 'viewed' : ''}`}>
+      <div className="album-filter-list">
         <div id="start-ref" ref={startRef} />
 
         <AlbumFilter />
@@ -51,13 +47,6 @@ const AlbumsBarContent = (
 
         <div id="end-ref" ref={endRef} />
       </div>
-
-      { viewingAlbum && (
-        <AlbumsView
-          album={viewingAlbum}
-          close={(() => dispatch(setViewingAlbum(null)))}
-        />
-      )}
 
       { isAddOpen && (
         <AlbumAddDialog
@@ -79,6 +68,10 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
   
   const startRef = useRef<null | HTMLDivElement>(null);
   const endRef = useRef<null | HTMLDivElement>(null);
+
+  const viewingAlbum = useAppSelector(selectViewing);
+
+  const dispatch = useAppDispatch();
 
   const scrollTo = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
@@ -103,6 +96,14 @@ const AlbumsBar = ({ close, pos }: AlbumsBarProps) => {
           isAddOpen={isAddOpen}
           closeAdd={() => setIsAddOpen(false)}
         />
+      }
+      footer={
+        viewingAlbum && (
+          <AlbumsView
+            album={viewingAlbum}
+            close={(() => dispatch(setViewingAlbum(null)))}
+          />
+        )
       }
     />
   );

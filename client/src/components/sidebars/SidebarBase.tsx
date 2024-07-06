@@ -7,11 +7,12 @@ interface SideBarBaseProps {
   close: (pos: number | undefined) => void;
   header: ReactNode;
   content: ReactNode;
+  footer?: ReactNode;
   pos?: number;
 };
 
 const SideBarBase = (
-  { minWidth, width = 500, close, header, content, pos = 0 }: SideBarBaseProps
+  { minWidth, width = 500, close, header, content, pos = 0, footer }: SideBarBaseProps
 ) => {
 
   const ref = useRef<null | HTMLDivElement>(null);
@@ -37,6 +38,10 @@ const SideBarBase = (
 
         <div className="resizeable-sidebar-content" ref={ref}>
           { content }
+        </div>
+
+        <div>
+          { footer }
         </div>
       </div>
     </Resizeable>

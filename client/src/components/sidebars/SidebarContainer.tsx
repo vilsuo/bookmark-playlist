@@ -11,10 +11,10 @@ const SidebarContainer = () => {
   const [scrollPos, setScrollPos] = useState<Partial<Record<SidebarType, number>>>({});
 
   const addScrollPos = (type: SidebarType, pos: number | undefined) => {
-    setScrollPos((positions) => ({
-      ...positions,
+    setScrollPos({
+      ...scrollPos,
       [type]: pos || 0,
-    }));
+    });
   };
 
   const closeSidebar = () => setSidebarType(null);
