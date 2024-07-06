@@ -40,7 +40,7 @@ const SideBarBase = (
           { content }
         </div>
 
-        <div>
+        <div className="resizeable-sidebar-footer">
           { footer }
         </div>
       </div>

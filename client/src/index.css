@@ -140,6 +140,7 @@ dialog .dialog-body .options {
   display: flex;
   flex-flow: column;
 
+  height: 100%;
   overflow: hidden;
 }
 .resizeable-sidebar-toolbar {
@@ -161,6 +162,9 @@ dialog .dialog-body .options {
 .resizeable-sidebar-content {
   padding: 10px;
   overflow-y: auto;
+}
+.resizeable-sidebar-footer {
+  margin-top: auto;
 }
 
 /* Container */
