@@ -755,11 +755,11 @@ table thead th.sortable:hover .sortable-icon.desc:after {
 .album-table th:first-child {
   width: 30%;
 }
-.album-table th:nth-child(2) {
-  width: 42%;
-}
 .album-table th:nth-child(3) {
-  width: 11%;
+  width: 55px;
+}
+.album-table th:nth-child(4) {
+  width: 85px;
 }
 /* Viewing row */
 .album-table tbody .album-row.viewing {
