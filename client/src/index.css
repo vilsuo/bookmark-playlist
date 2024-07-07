@@ -244,41 +244,39 @@ dialog .dialog-body .options {
   flex: 1;
   display: flex;
   flex-flow: row nowrap;
+  gap: 10px;
   margin: 10px;
+  padding: 10px;
   border: 2px solid black;
-  background-color: var(--ma-selected);
+  background-color: var(--ma);
 }
 .albums-view .actions {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 10px;
-  background-color: var(--ma);
 }
 .albums-view .actions button {
   height: 30px;
   width: 30px;
 }
-.albums-view .actions .play-button,
-.play-button {
+.albums-view .actions .play-button {
   height: 50px;
   width: 50px;
 }
 .albums-view .details {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  flex-flow: column nowrap;
-  overflow: hidden;
-
-  padding: 10px;
-  background-color: var(--ma);
+  margin: auto 0;
 }
-.albums-view .details span {
-  overflow: hidden;
+.albums-view .details div {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+.albums-view .details div span {
+  display: table-cell;
   white-space: nowrap;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 .albums-view .details .artist {
   font-size: x-large;

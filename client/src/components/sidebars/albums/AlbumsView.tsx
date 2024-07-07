@@ -8,7 +8,7 @@ import { setPlayingAlbum, selectIsPlaying } from '../../../redux/reducers/albums
 interface AlbumsViewProps {
   album: Album;
   close: () => void;
-}
+};
 
 const AlbumsView = ({ album, close }: AlbumsViewProps) => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -19,10 +19,6 @@ const AlbumsView = ({ album, close }: AlbumsViewProps) => {
 
   const addToQueue = () => dispatch(queueAdd(album));
   const playAlbum = () => dispatch(setPlayingAlbum(album));
-
-  const openEdit = () => {
-    setIsEditorOpen(!isEditorOpen);
-  };
 
   return (
     <React.Fragment>
@@ -46,12 +42,16 @@ const AlbumsView = ({ album, close }: AlbumsViewProps) => {
               Select
             </button>
             <button onClick={addToQueue}>Q</button>
-            <button onClick={openEdit}>E</button>
+            <button onClick={() => setIsEditorOpen(true)}>E</button>
           </div>
 
           <div className="details">
-            <span className="artist">{album.artist}</span>
-            <span className="title">{album.title}</span>
+            <div>
+              <span className="artist">{album.artist}</span>
+            </div>
+            <div>
+              <span className="title">{album.title}</span>
+            </div>
           </div>
         </div>
       </div>
