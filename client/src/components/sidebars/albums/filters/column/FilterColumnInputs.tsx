@@ -11,7 +11,7 @@ const TextInput = ({ text }: { text: string}) => {
 
   return (
     <div className="filter-text">
-      <label htmlFor="album-artist-text">Search:</label>
+      <label htmlFor="album-artist-text">Search</label>
       <input
         id="album-artist-text"
         type="text"
@@ -34,9 +34,9 @@ const PublishInput = ({ interval }: { interval: FilterInterval }) => {
   };
 
   return (
-    <div className="filter-interval">
+    <div className="filter-interval publish">
       <div className="start">
-        <label htmlFor="publish-start">From:</label>
+        <label htmlFor="publish-start">From</label>
         <input
           id="publish-start"
           type="number"
@@ -44,9 +44,9 @@ const PublishInput = ({ interval }: { interval: FilterInterval }) => {
           onChange={({ target }) => handlePublishStartChange(target.value)}
         />
       </div>
-
-      <div>
-        <label htmlFor="publish-end">to:</label>
+      
+      <div className="end">
+        <label htmlFor="publish-end">To</label>
         <input
           id="publish-end"
           type="number"
@@ -70,9 +70,9 @@ const AddDateInput = ({ interval }: { interval: FilterInterval }) => {
   };
 
   return (
-    <div className="filter-interval">
+    <div className="filter-interval add-date">
       <div className="start">
-        <label htmlFor="addDate-start">From:</label>
+        <label htmlFor="addDate-start">From</label>
         <input
           id="addDate-start"
           type="date"
@@ -80,9 +80,9 @@ const AddDateInput = ({ interval }: { interval: FilterInterval }) => {
           onChange={({ target }) => handleAddDateStartChange(target.value)}
         />
       </div>
-
-      <div>
-        <label htmlFor="addDate-end">to:</label>
+      
+      <div className="end">
+        <label htmlFor="addDate-end">To</label>
         <input
           id="addDate-end"
           type="date"

@@ -8,7 +8,7 @@ interface ColumnOptionsProps {
 const ColumnOptions = ({ column, handleColumnChange }: ColumnOptionsProps) => {
   return (
     <div className="column-options">
-      <label htmlFor="column-option">Filter albums:</label>
+      <label htmlFor="column-option">By</label>
       <select
         id="column-option"
         value={column}
