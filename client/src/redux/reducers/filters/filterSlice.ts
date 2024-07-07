@@ -66,10 +66,20 @@ const filtersSlice = createSlice({
       const interval = action.payload;
       state.filters.addDate = interval;
     },
-    resetFilteringFields: (state) => {
-      state.filters.text = initialState.filters.text;
-      state.filters.published = initialState.filters.published;
-      state.filters.addDate = initialState.filters.addDate;
+    resetFilteringColumn: (state) => {
+      const { column } = state.filters;
+      switch (column) {
+        case AlbumColumn.ARTIST:
+        case AlbumColumn.ALBUM:
+          state.filters.text = initialState.filters.text;
+          break;
+        case AlbumColumn.PUBLISHED:
+          state.filters.published = initialState.filters.published;
+          break;
+        case AlbumColumn.ADD_DATE:
+          state.filters.addDate = initialState.filters.addDate;
+          break;
+      }
     },
     setFilteringCategories: (state, action: PayloadAction<FilterCategories>) => {
       const categories = action.payload;
@@ -93,7 +103,7 @@ const filtersSlice = createSlice({
 
 export const {
   setFilteringColumn, setSort, setFilteringText, setFilteringPublished, 
-  setFilteringAddDate, resetFilteringFields, setFilteringCategories, 
+  setFilteringAddDate, resetFilteringColumn, setFilteringCategories, 
   toggleFilteringCategoryAll, removeFilteringCategory,
 } = filtersSlice.actions;
 
