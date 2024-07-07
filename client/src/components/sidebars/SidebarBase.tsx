@@ -2,7 +2,6 @@ import { ReactNode, useEffect, useRef } from "react";
 import Resizeable from "../general/Resizeable";
 
 interface SideBarBaseProps {
-  minWidth?: number
   width?: number;
   close: (pos: number | undefined) => void;
   header: ReactNode;
@@ -12,7 +11,7 @@ interface SideBarBaseProps {
 };
 
 const SideBarBase = (
-  { minWidth, width = 500, close, header, content, pos = 0, footer }: SideBarBaseProps
+  { width = 500, close, header, content, pos = 0, footer }: SideBarBaseProps
 ) => {
 
   const ref = useRef<null | HTMLDivElement>(null);
@@ -26,7 +25,7 @@ const SideBarBase = (
   };
 
   return (
-    <Resizeable minWidth={minWidth} width={width}>
+    <Resizeable width={width}>
       <div className="resizeable-sidebar">
         <div className="resizeable-sidebar-toolbar">
           { header }
