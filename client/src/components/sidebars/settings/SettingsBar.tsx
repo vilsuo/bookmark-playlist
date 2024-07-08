@@ -15,10 +15,10 @@ const SettingsBarContent = () => {
 
 interface SettingsBarProps {
   close: (pos: number | undefined) => void;
-  pos: number;
+  pos?: number;
 };
 
-const SettingsBar = ({ close, pos }: SettingsBarProps) => {
+const SettingsBar = ({ close, pos = 0 }: SettingsBarProps) => {
   return(
     <SideBarBase
       pos={pos}
