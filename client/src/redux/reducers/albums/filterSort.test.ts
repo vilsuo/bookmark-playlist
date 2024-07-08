@@ -1,24 +1,9 @@
 import { describe, expect, test } from "@jest/globals";
-import { createAlbumWithCategory, createAlbumsState, createFilterState } from "../../../../test/creators";
-import { RootState } from "../../store";
+import { createAlbumWithCategory, createFilteringAndSortingRootState } from "../../../../test/creators";
 import { selectSortedAndFilteredAlbums } from "./filterSort";
-import { Filter, Sort } from "../filters/filterSlice";
 import { Album, AlbumColumn, Order } from "../../../types";
 import { albums } from "../../../../test/constants";
 import { CATEGORY_ALL } from "../../../constants";
-
-const createFilteringAndSortingRootState = (
-  { albums = [], sorting, filters }: {
-    albums?: Album[],
-    sorting?: Sort,
-    filters?: Partial<Filter>,
-  } = {}
-): RootState => (
-  {
-    albums: createAlbumsState({ albums }) ,
-    filters: createFilterState({ sorting, filters }),
-  } as RootState
-);
 
 // do not care about ordering at this point
 const tempSortfn = (a: Album, b: Album) => a.id - b.id;
