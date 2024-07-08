@@ -6,6 +6,7 @@ import { createAlbumsState, createFilteringAndSortingRootState, createFilterStat
 import { albums } from "../../../../test/constants";
 import { selectSortedAndFilteredAlbums } from "./filterSort";
 import { selectPlaying } from "./albumsSlice";
+import { selectQueueFirst } from "../queueSlice";
 
 const createPlayingNextRootState = ({
   albums, playing, queue, playMode,
@@ -499,6 +500,14 @@ describe("Albums slice playing", () => {
         describe("when the queue is not empty", () => {
           const queue = [lastInSequence, middleInSequence];
 
+          let store: ReturnType<typeof setupStore>;
+          
+          // test that queue is popped
+          afterEach(() => {
+            const queueFirst = selectQueueFirst(store.getState());
+            expect(queueFirst).toStrictEqual(queue[1]);
+          });
+
           test("should play the first album in the queue when album is not being played", () => {
             const state = createPlayingNextRootState({
               albums: sortedAndFilteredAlbums,
@@ -506,7 +515,7 @@ describe("Albums slice playing", () => {
               playMode,
             });
   
-            const store = setupStore(state);
+            store = setupStore(state);
             store.dispatch(playNext());
   
             const result = selectPlaying(store.getState());
@@ -521,7 +530,7 @@ describe("Albums slice playing", () => {
               playMode,
             });
   
-            const store = setupStore(state);
+            store = setupStore(state);
             store.dispatch(playNext());
   
             const result = selectPlaying(store.getState());
@@ -626,6 +635,14 @@ describe("Albums slice playing", () => {
         });
 
         describe("when the queue is not empty", () => {
+          let store: ReturnType<typeof setupStore>;
+          
+          // test that queue is popped
+          afterEach(() => {
+            const queueFirst = selectQueueFirst(store.getState());
+            expect(queueFirst).toStrictEqual(queue[1]);
+          });
+
           describe("when album is not being played", () => {
             test("should play the first album in the queue when there are albums", () => {
               const state = createPlayingNextRootState({
@@ -634,7 +651,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -649,7 +666,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -666,7 +683,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
     
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -681,7 +698,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
     
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -697,7 +714,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
     
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -714,7 +731,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
     
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -831,6 +848,14 @@ describe("Albums slice playing", () => {
         });
 
         describe("when the queue is not empty", () => {
+          let store: ReturnType<typeof setupStore>;
+
+          // test that queue is popped
+          afterEach(() => {
+            const queueFirst = selectQueueFirst(store.getState());
+            expect(queueFirst).toStrictEqual(queue[1]);
+          });
+          
           describe("when album is not being played", () => {
             test("should play the first album in the queue when there are albums", () => {
               const state = createPlayingNextRootState({
@@ -839,7 +864,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -854,7 +879,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -871,7 +896,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -886,7 +911,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -902,7 +927,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
 
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
@@ -919,7 +944,7 @@ describe("Albums slice playing", () => {
                 playMode,
               });
   
-              const store = setupStore(state);
+              store = setupStore(state);
               store.dispatch(playNext());
     
               const result = selectPlaying(store.getState());
