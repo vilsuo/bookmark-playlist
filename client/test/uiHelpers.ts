@@ -1,4 +1,9 @@
-import { Matcher, fireEvent, screen } from '@testing-library/react';
+import { Matcher, fireEvent, screen, within } from '@testing-library/react';
+
+export const notificationExistsByTitle = async (title: string) => {
+  const notificationContainer = screen.getByTestId("notifications");
+  await within(notificationContainer).findByText(title);
+};
 
 export const findInputByLabelMatcher = async (matcher: Matcher) =>
   screen.findByLabelText<HTMLInputElement>(matcher);

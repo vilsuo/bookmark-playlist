@@ -1,15 +1,11 @@
 import { describe, expect, jest, test } from "@jest/globals";
 
 import { RootState, setupStore } from "../store";
-import { Notification, createNotification, selectNotifications } from "./notificationSlice";
-import { createNotificationState } from "../../../test/creators";
+import { createNotification, selectNotifications } from "./notificationSlice";
 import { NotificationType } from "../../types";
+import { createNotificationRootState } from "../../../test/creators";
 
 jest.mock("uuid", () => ({ v4: () => "randomid" }));
-
-const createNotificationRootState = (notifications?: Notification[]): RootState => (
-  { notifications: createNotificationState(notifications) } as RootState
-);
 
 describe("Notification slice", () => {
   describe("thunks", () => {

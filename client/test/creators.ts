@@ -61,3 +61,7 @@ export const createAlbumCategoryFilterRootState = (
     albums: createAlbumsState({ albums }),
   } as RootState
 );
+
+export const createNotificationRootState = (notifications?: Notification[]): RootState => (
+  { notifications: createNotificationState(notifications) } as RootState
+);

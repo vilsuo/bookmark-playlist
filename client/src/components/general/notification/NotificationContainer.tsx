@@ -7,7 +7,7 @@ const NotificationContainer = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="notification-container">
+    <div className="notification-container" data-testid="notifications">
       { notifications.map((notification) => 
         <Notification
           key={notification.id}
@@ -18,7 +18,7 @@ const NotificationContainer = () => {
         />
       )}
     </div>
-  )
+  );
 };
 
 export default NotificationContainer;
