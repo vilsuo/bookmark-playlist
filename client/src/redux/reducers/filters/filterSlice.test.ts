@@ -1,31 +1,18 @@
 import { describe, expect, test } from "@jest/globals";
 import reducer, { FilterCategories, selectFilterCategories, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilterCategorySingle, toggleFilteringCategoryAll } from "./filterSlice";
-import { Album, AlbumColumn, Order } from "../../../types";
+import { AlbumColumn, Order } from "../../../types";
 import { CATEGORY_ALL } from "../../../constants";
 import { albums, categories } from "../../../../test/constants";
 import { RootState, setupStore } from "../../store";
-import { createAlbumWithCategory, createAlbumsState, createFilterState } from "../../../../test/creators";
+import { createAlbumCategoryFilterRootState, createAlbumWithCategory, createCategoryFilterState, createFilterState } from "../../../../test/creators";
 
 const createSortingFilterState = (column: AlbumColumn, order: Order) =>
   createFilterState({ sorting: { column, order } });
-
-const createCategoryFilterState = (categories: FilterCategories) =>
-  createFilterState({ filters: { categories } });
 
 const createCategoryFilterRootState = (
   filterCategories: FilterCategories,
 ): RootState => (
   { filters: createCategoryFilterState(filterCategories) } as RootState
-);
-
-const createCategoryFilterTogglingRootState = (
-  categories: FilterCategories,
-  albums: Album[],
-): RootState => (
-  {
-    filters: createCategoryFilterState(categories),
-    albums: createAlbumsState({ albums }),
-  } as RootState
 );
 
 const expectEqualFilterCategories = (
@@ -176,7 +163,7 @@ describe("Filter slice", () => {
         test("should filter all categories except the toggled", () => {
           const [ targetCategory, ...rest ] = initialCategories;
 
-          const state = createCategoryFilterTogglingRootState(
+          const state = createAlbumCategoryFilterRootState(
             initialFilterCategories, 
             initialAlbums,
           );
@@ -197,7 +184,7 @@ describe("Filter slice", () => {
           test("should toggle on just the category even if it is only one missing", () => {
             const [ targetCategory, ...initialFilterCategories ] = initialCategories;
 
-            const state = createCategoryFilterTogglingRootState(
+            const state = createAlbumCategoryFilterRootState(
               initialFilterCategories, 
               initialAlbums,
             );
@@ -217,7 +204,7 @@ describe("Filter slice", () => {
           test("should toggle on the category if it is not the only one missing", () => {
             const [ targetCategory, otherCategory, ...initialFilterCategories ] = initialCategories;
 
-            const state = createCategoryFilterTogglingRootState(
+            const state = createAlbumCategoryFilterRootState(
               initialFilterCategories, 
               initialAlbums,
             );
@@ -241,7 +228,7 @@ describe("Filter slice", () => {
             const [ _otherCategory, ...initialFilterCategories ] = initialCategories;
             const [ targetCategory, ...rest ] = initialFilterCategories;
 
-            const state = createCategoryFilterTogglingRootState(
+            const state = createAlbumCategoryFilterRootState(
               initialFilterCategories, 
               initialAlbums,
             );

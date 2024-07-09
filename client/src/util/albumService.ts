@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Album, AlbumCreation, AlbumUpdate } from '../types';
 
-const BASE_URL = '/api/albums';
+export const BASE_URL = '/api/albums';
 
 export const getAlbums = async (): Promise<Album[]> => {
   const { data } = await axios.get(BASE_URL);

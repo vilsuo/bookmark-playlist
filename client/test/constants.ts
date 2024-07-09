@@ -1,4 +1,4 @@
-import { Album, AlbumCreation } from "../src/types";
+import { Album, AlbumCreation, AlbumUpdate } from "../src/types";
 
 export const albums: Album[] = [
   {
@@ -54,6 +54,20 @@ export const newAlbumValues: AlbumCreation = {
   title: "Rotting Ways To Misery",
   published: 1991,
   category: "Death",
+};
+
+export const updatedAlbumValues: AlbumUpdate = {
+  videoId: "HaMtzxHuN5w",
+  artist: "Forbidden",
+  title: "Twisted Into Form",
+  published: 1990,
+  category: "Thrash",
+};
+
+export const newAlbum: Album = {
+  id: 2000,
+  addDate: "2024-07-08T15:26:30.000Z",
+  ...newAlbumValues,
 };
 
 export const categories: Array<Album["category"]> = ["Thrash", "Death", "Black", "Doom"];

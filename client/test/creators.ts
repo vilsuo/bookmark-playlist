@@ -1,5 +1,5 @@
 import { AlbumsState, initialState as initialAlbumsState } from "../src/redux/reducers/albums/albumsSlice";
-import { Filter, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filters/filterSlice";
+import { Filter, FilterCategories, FilterState, Sort, initialState as initialFilterState } from "../src/redux/reducers/filters/filterSlice";
 import { Notification, NotificationState } from "../src/redux/reducers/notificationSlice";
 import { QueueState } from "../src/redux/reducers/queueSlice";
 import { SettingsState, initialState as initialSettingsState } from "../src/redux/reducers/settingsSlice";
@@ -35,6 +35,8 @@ export const createQueueState = (albums: Album[] = []): QueueState => (
 export const createNotificationState = (notifications: Notification[] = [])
 : NotificationState => ({ notifications });
 
+export const createCategoryFilterState = (categories: FilterCategories) =>
+  createFilterState({ filters: { categories } });
 
 // ROOT
 export const createFilteringAndSortingRootState = (
@@ -47,5 +49,15 @@ export const createFilteringAndSortingRootState = (
   {
     albums: createAlbumsState({ albums }) ,
     filters: createFilterState({ sorting, filters }),
+  } as RootState
+);
+
+export const createAlbumCategoryFilterRootState = (
+  categories: FilterCategories,
+  albums: Album[],
+): RootState => (
+  {
+    filters: createCategoryFilterState(categories),
+    albums: createAlbumsState({ albums }),
   } as RootState
 );
