@@ -1,15 +1,16 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "@jest/globals";
-import { createAlbum, deleteAlbum, fetchAlbums, selectAlbumCategories, selectAlbums, selectIsAloneInCategory, updateAlbum } from "./albumsSlice";
+import { createAlbum, createFromBookmarks, deleteAlbum, fetchAlbums, selectAlbumCategories, selectAlbums, selectIsAloneInCategory, updateAlbum } from "./albumsSlice";
 import { Album, AlbumUpdate, NotificationType } from "../../../types";
 import { RootState, setupStore } from "../../store";
 import { albums, categories, newAlbum, newAlbumValues, updatedAlbumValues } from "../../../../test/constants";
 import { createAlbumCategoryFilterRootState, createAlbumWithCategory, createAlbumsState, createQueueState } from "../../../../test/creators";
 import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
-import { BASE_URL } from "../../../util/albumService";
+import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
 import { Notification, selectNotifications } from "../notificationSlice";
 import { selectQueue } from "../queueSlice";
 import { selectFilterCategories } from "../filters/filterSlice";
+import { BASE_URL as CONVERTER_BASE_URL } from "../../../util/converterService";
 
 const createAlbumsRootState = (albums: Album[] = []): RootState => (
   { albums: createAlbumsState({ albums }) } as RootState
@@ -27,9 +28,6 @@ const createAlbumsQueueRootState = ({ albums = [], queue = [] }: {
 const createServerMockErrorResponse = (message: string, status = 400) => {
   return HttpResponse.json({ message } , { status });
 };
-
-// test file upload:
-// https://mswjs.io/docs/recipes/file-uploads
 
 const expectToHaveNotification = (
   notifications: Notification[],
@@ -130,7 +128,6 @@ describe("Albums slice", () => {
   });
 
   describe("async thunks", () => {
-  
     const server = setupServer();
   
     // Enable API mocking before tests.
@@ -154,7 +151,7 @@ describe("Albums slice", () => {
     describe("fetchAlbums", () => {
       describe("on successful request", () => {
         beforeEach(() => {
-          server.use(http.get(BASE_URL, async () => {
+          server.use(http.get(ALBUMS_BASE_URL, async () => {
             return HttpResponse.json(initialAlbums);
           }));
         });
@@ -171,7 +168,7 @@ describe("Albums slice", () => {
       describe("on failed request", () => {
         // simulate network error
         beforeEach(() => {
-          server.use(http.get(BASE_URL, async () => {
+          server.use(http.get(ALBUMS_BASE_URL, async () => {
             return HttpResponse.error();
           }));
         });
@@ -198,16 +195,75 @@ describe("Albums slice", () => {
       });
     });
 
-    /*
     describe("createFromBookmarks", () => {
+      const createdAlbums = [newAlbum];
+      const formData = new FormData();
 
+      describe("on successful request", () => {
+        beforeEach(() => {
+          server.use(http.post(CONVERTER_BASE_URL, () => {
+            return HttpResponse.json(createdAlbums, { status: 201 });
+          }));
+        });
+
+        test("should load the albums", async () => {
+          const store = setupStore(createAlbumsRootState(initialAlbums));
+          await store.dispatch(createFromBookmarks(formData));
+
+          const result = selectAlbums(store.getState());
+          expect(result).toContainEqual(createdAlbums[0]);
+          expect(result).toHaveLength(initialAlbums.length + createdAlbums.length);
+        });
+
+        test("should create a success notification", async () => {
+          const store = setupStore(createAlbumsRootState(initialAlbums));
+          await store.dispatch(createFromBookmarks(formData));
+
+          const result = selectNotifications(store.getState());
+          expectToHaveNotification(result, {
+            type: NotificationType.SUCCESS,
+            title: "Bookmarks imported",
+          })
+        });
+      });
+
+      describe("on failed request", () => {
+        const message = "Folder not found";
+
+        // simulate a server error
+        beforeEach(() => {
+          server.use(http.post(CONVERTER_BASE_URL, async () => {
+            return createServerMockErrorResponse(message);
+          }));
+        });
+
+        test("should not load albums", async () => {
+          const store = setupStore(createAlbumsRootState(initialAlbums));
+          await store.dispatch(createFromBookmarks(formData));
+
+          const result = selectAlbums(store.getState());
+          expect(result).not.toContainEqual(createdAlbums[0]);
+          expect(result).toHaveLength(initialAlbums.length);
+        });
+
+        test("should create an error notification", async () => {
+          const store = setupStore(createAlbumsRootState(initialAlbums));
+          await store.dispatch(createFromBookmarks(formData));
+
+          const result = selectNotifications(store.getState());
+          expectToHaveNotification(result, {
+            type: NotificationType.ERROR,
+            title: "Bookmark import failed",
+            message,
+          })
+        });
+      });
     });
-    */
 
     describe("createAlbum", () => {
       describe("on successful request", () => {
         beforeEach(() => {
-          server.use(http.post(BASE_URL, async () => {
+          server.use(http.post(ALBUMS_BASE_URL, async () => {
             return HttpResponse.json(newAlbum, { status: 201 })
           }));
         });
@@ -238,7 +294,7 @@ describe("Albums slice", () => {
 
         // simulate a "validation" error
         beforeEach(() => {
-          server.use(http.post(BASE_URL, async () => {
+          server.use(http.post(ALBUMS_BASE_URL, async () => {
             return createServerMockErrorResponse(message);
           }));
         });
@@ -275,7 +331,7 @@ describe("Albums slice", () => {
         beforeEach(() => {
           server.use(
             http.put<{ id: string }, AlbumUpdate, Album>(
-              `${BASE_URL}/:id`,
+              `${ALBUMS_BASE_URL}/:id`,
               async ({ request, params }) => {
                 const id = Number(params.id);
         
@@ -389,7 +445,7 @@ describe("Albums slice", () => {
 
         // simulate a "validation" error
         beforeEach(() => {
-          server.use(http.put(`${BASE_URL}/:id`, async () => {
+          server.use(http.put(`${ALBUMS_BASE_URL}/:id`, async () => {
             return createServerMockErrorResponse(message);
           }));
         });
@@ -429,7 +485,7 @@ describe("Albums slice", () => {
 
       describe("successful request", () => {
         beforeEach(() => {
-          server.use(http.delete(`${BASE_URL}/:id`, () => {
+          server.use(http.delete(`${ALBUMS_BASE_URL}/:id`, () => {
             return new Response(null, { status: 204 });
           }));
         });
@@ -512,7 +568,7 @@ describe("Albums slice", () => {
       describe("unsuccessful request", () => {
         // simulate a network error
         beforeEach(() => {
-          server.use(http.delete(`${BASE_URL}/:id`, async () => {
+          server.use(http.delete(`${ALBUMS_BASE_URL}/:id`, async () => {
             return HttpResponse.error();
           }));
         });
