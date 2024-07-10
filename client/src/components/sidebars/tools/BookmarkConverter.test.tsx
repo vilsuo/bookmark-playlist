@@ -7,10 +7,12 @@ import { setupServer } from 'msw/node';
 
 import { renderWithProviders } from "../../../../test/testUtils";
 import { findInputByLabelMatcher } from "../../../../test/uiHelpers";
-import { albums } from "../../../../test/constants";
+import { albums, newAlbum } from "../../../../test/constants";
 
 import BookmarkConverter from "./BookmarkConverter";
 import { BASE_URL } from "../../../util/converterService";
+import { selectAlbums } from "../../../redux/reducers/albums/albumsSlice";
+import { createAlbumsRootState } from "../../../../test/creators";
 
 const findBookmarkInput = async () => findInputByLabelMatcher(/Root folder/i);
 const findUploadInput = async () => findInputByLabelMatcher(/Attachment/i);
@@ -24,7 +26,7 @@ const uploadFileToInput = async (user: UserEvent, file: File) =>
 
 describe("<BookmarkConverter />", () => {
   const testBookmarkName = "My_bookmarks";
-  const testFile = new File(['<html></html>'], "test.html", { type: "text/html" });
+  const testFile = new File([], "test.html", { type: "text/html" });
 
   const handlers = [
     http.post(BASE_URL, async () => {
@@ -43,7 +45,7 @@ describe("<BookmarkConverter />", () => {
   // Disable API mocking after the tests are done.
   afterAll(() => server.close());
 
-  test("Can input a bookmarks folder name", async () => {
+  test("should be able to type bookmarks folder name", async () => {
     const user = userEvent.setup();
     renderWithProviders(<BookmarkConverter />);
 
@@ -54,7 +56,7 @@ describe("<BookmarkConverter />", () => {
     expect(await findConvertButton()).toHaveProperty("disabled", true);
   });
 
-  test("Can input a file", async () => {
+  test("should be able to input a file", async () => {
     const user = userEvent.setup();
     renderWithProviders(<BookmarkConverter />);
 
@@ -67,9 +69,11 @@ describe("<BookmarkConverter />", () => {
     expect(await findConvertButton()).toHaveProperty("disabled", true);
   });
 
-  test("Converting bookmarks disables converting", async () => {
+  test("should add albums after converting", async () => {
+    const preloadedState = createAlbumsRootState([newAlbum]);
+
     const user = userEvent.setup();
-    renderWithProviders(<BookmarkConverter />);
+    const { store } = renderWithProviders(<BookmarkConverter />, { preloadedState });
 
     await typeBookmarkNameToInput(user, testBookmarkName);
     await uploadFileToInput(user, testFile);
@@ -83,5 +87,7 @@ describe("<BookmarkConverter />", () => {
     });
 
     expect(await findConvertButton()).toHaveProperty("disabled", true);
+
+    expect(selectAlbums(store.getState())).toEqual([ newAlbum, ...albums ]);
   });
 });

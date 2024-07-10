@@ -3,7 +3,7 @@ import { createAlbum, createFromBookmarks, deleteAlbum, fetchAlbums, selectAlbum
 import { Album, AlbumUpdate, NotificationType } from "../../../types";
 import { RootState, setupStore } from "../../store";
 import { albums, categories, newAlbum, newAlbumValues, updatedAlbumValues } from "../../../../test/constants";
-import { createAlbumCategoryFilterRootState, createAlbumWithCategory, createAlbumsState, createQueueState } from "../../../../test/creators";
+import { createAlbumCategoryFilterRootState, createAlbumWithCategory, createAlbumsRootState, createAlbumsState, createQueueState } from "../../../../test/creators";
 import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
@@ -11,10 +11,6 @@ import { Notification, selectNotifications } from "../notificationSlice";
 import { selectQueue } from "../queueSlice";
 import { selectFilterCategories } from "../filters/filterSlice";
 import { BASE_URL as CONVERTER_BASE_URL } from "../../../util/converterService";
-
-const createAlbumsRootState = (albums: Album[] = []): RootState => (
-  { albums: createAlbumsState({ albums }) } as RootState
-);
 
 const createAlbumsQueueRootState = ({ albums = [], queue = [] }: {
   albums: Album[], queue: Album[],

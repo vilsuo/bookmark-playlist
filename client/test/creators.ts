@@ -62,6 +62,10 @@ export const createAlbumCategoryFilterRootState = (
   } as RootState
 );
 
+export const createAlbumsRootState = (albums: Album[] = []): RootState => (
+  { albums: createAlbumsState({ albums }) } as RootState
+);
+
 export const createQueueRootState = (queue?: Album[]): RootState => (
   { queue: createQueueState(queue) } as RootState
 );
