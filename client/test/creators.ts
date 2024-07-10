@@ -19,7 +19,7 @@ export const createAlbumsState = (values?: Partial<AlbumsState>): AlbumsState =>
 export const createFilterState = ({ sorting, filters }: {
   sorting?: Partial<Sort>,
   filters?: Partial<Filter>,
-}= {}): FilterState => ({
+} = {}): FilterState => ({
   sorting: { ...initialFilterState.sorting, ...sorting },
   filters: { ...initialFilterState.filters, ...filters },
 });
@@ -64,6 +64,13 @@ export const createAlbumCategoryFilterRootState = (
 
 export const createAlbumsRootState = (albums: Album[] = []): RootState => (
   { albums: createAlbumsState({ albums }) } as RootState
+);
+
+export const createFiltersRootState = ({ sorting, filters }: {
+  sorting?: Partial<Sort>,
+  filters?: Partial<Filter>,
+} = {}): RootState => (
+  { filters: createFilterState({ sorting, filters }) } as RootState
 );
 
 export const createQueueRootState = (queue?: Album[]): RootState => (
