@@ -32,7 +32,7 @@ const AlbumTable = () => {
           )}
         </tr>
       </thead>
-      <tbody>
+      <tbody data-testid="album-tbody">
         {filteredAndSortedAlbums.map((album) =>
           <AlbumRow
             key={album.videoId}
