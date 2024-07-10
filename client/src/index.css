@@ -795,10 +795,10 @@ table thead th.sortable:hover .sortable-icon.desc:after {
 .queue-table th:last-child {
   width: 100px;
 }
-.queue-table .queue-row .actions {
+.queue-actions {
   display: flex;
   gap: 4px;
 }
-.queue-table .queue-row .actions button {
+.queue-actions button {
   flex: 1;
 }

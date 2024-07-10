@@ -2,12 +2,7 @@ import { describe, expect, test } from "@jest/globals";
 import reducer, { QueueState, queueAdd, queuePop, queuePrepend, queueRemove, queueUpdate, selectIsQueued, selectQueueFirst } from "./queueSlice";
 import { albums, newAlbumValues } from "../../../test/constants";
 import { Album } from "../../types";
-import { RootState } from "../store";
-import { createQueueState } from "../../../test/creators";
-
-const createQueueRootState = (queue?: Album[]): RootState => (
-  { queue: createQueueState(queue) } as RootState
-);
+import { createQueueRootState, createQueueState } from "../../../test/creators";
 
 const getAlbumPosition = (state: QueueState, id: Album["id"]) =>
   state.queue.map(a => a.id).indexOf(id);

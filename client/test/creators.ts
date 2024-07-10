@@ -62,6 +62,10 @@ export const createAlbumCategoryFilterRootState = (
   } as RootState
 );
 
+export const createQueueRootState = (queue?: Album[]): RootState => (
+  { queue: createQueueState(queue) } as RootState
+);
+
 export const createNotificationRootState = (notifications?: Notification[]): RootState => (
   { notifications: createNotificationState(notifications) } as RootState
 );
