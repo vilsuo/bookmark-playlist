@@ -8,11 +8,10 @@ import { setupServer } from 'msw/node';
 import { renderWithProviders } from "../../../../test/testUtils";
 import { findInputByLabelMatcher } from "../../../../test/uiHelpers";
 import { albums, newAlbum } from "../../../../test/constants";
-
-import BookmarkConverter from "./BookmarkConverter";
 import { BASE_URL } from "../../../util/converterService";
 import { selectAlbums } from "../../../redux/reducers/albums/albumsSlice";
 import { createAlbumsRootState } from "../../../../test/creators";
+import ToolsBar from "./ToolsBar";
 
 const findBookmarkInput = async () => findInputByLabelMatcher(/Root folder/i);
 const findUploadInput = async () => findInputByLabelMatcher(/Attachment/i);
@@ -24,7 +23,9 @@ const typeBookmarkNameToInput = async (user: UserEvent, value: string) =>
 const uploadFileToInput = async (user: UserEvent, file: File) =>
   user.upload(await findUploadInput(), file);
 
-describe("<BookmarkConverter />", () => {
+describe("<ToolsBar />", () => {
+  const mockClose = () => {};
+
   const testBookmarkName = "My_bookmarks";
   const testFile = new File([], "test.html", { type: "text/html" });
 
@@ -45,9 +46,15 @@ describe("<BookmarkConverter />", () => {
   // Disable API mocking after the tests are done.
   afterAll(() => server.close());
 
+  test("should render tools bar", async () => {
+    renderWithProviders(<ToolsBar close={mockClose} />);
+
+    screen.getByRole("heading", { name: "Tools" });
+  });
+
   test("should be able to type bookmarks folder name", async () => {
     const user = userEvent.setup();
-    renderWithProviders(<BookmarkConverter />);
+    renderWithProviders(<ToolsBar close={mockClose} />);
 
     await typeBookmarkNameToInput(user, testBookmarkName);
 
@@ -58,7 +65,7 @@ describe("<BookmarkConverter />", () => {
 
   test("should be able to input a file", async () => {
     const user = userEvent.setup();
-    renderWithProviders(<BookmarkConverter />);
+    renderWithProviders(<ToolsBar close={mockClose} />);
 
     await uploadFileToInput(user, testFile);
 
@@ -73,7 +80,7 @@ describe("<BookmarkConverter />", () => {
     const preloadedState = createAlbumsRootState([newAlbum]);
 
     const user = userEvent.setup();
-    const { store } = renderWithProviders(<BookmarkConverter />, { preloadedState });
+    const { store } = renderWithProviders(<ToolsBar close={mockClose} />, { preloadedState });
 
     await typeBookmarkNameToInput(user, testBookmarkName);
     await uploadFileToInput(user, testFile);
