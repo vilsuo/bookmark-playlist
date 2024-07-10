@@ -1,18 +1,28 @@
 import { describe, expect, test } from "@jest/globals";
 import reducer, { FilterCategories, selectFilterCategories, selectIsAllCategoriesFiltered, selectIsCategoryFiltered, setSort, toggleFilterCategorySingle, toggleFilteringCategoryAll } from "./filterSlice";
-import { AlbumColumn, Order } from "../../../types";
+import { Album, AlbumColumn, Order } from "../../../types";
 import { CATEGORY_ALL } from "../../../constants";
-import { albums, categories } from "../../../../test/constants";
+import { albums, categories, createAlbumWithCategory } from "../../../../test/constants";
 import { RootState, setupStore } from "../../store";
-import { createAlbumCategoryFilterRootState, createAlbumWithCategory, createCategoryFilterState, createFilterState } from "../../../../test/creators";
+import { createDefaultAlbumsState, createDefaultFiltersRootState, createDefaultFiltersState } from "../../../../test/state";
 
-const createSortingFilterState = (column: AlbumColumn, order: Order) =>
-  createFilterState({ sorting: { column, order } });
+const createFiltersSortingTestState = (column: AlbumColumn, order: Order) =>
+  createDefaultFiltersState({ sorting: { column, order } });
 
-const createCategoryFilterRootState = (
-  filterCategories: FilterCategories,
+const createFiltersCategoriesTestState = (categories: FilterCategories = []) =>
+  createDefaultFiltersState({ filters: { categories } });
+
+const createFiltersCategoriesTestRootState = (categories: FilterCategories = []) =>
+  createDefaultFiltersRootState({ filters: { categories } });
+
+export const createAlbumCategoryFilterRootState = (
+  albums: Album[],
+  categories: FilterCategories,
 ): RootState => (
-  { filters: createCategoryFilterState(filterCategories) } as RootState
+  {
+    albums: createDefaultAlbumsState({ albums }),
+    filters: createDefaultFiltersState({ filters: { categories } }),
+  } as RootState
 );
 
 const expectEqualFilterCategories = (
@@ -35,7 +45,7 @@ describe("Filter slice", () => {
       const sortOrder = Order.ASC;
 
       test("should toggle order when calling with current column", () => {
-        const previousState = createSortingFilterState(sortColumn, sortOrder);
+        const previousState = createFiltersSortingTestState(sortColumn, sortOrder);
         
         const currentState = reducer(previousState, setSort(sortColumn));
         expect(currentState.sorting.column).toBe(sortColumn);
@@ -47,7 +57,7 @@ describe("Filter slice", () => {
       });
 
       test("should keep the current order when changing column", () => {
-        const previousState = createSortingFilterState(sortColumn, sortOrder);
+        const previousState = createFiltersSortingTestState(sortColumn, sortOrder);
         
         const currentState = reducer(previousState, setSort(AlbumColumn.ALBUM));
         expect(currentState.sorting.column).toBe(AlbumColumn.ALBUM);
@@ -57,7 +67,7 @@ describe("Filter slice", () => {
 
     describe("toggleFilteringCategoryAll", () => {
       test("should select none when all are selected", () => {
-        const previousState = createCategoryFilterState(CATEGORY_ALL);
+        const previousState = createFiltersCategoriesTestState(CATEGORY_ALL);
         const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
         expect(currentState.filters.categories).toBeInstanceOf(Array);
@@ -65,14 +75,14 @@ describe("Filter slice", () => {
       });
 
       test("should select all when none are selected", () => {
-        const previousState = createCategoryFilterState([]);
+        const previousState = createFiltersCategoriesTestState();
         const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
         expect(currentState.filters.categories).toBe(CATEGORY_ALL);
       });
 
       test("should select all when some are selected", () => {
-        const previousState = createCategoryFilterState([categories[0]]);
+        const previousState = createFiltersCategoriesTestState([categories[0]]);
         const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
         expect(currentState.filters.categories).toBe(CATEGORY_ALL);
@@ -86,19 +96,19 @@ describe("Filter slice", () => {
     describe("selectIsCategoryFiltered", () => {
       describe("all category", () => {
         test("should return false when no categories are filtered", () => {
-          const state = createCategoryFilterRootState([]);
+          const state = createFiltersCategoriesTestRootState();
           const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
           expect(result).toBe(false);
         });
   
         test("should return true when all categories are filtered", () => {
-          const state = createCategoryFilterRootState(CATEGORY_ALL);
+          const state = createFiltersCategoriesTestRootState(CATEGORY_ALL);
           const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
           expect(result).toBe(true);
         });
 
         test("should return false when some categories are filtered", () => {
-          const state = createCategoryFilterRootState([firstCategory, secondCategory]);
+          const state = createFiltersCategoriesTestRootState([firstCategory, secondCategory]);
           const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
           expect(result).toBe(false);
         });
@@ -106,19 +116,19 @@ describe("Filter slice", () => {
 
       describe("single category", () => {
         test("should return true when all categories are filtered", () => {
-          const state = createCategoryFilterRootState(CATEGORY_ALL);
+          const state = createFiltersCategoriesTestRootState(CATEGORY_ALL);
           const result = selectIsCategoryFiltered(state, firstCategory);
           expect(result).toBe(true);
         });
   
         test("should return true when the category is filtered", () => {
-          const state = createCategoryFilterRootState([firstCategory]);
+          const state = createFiltersCategoriesTestRootState([firstCategory]);
           const result = selectIsCategoryFiltered(state, firstCategory);
           expect(result).toBe(true);
         });
 
         test("should return false when the category is not filtered", () => {
-          const state = createCategoryFilterRootState([firstCategory]);
+          const state = createFiltersCategoriesTestRootState([firstCategory]);
           const result = selectIsCategoryFiltered(state, secondCategory);
           expect(result).toBe(false);
         });
@@ -127,19 +137,19 @@ describe("Filter slice", () => {
 
     describe("selectIsAllCategoriesFiltered", () => {
       test("should return false when no categories are filtered", () => {
-        const state = createCategoryFilterRootState([]);
+        const state = createFiltersCategoriesTestRootState();
         const result = selectIsAllCategoriesFiltered(state);
         expect(result).toBe(false);
       });
 
       test("should return true when all categories are filtered", () => {
-        const state = createCategoryFilterRootState(CATEGORY_ALL);
+        const state = createFiltersCategoriesTestRootState(CATEGORY_ALL);
         const result = selectIsAllCategoriesFiltered(state);
         expect(result).toBe(true);
       });
 
       test("should return false when some categories are filtered", () => {
-        const state = createCategoryFilterRootState([firstCategory, secondCategory]);
+        const state = createFiltersCategoriesTestRootState([firstCategory, secondCategory]);
         const result = selectIsAllCategoriesFiltered(state);
         expect(result).toBe(false);
       });
@@ -164,8 +174,8 @@ describe("Filter slice", () => {
           const [ targetCategory, ...rest ] = initialCategories;
 
           const state = createAlbumCategoryFilterRootState(
-            initialFilterCategories, 
             initialAlbums,
+            initialFilterCategories, 
           );
           
           const store = setupStore(state);
@@ -185,8 +195,8 @@ describe("Filter slice", () => {
             const [ targetCategory, ...initialFilterCategories ] = initialCategories;
 
             const state = createAlbumCategoryFilterRootState(
-              initialFilterCategories, 
               initialAlbums,
+              initialFilterCategories, 
             );
             
             const store = setupStore(state);
@@ -205,8 +215,8 @@ describe("Filter slice", () => {
             const [ targetCategory, otherCategory, ...initialFilterCategories ] = initialCategories;
 
             const state = createAlbumCategoryFilterRootState(
-              initialFilterCategories, 
               initialAlbums,
+              initialFilterCategories, 
             );
             
             const store = setupStore(state);
@@ -229,8 +239,8 @@ describe("Filter slice", () => {
             const [ targetCategory, ...rest ] = initialFilterCategories;
 
             const state = createAlbumCategoryFilterRootState(
-              initialFilterCategories, 
               initialAlbums,
+              initialFilterCategories, 
             );
             
             const store = setupStore(state);

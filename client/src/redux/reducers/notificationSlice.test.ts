@@ -3,7 +3,7 @@ import { describe, expect, jest, test } from "@jest/globals";
 import { RootState, setupStore } from "../store";
 import { createNotification, selectNotifications } from "./notificationSlice";
 import { NotificationType } from "../../types";
-import { createNotificationRootState } from "../../../test/creators";
+import { createDefaultNotificationsRootState } from "../../../test/state";
 
 jest.mock("uuid", () => ({ v4: () => "randomid" }));
 
@@ -22,7 +22,7 @@ describe("Notification slice", () => {
       };
       
       test("should add a notification", () => {
-        const state: RootState = createNotificationRootState();
+        const state: RootState = createDefaultNotificationsRootState();
         const store = setupStore(state);
         
         store.dispatch(createNotification(notificationBase));

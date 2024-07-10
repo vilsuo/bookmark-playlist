@@ -2,22 +2,36 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import { createAlbum, createFromBookmarks, deleteAlbum, fetchAlbums, selectAlbumCategories, selectAlbums, selectIsAloneInCategory, updateAlbum } from "./albumsSlice";
 import { Album, AlbumUpdate, NotificationType } from "../../../types";
 import { RootState, setupStore } from "../../store";
-import { albums, categories, newAlbum, newAlbumValues, updatedAlbumValues } from "../../../../test/constants";
-import { createAlbumCategoryFilterRootState, createAlbumWithCategory, createAlbumsRootState, createAlbumsState, createQueueState } from "../../../../test/creators";
+import { albums, categories, createAlbumWithCategory, newAlbum, newAlbumValues, updatedAlbumValues } from "../../../../test/constants";
+import { createDefaultAlbumsRootState, createDefaultAlbumsState, createDefaultFiltersState, createDefaultQueueState } from "../../../../test/state";
 import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
 import { Notification, selectNotifications } from "../notificationSlice";
 import { selectQueue } from "../queueSlice";
-import { selectFilterCategories } from "../filters/filterSlice";
+import { FilterCategories, selectFilterCategories } from "../filters/filterSlice";
 import { BASE_URL as CONVERTER_BASE_URL } from "../../../util/converterService";
 
-const createAlbumsQueueRootState = ({ albums = [], queue = [] }: {
-  albums: Album[], queue: Album[],
-}): RootState => (
+const createAlbumsRootTestState = (albums: Album[] = []) =>
+  createDefaultAlbumsRootState({ albums });
+
+export const createAlbumFilterCategoryRootTestState = (
+  albums: Album[],
+  categories: FilterCategories,
+): RootState => (
   {
-    albums: createAlbumsState({ albums }),
-    queue: createQueueState(queue),
+    albums: createDefaultAlbumsState({ albums }),
+    filters: createDefaultFiltersState({ filters: { categories } }),
+  } as RootState
+);
+
+const createAlbumsQueueRootTestState = (
+  albums: Album[] = [],
+  queue: Album[] = [],
+): RootState => (
+  {
+    albums: createDefaultAlbumsState({ albums }),
+    queue: createDefaultQueueState({ queue }),
   } as RootState
 );
 
@@ -25,24 +39,19 @@ const createServerMockErrorResponse = (message: string, status = 400) => {
   return HttpResponse.json({ message } , { status });
 };
 
-const expectToHaveNotification = (
+const expectToHaveANotification = (
   notifications: Notification[],
   { type, title, message }: Omit<Notification, "id">
 ) => {
   if (message !== undefined) {
     expect(notifications).toContainEqual(
       expect.objectContaining({
-        type,
-        title,
-        message,
+        type, title, message,
       }),
     );
   } else {
     expect(notifications).toContainEqual(
-      expect.objectContaining({
-        type,
-        title,
-      }),
+      expect.objectContaining({ type, title }),
     );
   }
 };
@@ -57,7 +66,7 @@ describe("Albums slice", () => {
 
     describe("selectAlbumCategories", () => {
       test("should contain exactly one of each category", () => {
-        const previousState = createAlbumsRootState([sameFirst, sameSecond, other]);
+        const previousState = createAlbumsRootTestState([sameFirst, sameSecond, other]);
         const result = selectAlbumCategories(previousState);
 
         expect(result).toHaveLength(2);
@@ -68,7 +77,7 @@ describe("Albums slice", () => {
 
     describe("selectIsAloneInCategory", () => {
       test("should be false without any albums", () => {
-        const previousState = createAlbumsRootState();
+        const previousState = createAlbumsRootTestState();
         const result = selectIsAloneInCategory(previousState, targetCategory);
 
         expect(result).toBeFalsy();
@@ -77,14 +86,14 @@ describe("Albums slice", () => {
       describe("single category", () => {
         describe("single album exists", () => {
           test("should be true with the album category", () => {
-            const previousState = createAlbumsRootState([sameFirst]);
+            const previousState = createAlbumsRootTestState([sameFirst]);
             const result = selectIsAloneInCategory(previousState, sameFirst.category);
 
             expect(result).toBeTruthy();
           });
 
           test("should be false with other category", () => {
-            const previousState = createAlbumsRootState([sameFirst]);
+            const previousState = createAlbumsRootTestState([sameFirst]);
             const result = selectIsAloneInCategory(previousState, other.category);
 
             expect(result).toBeFalsy();
@@ -92,7 +101,7 @@ describe("Albums slice", () => {
         });
 
         test("should be false when there are multiple albums with the category", () => {
-          const previousState = createAlbumsRootState([sameFirst, sameSecond]);
+          const previousState = createAlbumsRootTestState([sameFirst, sameSecond]);
           const result = selectIsAloneInCategory(previousState, sameFirst.category);
 
           expect(result).toBeFalsy();
@@ -101,7 +110,7 @@ describe("Albums slice", () => {
 
       describe("multiple categories", () => {
         test("should be true when each category has a single album", () => {
-          const previousState = createAlbumsRootState([sameFirst, other]);
+          const previousState = createAlbumsRootTestState([sameFirst, other]);
 
           const firstResult = selectIsAloneInCategory(previousState, sameFirst.category);
           expect(firstResult).toBeTruthy();
@@ -111,7 +120,7 @@ describe("Albums slice", () => {
         });
 
         test("should be false when category has multiple albums", () => {
-          const previousState = createAlbumsRootState([sameFirst, sameSecond, other]);
+          const previousState = createAlbumsRootTestState([sameFirst, sameSecond, other]);
 
           const firstResult = selectIsAloneInCategory(previousState, sameFirst.category);
           expect(firstResult).toBeFalsy();
@@ -182,7 +191,7 @@ describe("Albums slice", () => {
           await store.dispatch(fetchAlbums());
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.ERROR,
             title: 'Loading albums failed',
             message: "Unknown axios error",
@@ -203,7 +212,7 @@ describe("Albums slice", () => {
         });
 
         test("should load the albums", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectAlbums(store.getState());
@@ -212,11 +221,11 @@ describe("Albums slice", () => {
         });
 
         test("should create a success notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.SUCCESS,
             title: "Bookmarks imported",
           })
@@ -234,7 +243,7 @@ describe("Albums slice", () => {
         });
 
         test("should not load albums", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectAlbums(store.getState());
@@ -243,11 +252,11 @@ describe("Albums slice", () => {
         });
 
         test("should create an error notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.ERROR,
             title: "Bookmark import failed",
             message,
@@ -265,7 +274,7 @@ describe("Albums slice", () => {
         });
 
         test("should add the album", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createAlbum(newAlbumValues));
 
           const result = selectAlbums(store.getState());
@@ -274,11 +283,11 @@ describe("Albums slice", () => {
         });
 
         test("should create a success notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createAlbum(newAlbumValues));
           const result = selectNotifications(store.getState());
 
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.SUCCESS,
             title: 'Album added successfully',
           });
@@ -296,7 +305,7 @@ describe("Albums slice", () => {
         });
 
         test("should not add the album", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createAlbum(newAlbumValues));
 
           const result = selectAlbums(store.getState());
@@ -305,11 +314,11 @@ describe("Albums slice", () => {
         });
 
         test("should create an error notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createAlbum(newAlbumValues));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.ERROR,
             title: 'Album adding failed',
             message,
@@ -347,7 +356,7 @@ describe("Albums slice", () => {
         });
 
         test("should update the album", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
 
           await store.dispatch(updateAlbum({
             oldAlbum: albumToUpdate,
@@ -361,7 +370,7 @@ describe("Albums slice", () => {
         });
 
         test("should create a success notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
 
           await store.dispatch(updateAlbum({
             oldAlbum: albumToUpdate,
@@ -369,7 +378,7 @@ describe("Albums slice", () => {
           }));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.SUCCESS,
             title: "Album edited successfully",
           });
@@ -377,7 +386,7 @@ describe("Albums slice", () => {
 
         test("should update the album in the queue", async () => {
           const queue = [albumToUpdate, otherAlbum];
-          const state = createAlbumsQueueRootState({ albums: initialAlbums, queue });
+          const state = createAlbumsQueueRootTestState(initialAlbums, queue);
           const store = setupStore(state);
 
           await store.dispatch(updateAlbum({
@@ -399,9 +408,9 @@ describe("Albums slice", () => {
           const albumToUpdate = initialAlbums[2];
           const newValues = { ...updatedAlbumValues, category: newCategory };
 
-          const state = createAlbumCategoryFilterRootState(
-            initialCategories,
+          const state = createAlbumFilterCategoryRootTestState(
             initialAlbums,
+            initialCategories,
           );
 
           const store = setupStore(state);
@@ -419,9 +428,9 @@ describe("Albums slice", () => {
           const albumToUpdate = initialAlbums[1];
           const newValues = { ...updatedAlbumValues, category: newCategory };
 
-          const state = createAlbumCategoryFilterRootState(
-            initialCategories,
+          const state = createAlbumFilterCategoryRootTestState(
             initialAlbums,
+            initialCategories,
           );
 
           const store = setupStore(state);
@@ -447,7 +456,7 @@ describe("Albums slice", () => {
         });
 
         test("should not update the album", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(updateAlbum({
             oldAlbum: albumToUpdate,
             newValues: updatedAlbumValues,
@@ -459,14 +468,14 @@ describe("Albums slice", () => {
         });
 
         test("should create an error notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(updateAlbum({
             oldAlbum: albumToUpdate,
             newValues: updatedAlbumValues,
           }));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.ERROR,
             title: "Album edit failed",
             message,
@@ -487,7 +496,7 @@ describe("Albums slice", () => {
         });
 
         test("should remove the album", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(deleteAlbum(albumToRemove));
 
           const result = selectAlbums(store.getState());
@@ -496,11 +505,11 @@ describe("Albums slice", () => {
         });
 
         test("should create a success notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(deleteAlbum(albumToRemove));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.SUCCESS,
             title: "Album removed successfully",
           });
@@ -508,7 +517,7 @@ describe("Albums slice", () => {
 
         test("should remove the album from the queue", async () => {
           const queue = [albumToRemove, otherAlbum];
-          const state = createAlbumsQueueRootState({ albums: initialAlbums, queue });
+          const state = createAlbumsQueueRootTestState(initialAlbums, queue);
           const store = setupStore(state);
 
           await store.dispatch(deleteAlbum(albumToRemove));
@@ -525,9 +534,9 @@ describe("Albums slice", () => {
         test("should remove the category from filter if the category no longer exists", async () => {
           const albumToRemove = initialAlbums[2];
 
-          const state = createAlbumCategoryFilterRootState(
-            initialCategories,
+          const state = createAlbumFilterCategoryRootTestState(
             initialAlbums,
+            initialCategories,
           );
 
           const store = setupStore(state);
@@ -544,9 +553,9 @@ describe("Albums slice", () => {
         test("should not remove the category from filter if the category still exists", async () => {
           const albumToRemove = initialAlbums[1];
 
-          const state = createAlbumCategoryFilterRootState(
-            initialCategories,
+          const state = createAlbumFilterCategoryRootTestState(
             initialAlbums,
+            initialCategories,
           );
 
           const store = setupStore(state);
@@ -570,7 +579,7 @@ describe("Albums slice", () => {
         });
 
         test("should not delete the album", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(deleteAlbum(albumToRemove));
 
           const result = selectAlbums(store.getState());
@@ -579,11 +588,11 @@ describe("Albums slice", () => {
         });
 
         test("should create an error notification", async () => {
-          const store = setupStore(createAlbumsRootState(initialAlbums));
+          const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(deleteAlbum(albumToRemove));
 
           const result = selectNotifications(store.getState());
-          expectToHaveNotification(result, {
+          expectToHaveANotification(result, {
             type: NotificationType.ERROR,
             title: "Album deletion failed",
             message: "Unknown axios error",

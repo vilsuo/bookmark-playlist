@@ -5,12 +5,12 @@ import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { renderWithProviders } from "../../../../test/testUtils";
+import { renderWithProviders } from "../../../../test/render";
 import { findInputByLabelMatcher } from "../../../../test/uiHelpers";
 import { albums, newAlbum } from "../../../../test/constants";
 import { BASE_URL } from "../../../util/converterService";
 import { selectAlbums } from "../../../redux/reducers/albums/albumsSlice";
-import { createAlbumsRootState } from "../../../../test/creators";
+import { createDefaultAlbumsRootState } from "../../../../test/state";
 import ToolsBar from "./ToolsBar";
 
 const findBookmarkInput = async () => findInputByLabelMatcher(/Root folder/i);
@@ -77,7 +77,7 @@ describe("<ToolsBar />", () => {
   });
 
   test("should add albums after converting", async () => {
-    const preloadedState = createAlbumsRootState([newAlbum]);
+    const preloadedState = createDefaultAlbumsRootState({ albums: [newAlbum] });
 
     const user = userEvent.setup();
     const { store } = renderWithProviders(<ToolsBar close={mockClose} />, { preloadedState });

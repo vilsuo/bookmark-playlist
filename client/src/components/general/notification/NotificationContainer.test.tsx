@@ -1,10 +1,14 @@
 import { describe, expect, test } from "@jest/globals";
 import NotificationContainer from "./NotificationContainer";
-import { renderWithProviders } from "../../../../test/testUtils";
-import { createNotificationRootState } from "../../../../test/creators";
+import { renderWithProviders } from "../../../../test/render";
+import { createDefaultNotificationsRootState } from "../../../../test/state";
 import { NotificationType } from "../../../types";
 import { notificationExistsByTitle } from "../../../../test/uiHelpers";
 import { fireEvent, screen, within } from "@testing-library/dom";
+import { Notification, selectNotifications } from "../../../redux/reducers/notificationSlice";
+
+const createTestState = (notifications: Notification[] = []) =>
+  createDefaultNotificationsRootState({ notifications });
 
 const closeNotificationByTitle = async (title: string) => {
   const notificationContainer = screen.getByTestId("notifications");
@@ -32,7 +36,7 @@ describe("<NotificationContainer />", () => {
 
   test("should render a notification", async () => {
     const notification = notifications[0];
-    const preloadedState = createNotificationRootState([notification]);
+    const preloadedState = createTestState([notification]);
 
     renderWithProviders(<NotificationContainer />, { preloadedState });
 
@@ -42,9 +46,9 @@ describe("<NotificationContainer />", () => {
   test("should remove a notification by closing it", async () => {
     const [removedNotification, otherNotification] = notifications;
 
-    const preloadedState = createNotificationRootState(notifications);
+    const preloadedState = createTestState(notifications);
 
-    renderWithProviders(<NotificationContainer />, { preloadedState });
+    const { store } = renderWithProviders(<NotificationContainer />, { preloadedState });
 
     // notification should be found before removing it
     expect(screen.queryByText(removedNotification.title))
@@ -52,11 +56,15 @@ describe("<NotificationContainer />", () => {
 
     await closeNotificationByTitle(removedNotification.title);
 
+    expect(selectNotifications(store.getState())).not.toContain(removedNotification);
+
     // notification should not be found after removing it
     expect(screen.queryByText(removedNotification.title))
       .not.toBeInTheDocument();
 
     // other notification should still be found
     await notificationExistsByTitle(otherNotification.title);
+
+    expect(selectNotifications(store.getState())).toContain(otherNotification);
   });
 });

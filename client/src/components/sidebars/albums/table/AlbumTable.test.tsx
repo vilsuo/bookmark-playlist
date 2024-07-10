@@ -1,7 +1,7 @@
 import { describe, expect, test } from "@jest/globals";
-import { createFilteringAndSortingRootState } from "../../../../../test/creators";
+import { createAlbumsFiltersRootState } from "../../../../../test/state";
 import AlbumTable from "./AlbumTable";
-import { renderWithProviders } from "../../../../../test/testUtils";
+import { renderWithProviders } from "../../../../../test/render";
 import { albums } from "../../../../../test/constants";
 import { fireEvent, screen, within } from "@testing-library/dom";
 import { selectSortedAndFilteredAlbums } from "../../../../redux/reducers/albums/filterSort";
@@ -25,7 +25,7 @@ const clickAlbumTableHeader = (column: AlbumColumn) => {
 
 describe("<AlbumTable />", () => {
   test("should render all albums default sorted without any filters", async () => {
-    const preloadedState = createFilteringAndSortingRootState({ albums });
+    const preloadedState = createAlbumsFiltersRootState({ albums });
 
     const { store } = renderWithProviders(<AlbumTable />, { preloadedState });
 
@@ -39,7 +39,7 @@ describe("<AlbumTable />", () => {
 
   test("should render subset of albums with filters", async () => {
     const filters = { column: AlbumColumn.ARTIST, text: "mysti" };
-    const preloadedState = createFilteringAndSortingRootState({ albums, filters });
+    const preloadedState = createAlbumsFiltersRootState({ albums, filters });
 
     renderWithProviders(<AlbumTable />, { preloadedState });
 
@@ -49,7 +49,7 @@ describe("<AlbumTable />", () => {
 
   test("should be able to change sorting order", () => {
     const sorting = { column: AlbumColumn.ARTIST, order: Order.ASC };
-    const preloadedState = createFilteringAndSortingRootState({ albums, sorting });
+    const preloadedState = createAlbumsFiltersRootState({ albums, sorting });
     const { store } = renderWithProviders(<AlbumTable />, { preloadedState });
 
     const orderingBefore = selectSortedAndFilteredAlbums(store.getState());
@@ -70,7 +70,7 @@ describe("<AlbumTable />", () => {
 
   test("should be able to change sorting column", () => {
     const sorting = { column: AlbumColumn.ARTIST, order: Order.ASC };
-    const preloadedState = createFilteringAndSortingRootState({ albums, sorting });
+    const preloadedState = createAlbumsFiltersRootState({ albums, sorting });
     const { store } = renderWithProviders(<AlbumTable />, { preloadedState });
 
     const orderingBefore = selectSortedAndFilteredAlbums(store.getState());
@@ -90,7 +90,7 @@ describe("<AlbumTable />", () => {
   });
 
   test("should be able to toggle view on an album", () => {
-    const preloadedState = createFilteringAndSortingRootState({ albums });
+    const preloadedState = createAlbumsFiltersRootState({ albums });
 
     const { store } = renderWithProviders(<AlbumTable />, { preloadedState });
 

@@ -1,9 +1,10 @@
 import { describe, expect, test } from "@jest/globals";
-import { createAlbumWithCategory, createFilteringAndSortingRootState } from "../../../../test/creators";
+import { createAlbumsFiltersRootState } from "../../../../test/state";
 import { selectSortedAndFilteredAlbums } from "./filterSort";
 import { Album, AlbumColumn, Order } from "../../../types";
-import { albums } from "../../../../test/constants";
+import { albums, createAlbumWithCategory } from "../../../../test/constants";
 import { CATEGORY_ALL } from "../../../constants";
+import { createDateISOString } from "../../../util/dateConverter";
 
 // do not care about ordering at this point
 const tempSortfn = (a: Album, b: Album) => a.id - b.id;
@@ -13,25 +14,10 @@ const expectEqualAlbumsWithoutOrder = (result: Album[], expected: Album[]) => {
     .toStrictEqual(expected.toSorted(tempSortfn));
 };
 
-/**
- * Create date string in form YYYY-MM-DD
- * 
- * @param year the year, with four digits (0000 to 9999)
- * @param month the month, with two digits (01 to 12). Defaults to 1
- * @param date the day of the month, with two digits (01 to 31). Defaults to 1
- * @returns 
- */
-const createDateString = (year: number, month: number = 1, date: number = 1) => {
-  const YYYY = `0000${year}`.slice(-4);
-  const MM = `00${month}`.slice(-2);
-  const DD = `00${date}`.slice(-2);
-  return `${YYYY}-${MM}-${DD}`;
-};
-
 describe("Albums slice filtering and sorting albums", () => {
   describe("selectSortedAndFilteredAlbums", () => {
     test("should return empty array when there are no albums", () => {
-      const state = createFilteringAndSortingRootState({
+      const state = createAlbumsFiltersRootState({
         albums: [],
         filters: { categories: CATEGORY_ALL },
       });
@@ -43,7 +29,7 @@ describe("Albums slice filtering and sorting albums", () => {
     describe("filtering", () => {
       describe("Categories array", () => {
         test("should return all albums when all filter categories on toggle on", () => {
-          const state = createFilteringAndSortingRootState({
+          const state = createAlbumsFiltersRootState({
             albums,
             filters: { categories: CATEGORY_ALL },
           });
@@ -55,7 +41,7 @@ describe("Albums slice filtering and sorting albums", () => {
         });
 
         test("should return none when all filter does not have any categories", () => {
-          const state = createFilteringAndSortingRootState({
+          const state = createAlbumsFiltersRootState({
             albums,
             filters: { categories: [] },
           });
@@ -69,7 +55,7 @@ describe("Albums slice filtering and sorting albums", () => {
           const filterCategory = "Unique";
           const albumWithCategory = createAlbumWithCategory(album, filterCategory);
 
-          const state = createFilteringAndSortingRootState({
+          const state = createAlbumsFiltersRootState({
             albums: [ albumWithCategory, ...rest ],
             filters: { categories: [filterCategory] },
           });
@@ -84,7 +70,7 @@ describe("Albums slice filtering and sorting albums", () => {
         const categories = CATEGORY_ALL;
 
         test(AlbumColumn.ARTIST, () => {
-          const state = createFilteringAndSortingRootState({
+          const state = createAlbumsFiltersRootState({
             albums, filters: {
               text: "stifi",
               column: AlbumColumn.ARTIST,
@@ -97,7 +83,7 @@ describe("Albums slice filtering and sorting albums", () => {
         });
 
         test(AlbumColumn.ALBUM, () => {
-          const state = createFilteringAndSortingRootState({
+          const state = createAlbumsFiltersRootState({
             albums, filters: {
               text: "of",
               column: AlbumColumn.ALBUM,
@@ -117,7 +103,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
           describe("just start filter", () => {
             test("should return all with a small start filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: small,  end: "" },
                   column,
@@ -130,7 +116,7 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should return none with a large start filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: large,  end: "" },
                   column,
@@ -144,7 +130,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should include the start filter", () => {
               const start = "1993"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start,  end: "" },
                   column,
@@ -161,7 +147,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should not include earlier than the start filter", () => {
               const start = "1991"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start,  end: "" },
                   column,
@@ -178,7 +164,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should include all later than the start filter", () => {
               const start = "1991"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start,  end: "" },
                   column,
@@ -197,7 +183,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
           describe("just end filter", () => {
             test("should return none with a small end filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: "",  end: small },
                   column,
@@ -210,7 +196,7 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should return all with a large end filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: "",  end: large },
                   column,
@@ -224,7 +210,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should include the end filter", () => {
               const end = "1993"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: "",  end },
                   column,
@@ -241,7 +227,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should not include later than the end filter", () => {
               const end = "1991"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: "",  end },
                   column,
@@ -258,7 +244,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should include all earlier than the end filter", () => {
               const end = "1992"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: "",  end },
                   column,
@@ -279,7 +265,7 @@ describe("Albums slice filtering and sorting albums", () => {
             test("should include edge cases", () => {
               const start = "1991";
               const end = "1992"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start, end },
                   column,
@@ -299,7 +285,7 @@ describe("Albums slice filtering and sorting albums", () => {
             test("should not include any when start is later than end", () => {
               const start = "1993";
               const end = "1991"
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start, end },
                   column,
@@ -314,7 +300,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
             test("should include only exacts when start is equal to end", () => {
               const value = "1991";
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: value, end: value },
                   column,
@@ -329,7 +315,7 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include all when range is wide", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   published: { start: small, end: large },
                   column,
@@ -346,12 +332,12 @@ describe("Albums slice filtering and sorting albums", () => {
         describe(AlbumColumn.ADD_DATE, () => {
           const column = AlbumColumn.ADD_DATE;
 
-          const small = createDateString(1900, 1, 1);
-          const large = createDateString(2100, 12, 31);
+          const small = createDateISOString(1900, 1, 1);
+          const large = createDateISOString(2100, 12, 31);
 
           describe("just start filter", () => {
             test("should return all with a small start filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: small,  end: "" },
                   column,
@@ -364,7 +350,7 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should return none with a large start filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: large,  end: "" },
                   column,
@@ -377,8 +363,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include the start filter", () => {
-              const start = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const start = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start,  end: "" },
                   column,
@@ -393,8 +379,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should not include earlier than the start filter", () => {
-              const start = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const start = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start,  end: "" },
                   column,
@@ -412,8 +398,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include all later than the start filter", () => {
-              const start = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const start = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start,  end: "" },
                   column,
@@ -428,7 +414,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
           describe("just end filter", () => {
             test("should return none with a small end filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: "",  end: small },
                   column,
@@ -441,7 +427,7 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should return all with a large end filter", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: "",  end: large },
                   column,
@@ -454,8 +440,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include the end filter", () => {
-              const end = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const end = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: "",  end },
                   column,
@@ -470,8 +456,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should not include later than the end filter", () => {
-              const end = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const end = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: "",  end },
                   column,
@@ -489,8 +475,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include all earlier than the end filter", () => {
-              const end = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const end = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: "",  end },
                   column,
@@ -506,9 +492,9 @@ describe("Albums slice filtering and sorting albums", () => {
           
           describe("start and end filter", () => {
             test("should include edge cases", () => {
-              const start = createDateString(2022, 5, 7);
-              const end = createDateString(2022, 5, 28);
-              const state = createFilteringAndSortingRootState({
+              const start = createDateISOString(2022, 5, 7);
+              const end = createDateISOString(2022, 5, 28);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start,  end },
                   column,
@@ -523,9 +509,9 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should not include any when start is later than end", () => {
-              const start = createDateString(2022, 5, 29);
-              const end = createDateString(2022, 5, 27);
-              const state = createFilteringAndSortingRootState({
+              const start = createDateISOString(2022, 5, 29);
+              const end = createDateISOString(2022, 5, 27);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start, end },
                   column,
@@ -542,8 +528,8 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include only exacts when start is equal to end", () => {
-              const value = createDateString(2022, 6, 20);
-              const state = createFilteringAndSortingRootState({
+              const value = createDateISOString(2022, 6, 20);
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: value, end: value },
                   column,
@@ -557,7 +543,7 @@ describe("Albums slice filtering and sorting albums", () => {
             });
 
             test("should include all when range is wide", () => {
-              const state = createFilteringAndSortingRootState({
+              const state = createAlbumsFiltersRootState({
                 albums, filters: {
                   addDate: { start: small,  end: large },
                   column,
@@ -577,7 +563,7 @@ describe("Albums slice filtering and sorting albums", () => {
       test(AlbumColumn.ARTIST, () => {
         const column = AlbumColumn.ARTIST;
 
-        const stateAsc = createFilteringAndSortingRootState({
+        const stateAsc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.ASC }
         });
@@ -591,7 +577,7 @@ describe("Albums slice filtering and sorting albums", () => {
           albums[4],
         ]);
 
-        const stateDesc = createFilteringAndSortingRootState({
+        const stateDesc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.DESC }
         });
@@ -609,7 +595,7 @@ describe("Albums slice filtering and sorting albums", () => {
       test(AlbumColumn.ALBUM, () => {
         const column = AlbumColumn.ALBUM;
 
-        const stateAsc = createFilteringAndSortingRootState({
+        const stateAsc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.ASC }
         });
@@ -623,7 +609,7 @@ describe("Albums slice filtering and sorting albums", () => {
           albums[2],
         ]);
 
-        const stateDesc = createFilteringAndSortingRootState({
+        const stateDesc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.DESC }
         });
@@ -641,7 +627,7 @@ describe("Albums slice filtering and sorting albums", () => {
       test(AlbumColumn.PUBLISHED, () => {
         const column = AlbumColumn.PUBLISHED;
 
-        const stateAsc = createFilteringAndSortingRootState({
+        const stateAsc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.ASC }
         });
@@ -655,7 +641,7 @@ describe("Albums slice filtering and sorting albums", () => {
           albums[3],
         ]);
 
-        const stateDesc = createFilteringAndSortingRootState({
+        const stateDesc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.DESC }
         });
@@ -673,7 +659,7 @@ describe("Albums slice filtering and sorting albums", () => {
       test(AlbumColumn.ADD_DATE, () => {
         const column = AlbumColumn.ADD_DATE;
 
-        const stateAsc = createFilteringAndSortingRootState({
+        const stateAsc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.ASC }
         });
@@ -687,7 +673,7 @@ describe("Albums slice filtering and sorting albums", () => {
           albums[0],
         ]);
 
-        const stateDesc = createFilteringAndSortingRootState({
+        const stateDesc = createAlbumsFiltersRootState({
           albums,
           sorting: { column, order: Order.DESC }
         });
@@ -704,7 +690,7 @@ describe("Albums slice filtering and sorting albums", () => {
     });
 
     test("should not compute again with the same state", () => {
-      const state = createFilteringAndSortingRootState({ albums });
+      const state = createAlbumsFiltersRootState({ albums });
 
       selectSortedAndFilteredAlbums.resetRecomputations();
 
@@ -716,14 +702,14 @@ describe("Albums slice filtering and sorting albums", () => {
     });
 
     test("should recompute with a new state", () => {
-      const firstState = createFilteringAndSortingRootState({
+      const firstState = createAlbumsFiltersRootState({
         albums,
         sorting: { column: AlbumColumn.ARTIST, order: Order.ASC },
         filters: { text: "test" },
       });
 
       // change sort column
-      const secondState = createFilteringAndSortingRootState({ 
+      const secondState = createAlbumsFiltersRootState({ 
         albums,
         sorting: { column: AlbumColumn.ALBUM, order: Order.ASC },
         filters: { text: "test" },

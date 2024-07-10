@@ -7,7 +7,7 @@ export interface QueueState {
   queue: Album[];
 };
 
-const initialState: QueueState = {
+export const initialState: QueueState = {
   queue: [],
 };
 

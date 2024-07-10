@@ -2,25 +2,25 @@ import { afterEach, beforeAll, beforeEach, describe, expect, jest, test } from "
 import { Album, PlayMode } from "../../../types";
 import { playNext, selectCanPlayNextAlbum } from "./playing";
 import { RootState, setupStore } from "../../store";
-import { createAlbumsState, createFilteringAndSortingRootState, createFilterState, createQueueState, createSettingsState } from "../../../../test/creators";
+import { createDefaultAlbumsState, createAlbumsFiltersRootState, createDefaultFiltersState, createDefaultQueueState, createSettingsState } from "../../../../test/state";
 import { albums } from "../../../../test/constants";
 import { selectSortedAndFilteredAlbums } from "./filterSort";
 import { selectPlaying } from "./albumsSlice";
 import { selectQueueFirst } from "../queueSlice";
 
-const createPlayingNextRootState = ({
-  albums, playing, queue, playMode,
+const createPlayingNextTestRootState = ({
+  albums = [], playing = null, queue = [], playMode,
 }: {
   albums: Album[],
-  playing?: Album,
+  playing?: Album | null,
   queue?: Album[],
   playMode: PlayMode,
 }): RootState => (
   {
-    albums: createAlbumsState({ albums, playing }),
-    filters: createFilterState(),
-    queue: createQueueState(queue),
+    albums: createDefaultAlbumsState({ albums, playing }),
+    queue: createDefaultQueueState({ queue }),
     settings: createSettingsState({ playMode }),
+    filters: createDefaultFiltersState(),
   } as RootState
 );
 
@@ -40,7 +40,7 @@ describe("Albums slice playing", () => {
   const lastInSequence = sortedAndFilteredAlbums[sortedAndFilteredAlbums.length - 1];
 
   beforeAll(() => {
-    const state = createFilteringAndSortingRootState({ albums });
+    const state = createAlbumsFiltersRootState({ albums });
     const result = selectSortedAndFilteredAlbums(state);
 
     expect(result).toStrictEqual(sortedAndFilteredAlbums);
@@ -55,7 +55,7 @@ describe("Albums slice playing", () => {
 
         describe("when the queue is empty", () => {
           test("should return false when album is not being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               playMode,
             });
@@ -65,7 +65,7 @@ describe("Albums slice playing", () => {
           });
 
           test("should return false when album is being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               playing: firstInSequence,
               playMode,
@@ -78,7 +78,7 @@ describe("Albums slice playing", () => {
 
         describe("when the queue is not empty", () => {
           test("should return true when album is not being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               queue,
               playMode,
@@ -89,7 +89,7 @@ describe("Albums slice playing", () => {
           });
 
           test("should return true when album is being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               playing: middleInSequence,
               queue,
@@ -108,7 +108,7 @@ describe("Albums slice playing", () => {
         describe("when the queue is empty", () => {
           describe("when album is not being played", () => {
             test("should return false when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playMode,
               });
@@ -119,7 +119,7 @@ describe("Albums slice playing", () => {
     
             test("should return false when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playMode,
               });
@@ -131,7 +131,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should return true when playing a middle album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 playMode,
@@ -142,7 +142,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should return false when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 playMode,
@@ -154,7 +154,7 @@ describe("Albums slice playing", () => {
     
             test("should return false when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: firstInSequence,
                 playMode,
@@ -167,7 +167,7 @@ describe("Albums slice playing", () => {
             test("should return true when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
 
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 playMode,
@@ -182,7 +182,7 @@ describe("Albums slice playing", () => {
         describe("when the queue is not empty", () => {
           describe("when album is not being played", () => {
             test("should return true when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 queue,
                 playMode,
@@ -194,7 +194,7 @@ describe("Albums slice playing", () => {
     
             test("should return true when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 queue,
                 playMode,
@@ -207,7 +207,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should return true when playing a middle album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 queue,
@@ -219,7 +219,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should return true when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 queue,
@@ -232,7 +232,7 @@ describe("Albums slice playing", () => {
     
             test("should return true when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: firstInSequence,
                 queue,
@@ -246,7 +246,7 @@ describe("Albums slice playing", () => {
             test("should return true when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
   
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 queue,
@@ -266,7 +266,7 @@ describe("Albums slice playing", () => {
         describe("when the queue is empty", () => {
           describe("when album is not being played", () => {
             test("should return true when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playMode,
               });
@@ -277,7 +277,7 @@ describe("Albums slice playing", () => {
     
             test("should return false when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playMode,
               });
@@ -289,7 +289,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should return true when playing a middle album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 playMode,
@@ -300,7 +300,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should return true when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 playMode,
@@ -312,7 +312,7 @@ describe("Albums slice playing", () => {
     
             test("should return false when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: firstInSequence,
                 playMode,
@@ -325,7 +325,7 @@ describe("Albums slice playing", () => {
             test("should return true when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
 
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 playMode,
@@ -340,7 +340,7 @@ describe("Albums slice playing", () => {
         describe("when the queue is not empty", () => {
           describe("when album is not being played", () => {
             test("should return true when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 queue,
                 playMode,
@@ -352,7 +352,7 @@ describe("Albums slice playing", () => {
     
             test("should return true when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 queue,
                 playMode,
@@ -365,7 +365,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should return true when playing a middle album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 queue,
@@ -377,7 +377,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should return true when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 queue,
@@ -390,7 +390,7 @@ describe("Albums slice playing", () => {
     
             test("should return true when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: firstInSequence,
                 queue,
@@ -404,7 +404,7 @@ describe("Albums slice playing", () => {
             test("should return true when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
 
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 queue,
@@ -420,7 +420,7 @@ describe("Albums slice playing", () => {
 
       test("should not compute again with the same state", () => {
         const queue: Album[] = [];
-        const state = createPlayingNextRootState({
+        const state = createPlayingNextTestRootState({
           albums: sortedAndFilteredAlbums,
           queue,
           playMode: PlayMode.MANUAL,
@@ -436,14 +436,14 @@ describe("Albums slice playing", () => {
       test("should recompute with a new state", () => {
         const queue: Album[] = [];
 
-        const firstState = createPlayingNextRootState({
+        const firstState = createPlayingNextTestRootState({
           albums: sortedAndFilteredAlbums,
           queue,
           playMode: PlayMode.MANUAL,
         });
 
         // change playmode
-        const secondState = createPlayingNextRootState({
+        const secondState = createPlayingNextTestRootState({
           albums: sortedAndFilteredAlbums,
           queue,
           playMode: PlayMode.SHUFFLE,
@@ -470,7 +470,7 @@ describe("Albums slice playing", () => {
 
         describe("when the queue is empty", () => {
           test("should play null when album is not being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               playMode,
             });
@@ -483,7 +483,7 @@ describe("Albums slice playing", () => {
           });
 
           test("should play null when album is being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               playing: firstInSequence,
               playMode,
@@ -509,7 +509,7 @@ describe("Albums slice playing", () => {
           });
 
           test("should play the first album in the queue when album is not being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               queue,
               playMode,
@@ -523,7 +523,7 @@ describe("Albums slice playing", () => {
           });
 
           test("should play the first album in the queue when album is being played", () => {
-            const state = createPlayingNextRootState({
+            const state = createPlayingNextTestRootState({
               albums: sortedAndFilteredAlbums,
               playing: firstInSequence,
               queue,
@@ -545,7 +545,7 @@ describe("Albums slice playing", () => {
         describe("when the queue is empty", () => {
           describe("when album is not being played", () => {
             test("should play the first album when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playMode,
               });
@@ -559,7 +559,7 @@ describe("Albums slice playing", () => {
 
             test("should play null when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playMode,
               });
@@ -574,7 +574,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should play the album after the current one playing", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 playMode,
@@ -588,7 +588,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should play null when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 playMode,
@@ -603,7 +603,7 @@ describe("Albums slice playing", () => {
     
             test("should play null when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: middleInSequence,
                 playMode,
@@ -619,7 +619,7 @@ describe("Albums slice playing", () => {
             test("should play the first album when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
 
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 playMode,
@@ -645,7 +645,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is not being played", () => {
             test("should play the first album in the queue when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 queue,
                 playMode,
@@ -660,7 +660,7 @@ describe("Albums slice playing", () => {
     
             test("should play the first album in the queue when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 queue,
                 playMode,
@@ -676,7 +676,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should play the first album in the queue when playing an album in the middle of the albums list", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 queue,
@@ -691,7 +691,7 @@ describe("Albums slice playing", () => {
             });
       
             test("should play the first album in the queue when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 queue,
@@ -707,7 +707,7 @@ describe("Albums slice playing", () => {
       
             test("should play the first album in the queue when playing an album and there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: middleInSequence,
                 queue,
@@ -724,7 +724,7 @@ describe("Albums slice playing", () => {
             test("should play the first album in the queue when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
   
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 queue,
@@ -758,7 +758,7 @@ describe("Albums slice playing", () => {
         describe("when the queue is empty", () => {
           describe("when album is not being played", () => {
             test("should play a random album when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playMode,
               });
@@ -772,7 +772,7 @@ describe("Albums slice playing", () => {
     
             test("should play null when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playMode,
               });
@@ -787,7 +787,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should play a random album when playing a middle album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 playMode,
@@ -801,7 +801,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should play a random album when the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 playMode,
@@ -816,7 +816,7 @@ describe("Albums slice playing", () => {
     
             test("should play null when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: firstInSequence,
                 playMode,
@@ -832,7 +832,7 @@ describe("Albums slice playing", () => {
             test("should play a random album when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
 
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 playMode,
@@ -858,7 +858,7 @@ describe("Albums slice playing", () => {
           
           describe("when album is not being played", () => {
             test("should play the first album in the queue when there are albums", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 queue,
                 playMode,
@@ -873,7 +873,7 @@ describe("Albums slice playing", () => {
     
             test("should play the first album in the queue when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 queue,
                 playMode,
@@ -889,7 +889,7 @@ describe("Albums slice playing", () => {
 
           describe("when album is being played", () => {
             test("should play the first album in the queue when playing a middle album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: middleInSequence,
                 queue,
@@ -904,7 +904,7 @@ describe("Albums slice playing", () => {
             });
     
             test("should play the first album in the queue when playing the last album", () => {
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: sortedAndFilteredAlbums,
                 playing: lastInSequence,
                 queue,
@@ -920,7 +920,7 @@ describe("Albums slice playing", () => {
     
             test("should play the first album in the queue when there are no albums", () => {
               const empty: Album[] = [];
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: empty,
                 playing: firstInSequence,
                 queue,
@@ -937,7 +937,7 @@ describe("Albums slice playing", () => {
             test("should play the first album in the queue when the playing album is not in the albums list", () => {
               const [ first, second, ...rest ] = sortedAndFilteredAlbums;
 
-              const state = createPlayingNextRootState({
+              const state = createPlayingNextTestRootState({
                 albums: [ first, ...rest ], // also sorted and filtered
                 playing: second,
                 queue,

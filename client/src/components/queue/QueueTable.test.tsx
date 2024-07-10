@@ -1,11 +1,15 @@
 import { describe, expect, test } from "@jest/globals";
-import { createQueueRootState } from "../../../test/creators";
-import { renderWithProviders } from "../../../test/testUtils";
+import { createDefaultQueueRootState } from "../../../test/state";
+import { renderWithProviders } from "../../../test/render";
 import QueueTable from "./QueueTable";
 import { albums } from "../../../test/constants";
 import { fireEvent, screen, within } from "@testing-library/dom";
 import { selectPlaying } from "../../redux/reducers/albums/albumsSlice";
 import { selectIsQueued } from "../../redux/reducers/queueSlice";
+import { Album } from "../../types";
+
+const createTestState = (queue: Album[] = []) =>
+  createDefaultQueueRootState({ queue });
 
 const queryAllQueueTableRows = () => {
   const queueTableBody = screen.getByTestId("queue-tbody");
@@ -21,7 +25,7 @@ describe("<QueueTable />", () => {
   const [nonQueuedAlbum, ...queue] = albums;
 
   test("should display all queued albums", () => {
-    const preloadedState = createQueueRootState(queue);
+    const preloadedState = createTestState(queue);
     renderWithProviders(<QueueTable />, { preloadedState });
 
     const rows = queryAllQueueTableRows();
@@ -35,7 +39,7 @@ describe("<QueueTable />", () => {
   });
 
   test("should not display a non queued album", () => {
-    const preloadedState = createQueueRootState(queue);
+    const preloadedState = createTestState(queue);
     renderWithProviders(<QueueTable />, { preloadedState });
 
     expect(queryQueueTableRowByText(nonQueuedAlbum.title))
@@ -47,7 +51,7 @@ describe("<QueueTable />", () => {
     const albumToBePlayed = queue[playedIdx];
 
     test("should not display album after playing it", () => {
-      const preloadedState = createQueueRootState(queue);
+      const preloadedState = createTestState(queue);
       renderWithProviders(<QueueTable />, { preloadedState });
   
       const rowBefore = queryAllQueueTableRows()[playedIdx];
@@ -71,7 +75,7 @@ describe("<QueueTable />", () => {
     });
 
     test("should set album to be played", () => {
-      const preloadedState = createQueueRootState(queue);
+      const preloadedState = createTestState(queue);
       const { store } = renderWithProviders(<QueueTable />, { preloadedState });
   
       const rowBefore = queryAllQueueTableRows()[playedIdx];
@@ -88,7 +92,7 @@ describe("<QueueTable />", () => {
     const albumToBeRemoved = queue[removedIdx];
 
     test("should not display an album removed from the queue", () => {
-      const preloadedState = createQueueRootState(queue);
+      const preloadedState = createTestState(queue);
       renderWithProviders(<QueueTable />, { preloadedState });
 
       const rowBefore = queryAllQueueTableRows()[removedIdx];
@@ -112,7 +116,7 @@ describe("<QueueTable />", () => {
     });
 
     test("should remove album from the queue", () => {
-      const preloadedState = createQueueRootState(queue);
+      const preloadedState = createTestState(queue);
       const { store } = renderWithProviders(<QueueTable />, { preloadedState });
   
       const rowBefore = queryAllQueueTableRows()[removedIdx];
@@ -125,7 +129,7 @@ describe("<QueueTable />", () => {
   });
 
   test("should move the prepended album to the first place in the queue", () => {
-    const preloadedState = createQueueRootState(queue);
+    const preloadedState = createTestState(queue);
     renderWithProviders(<QueueTable />, { preloadedState });
 
     const startIdx = 1;

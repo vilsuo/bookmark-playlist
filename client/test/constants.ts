@@ -70,4 +70,10 @@ export const newAlbum: Album = {
   ...newAlbumValues,
 };
 
+export const createAlbumWithCategory = (
+  album: Album, category: string
+): Album => ({
+  ...album, category,
+});
+
 export const categories: Array<Album["category"]> = ["Thrash", "Death", "Black", "Doom"];

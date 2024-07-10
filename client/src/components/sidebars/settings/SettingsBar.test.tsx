@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import { fireEvent, screen } from '@testing-library/react';
 
 // We're using our own custom render function and not RTL's render.
-import { renderWithProviders } from '../../../../test/testUtils';
+import { renderWithProviders } from '../../../../test/render';
 
 import SettingsBar from "./SettingsBar";
 import { initialState as initialSettingsState, selectAutoplay, selectPlayMode } from '../../../redux/reducers/settingsSlice';

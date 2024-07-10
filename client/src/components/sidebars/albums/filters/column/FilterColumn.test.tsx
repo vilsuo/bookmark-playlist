@@ -1,16 +1,18 @@
 import { describe, expect, test } from "@jest/globals";
-import { renderWithProviders } from "../../../../../../test/testUtils";
+import { renderWithProviders } from "../../../../../../test/render";
 import FilterColumn from "./FilterColumn";
-import { createFiltersRootState } from "../../../../../../test/creators";
 import { changeOptionByLabel, findInputByLabelMatcher } from "../../../../../../test/uiHelpers";
 import { AlbumColumn } from "../../../../../types";
 import { fireEvent, screen } from "@testing-library/dom";
-import { initialState as defaultFiltersState, selectFilters } from "../../../../../redux/reducers/filters/filterSlice";
+import { initialState as defaultFiltersState, Filter, selectFilters } from "../../../../../redux/reducers/filters/filterSlice";
+import { createDateISOString } from "../../../../../util/dateConverter";
+import { createDefaultFiltersRootState } from "../../../../../../test/state";
+
+const createTestState = (filters: Partial<Filter>) => 
+  createDefaultFiltersRootState({ filters });
 
 const columnMatcher = /By/i;
-
 const textFilterMatcher = /Search/i;
-
 const startMatcher = /From/i;
 const endMatcher = /To/i;
 
@@ -32,10 +34,13 @@ describe("<FilterColumn />", () => {
   describe("filter columns", () => {
     const text = "sample text";
     const published = { start: "1990", end: "2000" };
-    const addDate = { start: "1990-04-07", end: "2000-12-31" };
+    const addDate = {
+      start: createDateISOString(1990, 4, 7),
+      end: createDateISOString(2000, 12, 31),
+    };
 
     test("should be able to change filter column", async () => {
-      const preloadedState = createFiltersRootState({ filters: { text, published, addDate } });
+      const preloadedState = createTestState({ text, published, addDate });
       renderWithProviders(<FilterColumn />, { preloadedState });
 
       // artist
@@ -68,7 +73,7 @@ describe("<FilterColumn />", () => {
       AlbumColumn.ARTIST,
       AlbumColumn.ALBUM
     ])("%s", (column) => {
-      const preloadedState = createFiltersRootState({ filters: { column, text, published, addDate } });
+      const preloadedState = createTestState({ column, text, published, addDate });
 
       test("should render published filter", async () => {
         renderWithProviders(<FilterColumn />, { preloadedState });
@@ -96,7 +101,7 @@ describe("<FilterColumn />", () => {
 
     describe(AlbumColumn.PUBLISHED, () => {
       const column = AlbumColumn.PUBLISHED;
-      const preloadedState = createFiltersRootState({ filters: { column, text, published, addDate } });
+      const preloadedState = createTestState({ column, text, published, addDate });
 
       test("should render published filter", async () => {
         renderWithProviders(<FilterColumn />, { preloadedState });
@@ -158,7 +163,7 @@ describe("<FilterColumn />", () => {
 
     describe(AlbumColumn.ADD_DATE, () => {
       const column = AlbumColumn.ADD_DATE;
-      const preloadedState = createFiltersRootState({ filters: { column, text, published, addDate } });
+      const preloadedState = createTestState({ column, text, published, addDate });
 
       test("should render add date filter", async () => {
         renderWithProviders(<FilterColumn />, { preloadedState });
@@ -169,7 +174,7 @@ describe("<FilterColumn />", () => {
       });
 
       test("should be able to change start filter", async () => {
-        const newStart = "1995-02-03";
+        const newStart = createDateISOString(1995, 2, 3);
         const { store } = renderWithProviders(<FilterColumn />, { preloadedState });
 
         await changeStartInput(newStart);
@@ -186,7 +191,7 @@ describe("<FilterColumn />", () => {
       });
 
       test("should be able to change end filter", async () => {
-        const newEnd = "2005-06-01";
+        const newEnd = createDateISOString(2005, 6, 1);
         const { store } = renderWithProviders(<FilterColumn />, { preloadedState });
 
         await changeEndInput(newEnd);

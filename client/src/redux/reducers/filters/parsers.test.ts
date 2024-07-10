@@ -1,14 +1,10 @@
 import { describe, expect, test } from "@jest/globals";
-import { RootState } from "../../store";
-import { Filter } from "./filterSlice";
-import { createFilterState } from "../../../../test/creators";
 import { selectParsedFilters } from "./parsers";
+import { createDefaultFiltersRootState } from "../../../../test/state";
+import { Filter } from "./filterSlice";
 
-const createParsingFilterRootState = (
-  filters?: Partial<Filter>
-): RootState => (
-  { filters: createFilterState({ filters }) } as RootState
-);
+const createFiltersTestRootState = (filters?: Partial<Filter>) => 
+  createDefaultFiltersRootState({ filters });
 
 describe("Filter Slice parsers", () => {
   describe("selectParsedFilters", () => {
@@ -17,7 +13,7 @@ describe("Filter Slice parsers", () => {
         const published = { start: "", end: "" };
         const parsedPublished = { start: undefined, end: undefined };
 
-        const state = createParsingFilterRootState({ published });
+        const state = createFiltersTestRootState({ published });
 
         const result = selectParsedFilters(state);
         expect(result.published).toStrictEqual(parsedPublished);
@@ -27,7 +23,7 @@ describe("Filter Slice parsers", () => {
         const published = { start: "1990", end: "2024" };
         const parsedPublished = { start: 1990, end: 2024 };
 
-        const state = createParsingFilterRootState({ published });
+        const state = createFiltersTestRootState({ published });
 
         const result = selectParsedFilters(state);
         expect(result.published).toStrictEqual(parsedPublished);
@@ -39,7 +35,7 @@ describe("Filter Slice parsers", () => {
         const addDate = { start: "", end: "" };
         const parsedAddDate = { start: undefined, end: undefined };
 
-        const state = createParsingFilterRootState({ addDate });
+        const state = createFiltersTestRootState({ addDate });
 
         const result = selectParsedFilters(state);
         expect(result.addDate).toStrictEqual(parsedAddDate);
@@ -48,7 +44,7 @@ describe("Filter Slice parsers", () => {
       describe("addDate start", () => {
         test("should convert to local date", () => {
           const addDate = { start: "2024-07-03", end: "" };
-          const state = createParsingFilterRootState({ addDate });
+          const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
           const resultParsedStart = new Date(result.addDate.start!);
@@ -60,7 +56,7 @@ describe("Filter Slice parsers", () => {
 
         test("should set hours to local zero", () => {
           const addDate = { start: "2024-07-03", end: "" };
-          const state = createParsingFilterRootState({ addDate });
+          const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
           const resultParsedStart = new Date(result.addDate.start!);
@@ -75,7 +71,7 @@ describe("Filter Slice parsers", () => {
       describe("addDate end", () => {
         test("should convert to following local date", () => {
           const addDate = { start: "", end: "2024-07-03" };
-          const state = createParsingFilterRootState({ addDate });
+          const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
           const resultParsedEnd = new Date(result.addDate.end!);
@@ -87,7 +83,7 @@ describe("Filter Slice parsers", () => {
 
         test("should set hours to local zero", () => {
           const addDate = { start: "", end: "2024-07-03" };
-          const state = createParsingFilterRootState({ addDate });
+          const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
           const resultParsedEnd = new Date(result.addDate.end!);
@@ -101,7 +97,7 @@ describe("Filter Slice parsers", () => {
     });
 
     test("should not compute again with the same state", () => {
-      const state = createParsingFilterRootState();
+      const state = createFiltersTestRootState();
 
       selectParsedFilters.resetRecomputations();
       selectParsedFilters(state);
@@ -111,13 +107,13 @@ describe("Filter Slice parsers", () => {
     });
 
     test("should recompute with a new state", () => {
-      const firstState = createParsingFilterRootState();
+      const firstState = createFiltersTestRootState();
 
       selectParsedFilters.resetRecomputations();
       selectParsedFilters(firstState);
       expect(selectParsedFilters.recomputations()).toBe(1);
 
-      const secondState = createParsingFilterRootState(
+      const secondState = createFiltersTestRootState(
         { published: { start: "1990", end: "1991" } },
       );
 
