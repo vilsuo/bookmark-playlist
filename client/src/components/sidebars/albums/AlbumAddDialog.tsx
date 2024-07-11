@@ -37,8 +37,8 @@ const AlbumAddDialog = ({ isOpen, onClose }: AlbumAddDialogProps) => {
       <AlbumForm
         album={defaultValues}
         submit={addAndClose}
+        submitText="Add"
       >
-        <button type='submit'>Add</button>
         <button type='button' onClick={onClose}>Cancel</button>
       </AlbumForm>
     </DragDialog>

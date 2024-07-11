@@ -66,8 +66,8 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
         <AlbumForm
           album={album}
           submit={updateAndClose}
+          submitText="Save"
         >
-          <button type='submit'>Save</button>
           <button type='button' onClick={openConfirmDialog}>Remove</button>
           <button type='button' onClick={onClose}>Cancel</button>
         </AlbumForm>

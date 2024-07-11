@@ -74,14 +74,20 @@ dialog .dialog-body .options {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: var(--ma-selected);
+  
   color: white;
+  min-width: 300px;
+  background-color: var(--ma-selected);
 }
 .album-form > label:first-child {
   margin-top: 10px;
 }
 .album-form > label,
 .album-form .category-select {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+
   padding: 2px;
   margin: 0 10px;
   border: 2px solid black;
@@ -99,11 +105,6 @@ dialog .dialog-body .options {
   padding: 4px;
   border: 1px solid white;
   background-color: black;
-}
-.album-form .category-select div {
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 4px;
 }
 
 /* Resizeable */

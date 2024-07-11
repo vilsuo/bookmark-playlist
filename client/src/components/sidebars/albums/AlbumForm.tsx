@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlbumCreation } from '../../../types';
+import { AlbumColumn, AlbumCreation } from '../../../types';
 import { useAppSelector } from '../../../redux/hooks';
 import { selectAlbumCategories } from '../../../redux/reducers/albums/albumsSlice';
 import { CATEGORY_OTHER } from '../../../constants';
@@ -7,7 +7,7 @@ import { CATEGORY_OTHER } from '../../../constants';
 interface CategorySelectProps {
   category: string;
   setCategory: (category: string) => void;
-}
+};
 
 const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
   const [inputSelected, setInputSelected] = useState(category === CATEGORY_OTHER);
@@ -22,12 +22,9 @@ const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
 
   return (
     <div className="category-select">
-      <div>
-        <label>Category
-        <select
-          value={category}
-          onChange={handleSelect}
-        >
+      <label>
+        <span>Category</span>
+        <select value={category} onChange={handleSelect}>
           <option value={CATEGORY_OTHER}>-- Other --</option>
 
           {categories.map(c =>
@@ -36,16 +33,17 @@ const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
             </option>
           )}
         </select>
-        </label>
-        { inputSelected && (
-          <input autoFocus
-            type='text'
-            value={category}
-            onChange={({ target }) => setCategory(target.value)}
-            required
-          />
-        )}
-      </div>
+      </label>
+      
+      { (inputSelected || !categories.length) && (
+        <input data-testid="new-category-input"
+          type='text'
+          value={category}
+          onChange={({ target }) => setCategory(target.value)}
+          autoFocus
+          required
+        />
+      )}
     </div>
   );
 };
@@ -53,10 +51,11 @@ const CategorySelect = ({ category, setCategory }: CategorySelectProps) => {
 interface AlbumFormProps {
   album: AlbumCreation;
   submit: (album: AlbumCreation) => Promise<void>;
+  submitText?: string;
   children: React.ReactNode;
-}
+};
 
-const AlbumForm = ({ album, submit, children }: AlbumFormProps) => {
+const AlbumForm = ({ album, submit, submitText = "Submit", children }: AlbumFormProps) => {
   const [artist, setArtist] = useState(album.artist);
   const [title, setTitle] = useState(album.title);
   const [published, setPublished] = useState(album.published);
@@ -66,13 +65,13 @@ const AlbumForm = ({ album, submit, children }: AlbumFormProps) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    await submit({ artist, title, published, category, videoId  });
+    await submit({ artist, title, published, category, videoId });
   };
 
   return (
     <form className="album-form" onSubmit={handleSubmit}>
       <label>
-        <span>Artist</span>
+        <span>{AlbumColumn.ARTIST}</span>
         <input
           type='text'
           value={artist}
@@ -81,7 +80,7 @@ const AlbumForm = ({ album, submit, children }: AlbumFormProps) => {
         />
       </label>
       <label>
-        <span>Title</span>
+        <span>{AlbumColumn.ALBUM}</span>
         <input
           type='text'
           value={title}
@@ -90,7 +89,7 @@ const AlbumForm = ({ album, submit, children }: AlbumFormProps) => {
         />
       </label>
       <label>
-        <span>Published</span>
+        <span>{AlbumColumn.PUBLISHED}</span>
         <input
           type='number'
           min={1000}
@@ -114,6 +113,8 @@ const AlbumForm = ({ album, submit, children }: AlbumFormProps) => {
       </label>
 
       <div className="options">
+        <button type='submit'>{submitText}</button>
+
         { children }
       </div>
     </form>
