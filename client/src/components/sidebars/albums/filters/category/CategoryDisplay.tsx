@@ -12,7 +12,7 @@ const CategoryDisplay = ({ showList, setShowList }: CategoryDisplayProps) => {
 
   return (
     <div className="category-display">
-      <div className="selected">
+      <div className="selected" data-testid="selected-categories">
         Categories:
         { isAllCategoriesFiltered
           ? <span>{filterCategories}</span>
