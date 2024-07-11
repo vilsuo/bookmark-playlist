@@ -11,6 +11,7 @@ import { Notification, selectNotifications } from "../notificationSlice";
 import { selectQueue } from "../queueSlice";
 import { FilterCategories, selectFilterCategories } from "../filters/filterSlice";
 import { BASE_URL as CONVERTER_BASE_URL } from "../../../util/converterService";
+import { createServerMockErrorResponse } from "../../../../test/server";
 
 const createAlbumsRootTestState = (albums: Album[] = []) =>
   createDefaultAlbumsRootState({ albums });
@@ -34,10 +35,6 @@ const createAlbumsQueueRootTestState = (
     queue: createDefaultQueueState({ queue }),
   } as RootState
 );
-
-const createServerMockErrorResponse = (message: string, status = 400) => {
-  return HttpResponse.json({ message } , { status });
-};
 
 const expectToHaveANotification = (
   notifications: Notification[],

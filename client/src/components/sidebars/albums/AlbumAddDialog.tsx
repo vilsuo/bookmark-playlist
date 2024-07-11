@@ -6,11 +6,12 @@ import { createAlbum } from '../../../redux/reducers/albums/albumsSlice';
 import { CATEGORY_OTHER } from '../../../constants';
 
 interface AlbumAddDialogProps {
+  album?: AlbumCreation;
   isOpen: boolean;
   onClose: () => void;
-}
+};
 
-const defaultValues = {
+const defaultValues: AlbumCreation = {
   artist: '',
   title: '',
   published: 2000,
@@ -18,7 +19,7 @@ const defaultValues = {
   videoId: '',
 };
 
-const AlbumAddDialog = ({ isOpen, onClose }: AlbumAddDialogProps) => {
+const AlbumAddDialog = ({ album = defaultValues, isOpen, onClose }: AlbumAddDialogProps) => {
   const dispatch = useAppDispatch();
 
   const addAndClose = async (albumValues: AlbumCreation) => {
@@ -35,7 +36,7 @@ const AlbumAddDialog = ({ isOpen, onClose }: AlbumAddDialogProps) => {
       onClose={onClose}
     >
       <AlbumForm
-        album={defaultValues}
+        album={album}
         submit={addAndClose}
         submitText="Add"
       >
