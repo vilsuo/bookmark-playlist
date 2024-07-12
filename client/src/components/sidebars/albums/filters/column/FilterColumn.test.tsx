@@ -75,7 +75,7 @@ describe("<FilterColumn />", () => {
     ])("%s", (column) => {
       const preloadedState = createTestState({ column, text, published, addDate });
 
-      test("should render published filter", async () => {
+      test("should render text filter", async () => {
         renderWithProviders(<FilterColumn />, { preloadedState });
 
         expect(await findColumnOption()).toHaveValue(column);
@@ -216,7 +216,7 @@ describe("<FilterColumn />", () => {
         expect(await findStartInput()).toHaveDisplayValue(defaultAddDate.start);
         expect(await findEndInput()).toHaveDisplayValue(defaultAddDate.end);
 
-        expect(selectFilters(store.getState())).toEqual({
+        expect(selectFilters(store.getState())).toStrictEqual({
           ...selectFilters(preloadedState),
           addDate: defaultAddDate,
         });

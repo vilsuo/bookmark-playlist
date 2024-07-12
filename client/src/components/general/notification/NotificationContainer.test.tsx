@@ -31,7 +31,7 @@ describe("<NotificationContainer />", () => {
       type: NotificationType.ERROR,
       title: "Error",
       message: "This is an error message",
-    }
+    },
   ];
 
   test("should render a notification", async () => {
@@ -43,28 +43,54 @@ describe("<NotificationContainer />", () => {
     await notificationExistsByTitle(notification.title);
   });
 
-  test("should remove a notification by closing it", async () => {
-    const [removedNotification, otherNotification] = notifications;
+  describe("closing a notification", () => {
+    const [ notificationToBeClosed, notification ] = notifications;
 
-    const preloadedState = createTestState(notifications);
+    test("should not render the notification", async () => {
+      const preloadedState = createTestState(notifications);
+      renderWithProviders(<NotificationContainer />, { preloadedState });
 
-    const { store } = renderWithProviders(<NotificationContainer />, { preloadedState });
+      await closeNotificationByTitle(notificationToBeClosed.title);
 
-    // notification should be found before removing it
-    expect(screen.queryByText(removedNotification.title))
-      .toBeInTheDocument();
+      // notification should not be found after removing it
+      expect(screen.queryByText(notificationToBeClosed.title))
+        .not.toBeInTheDocument();
+    });
 
-    await closeNotificationByTitle(removedNotification.title);
+    test("should render the other notifications", async () => {
+      const preloadedState = createTestState(notifications);
+      renderWithProviders(<NotificationContainer />, { preloadedState });
 
-    expect(selectNotifications(store.getState())).not.toContain(removedNotification);
+      await closeNotificationByTitle(notificationToBeClosed.title);
+      
+      expect(screen.queryByText(notification.title)).toBeInTheDocument();
+    });
 
-    // notification should not be found after removing it
-    expect(screen.queryByText(removedNotification.title))
-      .not.toBeInTheDocument();
+    test("should remove the notification", async () => {
+      const preloadedState = createTestState(notifications);
+      const { store } = renderWithProviders(
+        <NotificationContainer />,
+        { preloadedState },
+      );
 
-    // other notification should still be found
-    await notificationExistsByTitle(otherNotification.title);
+      await closeNotificationByTitle(notificationToBeClosed.title);
 
-    expect(selectNotifications(store.getState())).toContain(otherNotification);
+      expect(selectNotifications(store.getState()))
+        .not.toContainEqual(notificationToBeClosed);
+    });
+
+    test("should not remove the other notifications", async () => {
+      const preloadedState = createTestState(notifications);
+      const { store } = renderWithProviders(
+        <NotificationContainer />,
+        { preloadedState },
+      );
+
+      await closeNotificationByTitle(notificationToBeClosed.title);
+
+      const result = selectNotifications(store.getState());
+      expect(result).toHaveLength(notifications.length - 1);
+      expect(result).toContainEqual(notification);
+    });
   });
 });

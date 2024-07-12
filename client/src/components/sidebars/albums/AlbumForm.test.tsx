@@ -38,8 +38,7 @@ const renderAlbumForm = (albums: Album[] = []) => renderWithProviders(
 const changeCategory = async (category: string) =>
   changeOptionByLabel("Category", category);
 
-const findCategoryInput = async () =>
-  findInputByLabelMatcher("Category");
+const findCategoryInput = async () => findInputByLabelMatcher("Category");
 
 const queryAllCategoryOptions = async () =>
   within(await findCategoryInput()).findAllByRole("option");
@@ -47,7 +46,7 @@ const queryAllCategoryOptions = async () =>
 const queryNewInput = () => screen.queryByTestId("new-category-input");
 
 describe("<AlbumForm>", () => {
-  test("should render the children", () => {
+  test("should render the child component", () => {
     renderAlbumForm();
 
     expect(screen.getByText(childText)).toBeInTheDocument();
@@ -74,76 +73,78 @@ describe("<AlbumForm>", () => {
     expect(await findInputByLabelMatcher("Video id")).toHaveValue(album.videoId);
   });
 
-  describe("when there are no albums", () => {
-    test("should have only other category option", async () => {
-      renderAlbumForm();
+  describe("category select", () => {
+    describe("when there are no albums", () => {
+      test("should have only other category option", async () => {
+        renderAlbumForm();
 
-      const options = await queryAllCategoryOptions();
-      expect(options).toHaveLength(1);
-      expect(options[0]).toHaveValue(CATEGORY_OTHER);
-    });
-
-    test("should select the other category", async () => {
-      renderAlbumForm();
-
-      expect(await findCategoryInput()).toHaveValue(CATEGORY_OTHER);
-      expect(queryNewInput()).toHaveValue(album.category);
-    });
-  });
-
-  describe("when there are albums", () => {
-    test("should have all category options sorted", async () => {
-      renderAlbumForm(initialAlbums);
-
-      const options = await queryAllCategoryOptions();
-      expect(options).toHaveLength(initialAlbumCategories.length + 1);
-
-      expect(options[0]).toHaveValue(CATEGORY_OTHER);
-      initialAlbumCategories.toSorted().forEach((category, i) =>
-        expect(options[i + 1]).toHaveValue(category)
-      );
-    });
-
-    test("should select the album category", async () => {
-      renderAlbumForm(initialAlbums);
-
-      expect(await findCategoryInput()).toHaveValue(album.category);
-      expect(queryNewInput()).not.toBeInTheDocument();
-    });
-
-    test("should be able to change category", async () => {
-      const existingCategory = initialAlbumCategories[1];
-
-      renderAlbumForm(initialAlbums);
-
-      await changeCategory(existingCategory);
-
-      const input = await findCategoryInput();
-      expect(input).toHaveValue(existingCategory);
-      expect(input).not.toHaveValue(album.category);
-
-      expect(queryNewInput()).not.toBeInTheDocument();
-    });
-
-    test("should be able to change to a new category", async () => {
-      const nonExistingCategory = otherCategory;
-      renderAlbumForm(initialAlbums);
-
-      // open new input
-      await changeCategory(CATEGORY_OTHER);
-
-      const subInput = queryNewInput();
-
-      // type to new input
-      fireEvent.change(subInput!, {
-        target: { value: nonExistingCategory },
+        const options = await queryAllCategoryOptions();
+        expect(options).toHaveLength(1);
+        expect(options[0]).toHaveValue(CATEGORY_OTHER);
       });
 
-      const input = await findCategoryInput();
-      expect(input).toHaveValue(CATEGORY_OTHER);
+      test("should select the other category", async () => {
+        renderAlbumForm();
 
-      expect(subInput).toHaveValue(nonExistingCategory);
-      expect(subInput).not.toHaveValue(album.category);
+        expect(await findCategoryInput()).toHaveValue(CATEGORY_OTHER);
+        expect(queryNewInput()).toHaveValue(album.category);
+      });
+    });
+
+    describe("when there are albums", () => {
+      test("should have all category options sorted", async () => {
+        renderAlbumForm(initialAlbums);
+
+        const options = await queryAllCategoryOptions();
+        expect(options).toHaveLength(initialAlbumCategories.length + 1);
+
+        expect(options[0]).toHaveValue(CATEGORY_OTHER);
+        initialAlbumCategories.toSorted().forEach((category, i) =>
+          expect(options[i + 1]).toHaveValue(category)
+        );
+      });
+
+      test("should select the album category", async () => {
+        renderAlbumForm(initialAlbums);
+
+        expect(await findCategoryInput()).toHaveValue(album.category);
+        expect(queryNewInput()).not.toBeInTheDocument();
+      });
+
+      test("should be able to change category", async () => {
+        const existingCategory = initialAlbumCategories[1];
+
+        renderAlbumForm(initialAlbums);
+
+        await changeCategory(existingCategory);
+
+        const input = await findCategoryInput();
+        expect(input).toHaveValue(existingCategory);
+        expect(input).not.toHaveValue(album.category);
+
+        expect(queryNewInput()).not.toBeInTheDocument();
+      });
+
+      test("should be able to change to a new category", async () => {
+        const nonExistingCategory = otherCategory;
+        renderAlbumForm(initialAlbums);
+
+        // open new input
+        await changeCategory(CATEGORY_OTHER);
+
+        const subInput = queryNewInput();
+
+        // type to new input
+        fireEvent.change(subInput!, {
+          target: { value: nonExistingCategory },
+        });
+
+        const input = await findCategoryInput();
+        expect(input).toHaveValue(CATEGORY_OTHER);
+
+        expect(subInput).toHaveValue(nonExistingCategory);
+        expect(subInput).not.toHaveValue(album.category);
+      });
     });
   });
 });

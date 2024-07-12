@@ -65,7 +65,7 @@ describe("<AlbumTable />", () => {
     const rows = queryAllAlbumTableRows();
     expect(rows).toHaveLength(albums.length);
 
-    expect(orderingBefore).not.toEqual(orderingAfter);
+    expect(orderingBefore).not.toStrictEqual(orderingAfter);
   });
 
   test("should be able to change sorting column", () => {
@@ -86,12 +86,11 @@ describe("<AlbumTable />", () => {
     const rows = queryAllAlbumTableRows();
     expect(rows).toHaveLength(albums.length);
 
-    expect(orderingBefore).not.toEqual(orderingAfter);
+    expect(orderingBefore).not.toStrictEqual(orderingAfter);
   });
 
   test("should be able to toggle view on an album", () => {
     const preloadedState = createAlbumsFiltersRootState({ albums });
-
     const { store } = renderWithProviders(<AlbumTable />, { preloadedState });
 
     const selectIdx = 1;

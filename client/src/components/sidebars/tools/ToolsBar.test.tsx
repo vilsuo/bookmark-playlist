@@ -67,6 +67,6 @@ describe("<ToolsBar />", () => {
 
     await submit(convertButton);
 
-    expect(selectAlbums(store.getState())).toEqual([ newAlbum, ...albums ]);
+    expect(selectAlbums(store.getState())).toStrictEqual([ newAlbum, ...albums ]);
   });
 });

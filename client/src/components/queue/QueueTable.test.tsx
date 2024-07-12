@@ -5,7 +5,7 @@ import QueueTable from "./QueueTable";
 import { albums } from "../../../test/constants";
 import { fireEvent, screen, within } from "@testing-library/dom";
 import { selectPlaying } from "../../redux/reducers/albums/albumsSlice";
-import { selectIsQueued } from "../../redux/reducers/queueSlice";
+import { selectIsQueued, selectQueueFirst } from "../../redux/reducers/queueSlice";
 import { Album } from "../../types";
 
 const createTestState = (queue: Album[] = []) =>
@@ -24,7 +24,7 @@ const queryQueueTableRowByText = (text: string) => {
 describe("<QueueTable />", () => {
   const [nonQueuedAlbum, ...queue] = albums;
 
-  test("should display all queued albums", () => {
+  test("should display all queued albums in order", () => {
     const preloadedState = createTestState(queue);
     renderWithProviders(<QueueTable />, { preloadedState });
 
@@ -50,16 +50,35 @@ describe("<QueueTable />", () => {
     const playedIdx = 1;
     const albumToBePlayed = queue[playedIdx];
 
-    test("should not display album after playing it", () => {
+    test("should not display the album after playing it", () => {
       const preloadedState = createTestState(queue);
       renderWithProviders(<QueueTable />, { preloadedState });
   
-      const rowBefore = queryAllQueueTableRows()[playedIdx];
-      expect(rowBefore).toHaveTextContent(albumToBePlayed.title);
+      const rowBefore = queryQueueTableRowByText(albumToBePlayed.title);
+      expect(rowBefore).toBeInTheDocument();
+
+      fireEvent.click(within(rowBefore!).getByTestId("play-queue"));
   
-      fireEvent.click(within(rowBefore).getByTestId("play-queue"));
+      const rowAfter = queryQueueTableRowByText(albumToBePlayed.title);
+      expect(rowAfter).not.toBeInTheDocument();
+    });
+
+    test("should remove the album from the queue", () => {
+      const preloadedState = createTestState(queue);
+      const { store } = renderWithProviders(<QueueTable />, { preloadedState });
   
-      expect(rowBefore).not.toBeInTheDocument();
+      const rowBefore = queryQueueTableRowByText(albumToBePlayed.title);
+      fireEvent.click(within(rowBefore!).getByTestId("play-queue"));
+  
+      expect(selectIsQueued(store.getState(), albumToBePlayed.id)).toBe(false);
+    });
+
+    test("should shift the other albums to take the played albums place", () => {
+      const preloadedState = createTestState(queue);
+      renderWithProviders(<QueueTable />, { preloadedState });
+  
+      const row = queryQueueTableRowByText(albumToBePlayed.title);
+      fireEvent.click(within(row!).getByTestId("play-queue"));
   
       const rowsAfter = queryAllQueueTableRows();
       expect(rowsAfter).toHaveLength(queue.length - 1);
@@ -68,20 +87,18 @@ describe("<QueueTable />", () => {
           // earlier albums keep their place
           expect(row).toHaveTextContent(queue[i].title);
         } else {
-          // later albums are shifted one down
+          // later albums are shifted one position up
           expect(row).toHaveTextContent(queue[i + 1].title);
         }
       });
     });
 
-    test("should set album to be played", () => {
+    test("should set the album as played", () => {
       const preloadedState = createTestState(queue);
       const { store } = renderWithProviders(<QueueTable />, { preloadedState });
   
-      const rowBefore = queryAllQueueTableRows()[playedIdx];
-      expect(rowBefore).toHaveTextContent(albumToBePlayed.title);
-  
-      fireEvent.click(within(rowBefore).getByTestId("play-queue"));
+      const row = queryQueueTableRowByText(albumToBePlayed.title);
+      fireEvent.click(within(row!).getByTestId("play-queue"));
   
       expect(selectPlaying(store.getState())).toStrictEqual(albumToBePlayed);
     });
@@ -91,16 +108,33 @@ describe("<QueueTable />", () => {
     const removedIdx = 1;
     const albumToBeRemoved = queue[removedIdx];
 
-    test("should not display an album removed from the queue", () => {
+    test("should not display the album after removing it", () => {
       const preloadedState = createTestState(queue);
       renderWithProviders(<QueueTable />, { preloadedState });
 
-      const rowBefore = queryAllQueueTableRows()[removedIdx];
-      expect(rowBefore).toHaveTextContent(albumToBeRemoved.title);
+      const rowBefore = queryQueueTableRowByText(albumToBeRemoved.title);
+      fireEvent.click(within(rowBefore!).getByTestId("remove-queue"));
 
-      fireEvent.click(within(rowBefore).getByTestId("remove-queue"));
+      const rowAfter = queryQueueTableRowByText(albumToBeRemoved.title);
+      expect(rowAfter).not.toBeInTheDocument();
+    });
 
-      expect(rowBefore).not.toBeInTheDocument();
+    test("should remove album from the queue", () => {
+      const preloadedState = createTestState(queue);
+      const { store } = renderWithProviders(<QueueTable />, { preloadedState });
+  
+      const row = queryQueueTableRowByText(albumToBeRemoved.title);
+      fireEvent.click(within(row!).getByTestId("remove-queue"));
+  
+      expect(selectIsQueued(store.getState(), albumToBeRemoved.id)).toBe(false);
+    });
+
+    test("should shift the other albums to take the removed albums place", () => {
+      const preloadedState = createTestState(queue);
+      renderWithProviders(<QueueTable />, { preloadedState });
+
+      const row = queryQueueTableRowByText(albumToBeRemoved.title);
+      fireEvent.click(within(row!).getByTestId("remove-queue"));
 
       const rowsAfter = queryAllQueueTableRows();
       expect(rowsAfter).toHaveLength(queue.length - 1);
@@ -114,44 +148,55 @@ describe("<QueueTable />", () => {
         }
       });
     });
-
-    test("should remove album from the queue", () => {
-      const preloadedState = createTestState(queue);
-      const { store } = renderWithProviders(<QueueTable />, { preloadedState });
-  
-      const rowBefore = queryAllQueueTableRows()[removedIdx];
-      expect(rowBefore).toHaveTextContent(albumToBeRemoved.title);
-  
-      fireEvent.click(within(rowBefore).getByTestId("remove-queue"));
-  
-      expect(selectIsQueued(store.getState(), albumToBeRemoved.id)).toBe(false);
-    });
   });
 
-  test("should move the prepended album to the first place in the queue", () => {
-    const preloadedState = createTestState(queue);
-    renderWithProviders(<QueueTable />, { preloadedState });
+  describe("prepending", () => {
+    const prependIdx = 1;
+    const albumToBePrepended = queue[prependIdx];
 
-    const startIdx = 1;
-    const albumToBePrepended = queue[startIdx];
+    test("should display the album after prepending it", () => {
+      const preloadedState = createTestState(queue);
+      renderWithProviders(<QueueTable />, { preloadedState });
 
-    const rowBefore = queryAllQueueTableRows()[startIdx];
-    expect(rowBefore).toHaveTextContent(albumToBePrepended.title);
+      const rowBefore = queryQueueTableRowByText(albumToBePrepended.title);
+      fireEvent.click(within(rowBefore!).getByTestId("prepend-queue"));
 
-    fireEvent.click(within(rowBefore).getByTestId("prepend-queue"));
+      const rowAfter = queryQueueTableRowByText(albumToBePrepended.title);
+      expect(rowAfter).toBeInTheDocument();
+    });
 
-    const rowsAfter = queryAllQueueTableRows();
-    expect(rowsAfter).toHaveLength(queue.length);
-    rowsAfter.forEach((row, i) => {
-      if (i === 0) {
-        expect(row).toHaveTextContent(albumToBePrepended.title);
-      } else if (i <= startIdx) {
-        // earlier albums are shifted one down
-        expect(row).toHaveTextContent(queue[i - 1].title);
-      } else {
-        // later albums keep their place
-        expect(row).toHaveTextContent(queue[i].title);
-      }
+    test("should move the prepended album to the first place in the queue", () => {
+      const preloadedState = createTestState(queue);
+      const { store } = renderWithProviders(<QueueTable />, { preloadedState });
+
+      const row = queryQueueTableRowByText(albumToBePrepended.title);
+      fireEvent.click(within(row!).getByTestId("prepend-queue"));
+
+      const rowAfter = queryQueueTableRowByText(albumToBePrepended.title);
+      expect(rowAfter).toBeInTheDocument();
+
+      expect(queryAllQueueTableRows()[0]).toHaveTextContent(albumToBePrepended.title);
+      expect(selectQueueFirst(store.getState())).toStrictEqual(albumToBePrepended);
+    });
+
+    test("should shift the other albums after the prepended album in the queue", () => {
+      const preloadedState = createTestState(queue);
+      renderWithProviders(<QueueTable />, { preloadedState });
+  
+      const row = queryAllQueueTableRows()[prependIdx];
+      fireEvent.click(within(row).getByTestId("prepend-queue"));
+  
+      const rowsAfter = queryAllQueueTableRows();
+      expect(rowsAfter).toHaveLength(queue.length);
+      rowsAfter.forEach((row, i) => {
+        if (0 < i && i <= prependIdx) {
+          // earlier albums are shifted one down
+          expect(row).toHaveTextContent(queue[i - 1].title);
+        } else if (i > prependIdx) {
+          // later albums keep their place
+          expect(row).toHaveTextContent(queue[i].title);
+        }
+      });
     });
   });
 });
