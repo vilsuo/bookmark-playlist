@@ -1,17 +1,16 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "@jest/globals";
+import { beforeEach, describe, expect, test } from "@jest/globals";
 import { createAlbum, createFromBookmarks, deleteAlbum, fetchAlbums, selectAlbumCategories, selectAlbums, selectIsAloneInCategory, updateAlbum } from "./albumsSlice";
-import { Album, AlbumUpdate, NotificationType } from "../../../types";
+import { Album, NotificationType } from "../../../types";
 import { RootState, setupStore } from "../../store";
 import { albums, categories, createAlbumWithCategory, newAlbum, newAlbumValues, updatedAlbumValues } from "../../../../test/constants";
 import { createDefaultAlbumsRootState, createDefaultAlbumsState, createDefaultFiltersState, createDefaultQueueState } from "../../../../test/state";
-import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
 import { Notification, selectNotifications } from "../notificationSlice";
 import { selectQueue } from "../queueSlice";
 import { FilterCategories, selectFilterCategories } from "../filters/filterSlice";
 import { BASE_URL as CONVERTER_BASE_URL } from "../../../util/converterService";
-import { createServerMockErrorResponse } from "../../../../test/server";
+import server, { createServerMockErrorResponse } from "../../../../test/server";
 
 const createAlbumsRootTestState = (albums: Album[] = []) =>
   createDefaultAlbumsRootState({ albums });
@@ -130,17 +129,6 @@ describe("Albums slice", () => {
   });
 
   describe("async thunks", () => {
-    const server = setupServer();
-  
-    // Enable API mocking before tests.
-    beforeAll(() => server.listen());
-  
-    // Reset any runtime request handlers we may add during the tests.
-    afterEach(() => server.resetHandlers());
-  
-    // Disable API mocking after the tests are done.
-    afterAll(() => server.close());
-
     const [ newCategory, ...initialCategories] = categories;
 
     const initialAlbums = [
@@ -152,18 +140,15 @@ describe("Albums slice", () => {
 
     describe("fetchAlbums", () => {
       describe("on successful request", () => {
-        beforeEach(() => {
-          server.use(http.get(ALBUMS_BASE_URL, async () => {
-            return HttpResponse.json(initialAlbums);
-          }));
-        });
-
         test("should load the albums", async () => {
           const store = setupStore();
 
+          const before = selectAlbums(store.getState());
+          expect(before).toHaveLength(0);
+
           await store.dispatch(fetchAlbums());
           const result = selectAlbums(store.getState());
-          expect(result).toStrictEqual(initialAlbums);
+          expect(result).toStrictEqual(albums);
         });
       });
 
@@ -198,23 +183,16 @@ describe("Albums slice", () => {
     });
 
     describe("createFromBookmarks", () => {
-      const createdAlbums = [newAlbum];
+      const initialAlbums = [newAlbum];
       const formData = new FormData();
 
       describe("on successful request", () => {
-        beforeEach(() => {
-          server.use(http.post(CONVERTER_BASE_URL, () => {
-            return HttpResponse.json(createdAlbums, { status: 201 });
-          }));
-        });
-
         test("should load the albums", async () => {
           const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectAlbums(store.getState());
-          expect(result).toContainEqual(createdAlbums[0]);
-          expect(result).toHaveLength(initialAlbums.length + createdAlbums.length);
+          expect(result).toEqual([ ...initialAlbums, ...albums ]);
         });
 
         test("should create a success notification", async () => {
@@ -244,7 +222,6 @@ describe("Albums slice", () => {
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectAlbums(store.getState());
-          expect(result).not.toContainEqual(createdAlbums[0]);
           expect(result).toHaveLength(initialAlbums.length);
         });
 
@@ -263,27 +240,22 @@ describe("Albums slice", () => {
     });
 
     describe("createAlbum", () => {
-      describe("on successful request", () => {
-        beforeEach(() => {
-          server.use(http.post(ALBUMS_BASE_URL, async () => {
-            return HttpResponse.json(newAlbum, { status: 201 })
-          }));
-        });
+      const initialAlbums = albums;
 
+      describe("on successful request", () => {
         test("should add the album", async () => {
           const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createAlbum(newAlbumValues));
 
           const result = selectAlbums(store.getState());
-          expect(result).toContainEqual(newAlbum);
-          expect(result).toHaveLength(initialAlbums.length + 1);
+          expect(result).toEqual([ ...initialAlbums, newAlbum ]);
         });
 
         test("should create a success notification", async () => {
           const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(createAlbum(newAlbumValues));
-          const result = selectNotifications(store.getState());
 
+          const result = selectNotifications(store.getState());
           expectToHaveANotification(result, {
             type: NotificationType.SUCCESS,
             title: 'Album added successfully',
@@ -330,28 +302,6 @@ describe("Albums slice", () => {
       const updatedAlbum = { ...albumToUpdate, ...updatedAlbumValues };
 
       describe("successful request", () => {
-        beforeEach(() => {
-          server.use(
-            http.put<{ id: string }, AlbumUpdate, Album>(
-              `${ALBUMS_BASE_URL}/:id`,
-              async ({ request, params }) => {
-                const id = Number(params.id);
-        
-                // Read the intercepted request body as JSON.
-                const body = await request.json();
-
-                const addDate = initialAlbums.find(a => a.id === id)!.addDate;
-        
-                return HttpResponse.json({
-                  id,
-                  ...body,
-                  addDate,
-                });
-              },
-            ),
-          );
-        });
-
         test("should update the album", async () => {
           const store = setupStore(createAlbumsRootTestState(initialAlbums));
 
@@ -486,12 +436,6 @@ describe("Albums slice", () => {
       const otherAlbum = initialAlbums[2];
 
       describe("successful request", () => {
-        beforeEach(() => {
-          server.use(http.delete(`${ALBUMS_BASE_URL}/:id`, () => {
-            return new Response(null, { status: 204 });
-          }));
-        });
-
         test("should remove the album", async () => {
           const store = setupStore(createAlbumsRootTestState(initialAlbums));
           await store.dispatch(deleteAlbum(albumToRemove));
