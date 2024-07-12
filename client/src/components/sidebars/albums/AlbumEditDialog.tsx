@@ -10,10 +10,9 @@ interface AlbumEditDialogProps {
   album: Album;
   isOpen: boolean;
   onClose: () => void;
-}
+};
 
 const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
-
   const dispatch = useAppDispatch();
 
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
@@ -36,11 +35,6 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
     }
   };
 
-  const deleteAndClose = async () => {
-    await removeAndClose();
-    closeConfirmDialog();
-  };
-
   const closeConfirmDialog = () => { setIsRemoveOpen(false) };
   const openConfirmDialog = () => { setIsRemoveOpen(true); };
 
@@ -49,7 +43,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
       <ConfirmDialog
         title='Remove album'
         isOpen={isRemoveOpen}
-        onConfirm={deleteAndClose}
+        onConfirm={removeAndClose}
         onCancel={closeConfirmDialog}
       >
         <p>
