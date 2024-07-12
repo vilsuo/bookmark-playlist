@@ -1,3 +1,7 @@
+// TODO: test component with Cypress (jestdom does not support dialogs) so that
+// test do not test hidden elements!
+
+/*
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { renderWithProviders } from "../../../../test/render";
 import AlbumAddDialog from "./AlbumAddDialog";
@@ -80,3 +84,4 @@ describe("<AlbumAddDialog />", () => {
     });
   });
 });
+*/
