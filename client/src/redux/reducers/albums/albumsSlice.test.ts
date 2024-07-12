@@ -76,7 +76,7 @@ describe("Albums slice", () => {
         const previousState = createAlbumsRootTestState();
         const result = selectIsAloneInCategory(previousState, targetCategory);
 
-        expect(result).toBeFalsy();
+        expect(result).toBe(false);
       });
 
       describe("single category", () => {
@@ -85,14 +85,14 @@ describe("Albums slice", () => {
             const previousState = createAlbumsRootTestState([sameFirst]);
             const result = selectIsAloneInCategory(previousState, sameFirst.category);
 
-            expect(result).toBeTruthy();
+            expect(result).toBe(true);
           });
 
           test("should be false with other category", () => {
             const previousState = createAlbumsRootTestState([sameFirst]);
             const result = selectIsAloneInCategory(previousState, other.category);
 
-            expect(result).toBeFalsy();
+            expect(result).toBe(false);
           });
         });
 
@@ -100,7 +100,7 @@ describe("Albums slice", () => {
           const previousState = createAlbumsRootTestState([sameFirst, sameSecond]);
           const result = selectIsAloneInCategory(previousState, sameFirst.category);
 
-          expect(result).toBeFalsy();
+          expect(result).toBe(false);
         });
       });
 
@@ -109,20 +109,20 @@ describe("Albums slice", () => {
           const previousState = createAlbumsRootTestState([sameFirst, other]);
 
           const firstResult = selectIsAloneInCategory(previousState, sameFirst.category);
-          expect(firstResult).toBeTruthy();
+          expect(firstResult).toBe(true);
 
           const secondResult = selectIsAloneInCategory(previousState, other.category);
-          expect(secondResult).toBeTruthy();
+          expect(secondResult).toBe(true);
         });
 
         test("should be false when category has multiple albums", () => {
           const previousState = createAlbumsRootTestState([sameFirst, sameSecond, other]);
 
           const firstResult = selectIsAloneInCategory(previousState, sameFirst.category);
-          expect(firstResult).toBeFalsy();
+          expect(firstResult).toBe(false);
 
           const secondResult = selectIsAloneInCategory(previousState, other.category);
-          expect(secondResult).toBeTruthy();
+          expect(secondResult).toBe(true);
         });
       });
     });
@@ -192,7 +192,7 @@ describe("Albums slice", () => {
           await store.dispatch(createFromBookmarks(formData));
 
           const result = selectAlbums(store.getState());
-          expect(result).toEqual([ ...initialAlbums, ...albums ]);
+          expect(result).toStrictEqual([ ...initialAlbums, ...albums ]);
         });
 
         test("should create a success notification", async () => {
@@ -248,7 +248,7 @@ describe("Albums slice", () => {
           await store.dispatch(createAlbum(newAlbumValues));
 
           const result = selectAlbums(store.getState());
-          expect(result).toEqual([ ...initialAlbums, newAlbum ]);
+          expect(result).toStrictEqual([ ...initialAlbums, newAlbum ]);
         });
 
         test("should create a success notification", async () => {

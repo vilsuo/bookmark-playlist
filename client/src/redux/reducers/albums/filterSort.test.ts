@@ -27,8 +27,8 @@ describe("Albums slice filtering and sorting albums", () => {
     });
 
     describe("filtering", () => {
-      describe("Categories array", () => {
-        test("should return all albums when all filter categories on toggle on", () => {
+      describe("categories", () => {
+        test("should return all albums when all filter categories are toggled on", () => {
           const state = createAlbumsFiltersRootState({
             albums,
             filters: { categories: CATEGORY_ALL },
@@ -40,7 +40,7 @@ describe("Albums slice filtering and sorting albums", () => {
           expectEqualAlbumsWithoutOrder(result, albums);
         });
 
-        test("should return none when all filter does not have any categories", () => {
+        test("should return none when filter does not have any categories", () => {
           const state = createAlbumsFiltersRootState({
             albums,
             filters: { categories: [] },
@@ -66,7 +66,7 @@ describe("Albums slice filtering and sorting albums", () => {
         });
       });
 
-      describe("Other", () => {
+      describe("columns", () => {
         const categories = CATEGORY_ALL;
 
         test(AlbumColumn.ARTIST, () => {
@@ -565,7 +565,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateAsc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.ASC }
+          sorting: { column, order: Order.ASC },
         });
 
         const resultAsc = selectSortedAndFilteredAlbums(stateAsc);
@@ -579,7 +579,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateDesc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.DESC }
+          sorting: { column, order: Order.DESC },
         });
 
         const resultDesc = selectSortedAndFilteredAlbums(stateDesc);
@@ -597,7 +597,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateAsc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.ASC }
+          sorting: { column, order: Order.ASC },
         });
 
         const resultAsc = selectSortedAndFilteredAlbums(stateAsc);
@@ -611,7 +611,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateDesc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.DESC }
+          sorting: { column, order: Order.DESC },
         });
 
         const resultDesc = selectSortedAndFilteredAlbums(stateDesc);
@@ -629,7 +629,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateAsc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.ASC }
+          sorting: { column, order: Order.ASC },
         });
 
         const resultAsc = selectSortedAndFilteredAlbums(stateAsc);
@@ -643,7 +643,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateDesc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.DESC }
+          sorting: { column, order: Order.DESC },
         });
 
         const resultDesc = selectSortedAndFilteredAlbums(stateDesc);
@@ -661,7 +661,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateAsc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.ASC }
+          sorting: { column, order: Order.ASC },
         });
 
         const resultAsc = selectSortedAndFilteredAlbums(stateAsc);
@@ -675,7 +675,7 @@ describe("Albums slice filtering and sorting albums", () => {
 
         const stateDesc = createAlbumsFiltersRootState({
           albums,
-          sorting: { column, order: Order.DESC }
+          sorting: { column, order: Order.DESC },
         });
 
         const resultDesc = selectSortedAndFilteredAlbums(stateDesc);

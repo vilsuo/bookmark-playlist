@@ -82,7 +82,7 @@ describe("Filter slice", () => {
       });
 
       test("should select all when some are selected", () => {
-        const previousState = createFiltersCategoriesTestState([categories[0]]);
+        const previousState = createFiltersCategoriesTestState(categories);
         const currentState = reducer(previousState, toggleFilteringCategoryAll());
         
         expect(currentState.filters.categories).toBe(CATEGORY_ALL);
@@ -91,25 +91,28 @@ describe("Filter slice", () => {
   });
 
   describe("selectors", () => {
-    const [ firstCategory, secondCategory ] = categories;
+    const [ nonFilteredCategory, ...filterCategories ] = categories;
+    const filteredCategory = filterCategories[1];
 
     describe("selectIsCategoryFiltered", () => {
       describe("all category", () => {
+        const category = CATEGORY_ALL;
+
         test("should return false when no categories are filtered", () => {
           const state = createFiltersCategoriesTestRootState();
-          const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
+          const result = selectIsCategoryFiltered(state, category);
           expect(result).toBe(false);
         });
   
         test("should return true when all categories are filtered", () => {
           const state = createFiltersCategoriesTestRootState(CATEGORY_ALL);
-          const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
+          const result = selectIsCategoryFiltered(state, category);
           expect(result).toBe(true);
         });
 
         test("should return false when some categories are filtered", () => {
-          const state = createFiltersCategoriesTestRootState([firstCategory, secondCategory]);
-          const result = selectIsCategoryFiltered(state, CATEGORY_ALL);
+          const state = createFiltersCategoriesTestRootState(filterCategories);
+          const result = selectIsCategoryFiltered(state, category);
           expect(result).toBe(false);
         });
       });
@@ -117,19 +120,19 @@ describe("Filter slice", () => {
       describe("single category", () => {
         test("should return true when all categories are filtered", () => {
           const state = createFiltersCategoriesTestRootState(CATEGORY_ALL);
-          const result = selectIsCategoryFiltered(state, firstCategory);
+          const result = selectIsCategoryFiltered(state, filteredCategory);
           expect(result).toBe(true);
         });
   
         test("should return true when the category is filtered", () => {
-          const state = createFiltersCategoriesTestRootState([firstCategory]);
-          const result = selectIsCategoryFiltered(state, firstCategory);
+          const state = createFiltersCategoriesTestRootState(filterCategories);
+          const result = selectIsCategoryFiltered(state, filteredCategory);
           expect(result).toBe(true);
         });
 
         test("should return false when the category is not filtered", () => {
-          const state = createFiltersCategoriesTestRootState([firstCategory]);
-          const result = selectIsCategoryFiltered(state, secondCategory);
+          const state = createFiltersCategoriesTestRootState(filterCategories);
+          const result = selectIsCategoryFiltered(state, nonFilteredCategory);
           expect(result).toBe(false);
         });
       });
@@ -149,7 +152,7 @@ describe("Filter slice", () => {
       });
 
       test("should return false when some categories are filtered", () => {
-        const state = createFiltersCategoriesTestRootState([firstCategory, secondCategory]);
+        const state = createFiltersCategoriesTestRootState(filterCategories);
         const result = selectIsAllCategoriesFiltered(state);
         expect(result).toBe(false);
       });
@@ -181,10 +184,9 @@ describe("Filter slice", () => {
           const store = setupStore(state);
 
           store.dispatch(toggleFilterCategorySingle(targetCategory));
-          const result = selectFilterCategories(store.getState());
 
-          expect(result).not.toEqual(initialFilterCategories);
-          expect(result).not.toContain(targetCategory);
+          const result = selectFilterCategories(store.getState());
+          expect(result).not.toContainEqual(targetCategory);
           expectEqualFilterCategories(result, rest);
         });
       });
@@ -202,12 +204,10 @@ describe("Filter slice", () => {
             const store = setupStore(state);
 
             store.dispatch(toggleFilterCategorySingle(targetCategory));
+
             const result = selectFilterCategories(store.getState());
-
-            expect(result).not.toEqual(initialFilterCategories);
-            expect(result).not.toEqual(CATEGORY_ALL);
-
-            expect(result).toContain(targetCategory);
+            expect(result).not.toBe(CATEGORY_ALL);
+            expect(result).toContainEqual(targetCategory);
             expectEqualFilterCategories(result, initialCategories);
           });
 
@@ -222,20 +222,18 @@ describe("Filter slice", () => {
             const store = setupStore(state);
 
             store.dispatch(toggleFilterCategorySingle(targetCategory));
+
             const result = selectFilterCategories(store.getState());
-
-            expect(result).not.toEqual(initialFilterCategories);
-            expect(result).not.toEqual(CATEGORY_ALL);
-
-            expect(result).toContain(targetCategory);
-            expect(result).not.toContain(otherCategory);
+            expect(result).not.toBe(CATEGORY_ALL);
+            expect(result).toContainEqual(targetCategory);
+            expect(result).not.toContainEqual(otherCategory);
             expectEqualFilterCategories(result, [ targetCategory, ...initialFilterCategories ]);
           });
         });
 
         describe("toggling a category that is filtered", () => {
           test("should toggle off just the category", () => {
-            const [ _otherCategory, ...initialFilterCategories ] = initialCategories;
+            const [ otherCategory, ...initialFilterCategories ] = initialCategories;
             const [ targetCategory, ...rest ] = initialFilterCategories;
 
             const state = createAlbumCategoryFilterRootState(
@@ -246,13 +244,12 @@ describe("Filter slice", () => {
             const store = setupStore(state);
 
             store.dispatch(toggleFilterCategorySingle(targetCategory));
+
             const result = selectFilterCategories(store.getState());
+            expect(result).not.toBe(CATEGORY_ALL);
 
-            expect(result).not.toEqual(initialFilterCategories);
-            expect(result).not.toEqual(CATEGORY_ALL);
-
-            expect(result).not.toContain(targetCategory);
-            expect(result).not.toContain(_otherCategory);
+            expect(result).not.toContainEqual(targetCategory);
+            expect(result).not.toContainEqual(otherCategory);
             expectEqualFilterCategories(result, rest);
           });
         });

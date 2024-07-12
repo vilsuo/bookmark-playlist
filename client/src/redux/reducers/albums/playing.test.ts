@@ -39,6 +39,7 @@ describe("Albums slice playing", () => {
   const afterMiddleInSequence = sortedAndFilteredAlbums[2];
   const lastInSequence = sortedAndFilteredAlbums[sortedAndFilteredAlbums.length - 1];
 
+  // check that tests are actually expecting correct ordering
   beforeAll(() => {
     const state = createAlbumsFiltersRootState({ albums });
     const result = selectSortedAndFilteredAlbums(state);
@@ -427,8 +428,10 @@ describe("Albums slice playing", () => {
         });
 
         selectCanPlayNextAlbum.resetRecomputations();
+
         selectCanPlayNextAlbum(state);
         expect(selectCanPlayNextAlbum.recomputations()).toBe(1);
+        
         selectCanPlayNextAlbum(state);
         expect(selectCanPlayNextAlbum.recomputations()).toBe(1);
       });
