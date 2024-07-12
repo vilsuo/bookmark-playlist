@@ -10,9 +10,11 @@ import { selectAlbums } from "./albumsSlice";
  * filters and sorting orders
  */
 export const selectSortedAndFilteredAlbums = createSelector(
-  selectAlbums,
-  selectSorting,
-  selectParsedFilters,
+  [
+    selectAlbums,
+    selectSorting,
+    selectParsedFilters,
+  ],
   (albums, sorting, parsedFilters) => {
     return albums
       .filter(getFilterFn(parsedFilters))

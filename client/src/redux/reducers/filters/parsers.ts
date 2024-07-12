@@ -14,7 +14,7 @@ export type ParsedFilter = Omit<Filter, "published" | "addDate"> & {
  * albums to be filtered
  */
 export const selectParsedFilters = createSelector(
-  selectFilters,
+  [selectFilters],
   (filters): ParsedFilter => ({
     ...filters,
     published: parsePublishedFilterInterval(filters.published),
@@ -52,8 +52,9 @@ const parsePublishedFilterInterval = ({ start, end }: FilterInterval)
  * @returns date interval values converted to milliseconds since midnight,
  *          January 1, 1970 UTC
  */
-const parseAddDateFilterInterval = ({ start, end }: FilterInterval)
-: ParsedFilterInterval => {
+const parseAddDateFilterInterval = (
+  { start, end }: FilterInterval,
+) : ParsedFilterInterval => {
   let startTime;
   let endTime;
 

@@ -9,10 +9,12 @@ import { RootState } from "../../store";
 // SELECTORS
 
 export const selectCanPlayNextAlbum = createSelector(
-  selectSortedAndFilteredAlbums,
-  selectQueueFirst,
-  selectPlayMode,
-  selectPlaying,
+  [
+    selectSortedAndFilteredAlbums,
+    selectQueueFirst,
+    selectPlayMode,
+    selectPlaying,
+  ],
   (albums, nextAlbumInQueue, playMode, playingAlbum) => {
     // can play next from queue
     if (nextAlbumInQueue) { return true; }
