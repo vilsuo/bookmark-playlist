@@ -2,6 +2,7 @@ import { describe, expect, test } from "@jest/globals";
 import { selectParsedFilters } from "./parsers";
 import { createDefaultFiltersRootState } from "../../../../test/state";
 import { Filter } from "./filterSlice";
+import { createDateISOString } from "../../../util/dateConverter";
 
 const createFiltersTestRootState = (filters?: Partial<Filter>) => 
   createDefaultFiltersRootState({ filters });
@@ -31,6 +32,11 @@ describe("Filter Slice parsers", () => {
     });
 
     describe("addDate", () => {
+      const year = 2024;
+      const month = 7;
+      const day = 3;
+      const dateString = createDateISOString(year, month, day);
+
       test("should parse empty string as undefined", () => {
         const addDate = { start: "", end: "" };
         const parsedAddDate = { start: undefined, end: undefined };
@@ -43,19 +49,19 @@ describe("Filter Slice parsers", () => {
 
       describe("addDate start", () => {
         test("should convert to local date", () => {
-          const addDate = { start: "2024-07-03", end: "" };
+          const addDate = { start: dateString, end: "" };
           const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
           const resultParsedStart = new Date(result.addDate.start!);
 
-          expect(resultParsedStart?.getFullYear()).toEqual(2024);
-          expect(resultParsedStart?.getMonth()).toEqual(7 - 1); // zero based
-          expect(resultParsedStart?.getDate()).toEqual(3);
+          expect(resultParsedStart?.getFullYear()).toBe(year);
+          expect(resultParsedStart?.getMonth()).toBe(month - 1); // zero based
+          expect(resultParsedStart?.getDate()).toBe(day);
         });
 
         test("should set hours to local zero", () => {
-          const addDate = { start: "2024-07-03", end: "" };
+          const addDate = { start: dateString, end: "" };
           const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
@@ -70,19 +76,19 @@ describe("Filter Slice parsers", () => {
 
       describe("addDate end", () => {
         test("should convert to following local date", () => {
-          const addDate = { start: "", end: "2024-07-03" };
+          const addDate = { start: "", end: dateString };
           const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
           const resultParsedEnd = new Date(result.addDate.end!);
 
-          expect(resultParsedEnd?.getFullYear()).toEqual(2024);
-          expect(resultParsedEnd?.getMonth()).toEqual(7 - 1); // zero based
-          expect(resultParsedEnd?.getDate()).toEqual(3 + 1); // the next day
+          expect(resultParsedEnd?.getFullYear()).toEqual(year);
+          expect(resultParsedEnd?.getMonth()).toEqual(month - 1); // zero based
+          expect(resultParsedEnd?.getDate()).toEqual(day + 1); // the next day
         });
 
         test("should set hours to local zero", () => {
-          const addDate = { start: "", end: "2024-07-03" };
+          const addDate = { start: "", end: dateString };
           const state = createFiltersTestRootState({ addDate });
 
           const result = selectParsedFilters(state);
@@ -96,29 +102,33 @@ describe("Filter Slice parsers", () => {
       });
     });
 
-    test("should not compute again with the same state", () => {
-      const state = createFiltersTestRootState();
+    describe("recomputations", () => {
+      test("should not compute again with the same state", () => {
+        const state = createFiltersTestRootState();
 
-      selectParsedFilters.resetRecomputations();
-      selectParsedFilters(state);
-      expect(selectParsedFilters.recomputations()).toBe(1);
-      selectParsedFilters(state);
-      expect(selectParsedFilters.recomputations()).toBe(1);
-    });
+        selectParsedFilters.resetRecomputations();
 
-    test("should recompute with a new state", () => {
-      const firstState = createFiltersTestRootState();
+        selectParsedFilters(state);
+        expect(selectParsedFilters.recomputations()).toBe(1);
 
-      selectParsedFilters.resetRecomputations();
-      selectParsedFilters(firstState);
-      expect(selectParsedFilters.recomputations()).toBe(1);
+        selectParsedFilters(state);
+        expect(selectParsedFilters.recomputations()).toBe(1);
+      });
 
-      const secondState = createFiltersTestRootState(
-        { published: { start: "1990", end: "1991" } },
-      );
+      test("should recompute with a new state", () => {
+        const firstState = createFiltersTestRootState();
+        const secondState = createFiltersTestRootState(
+          { published: { start: "1990", end: "1991" } },
+        );
 
-      selectParsedFilters(secondState);
-      expect(selectParsedFilters.recomputations()).toBe(2);
+        selectParsedFilters.resetRecomputations();
+
+        selectParsedFilters(firstState);
+        expect(selectParsedFilters.recomputations()).toBe(1);
+
+        selectParsedFilters(secondState);
+        expect(selectParsedFilters.recomputations()).toBe(2);
+      });
     });
   });
 });
