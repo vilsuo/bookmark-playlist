@@ -1,12 +1,11 @@
 import '@testing-library/jest-dom/jest-globals';
-import server from './test/server';
+import server from './test/mocks/node';
 import { afterAll, afterEach, beforeAll } from '@jest/globals';
 
 // https://github.com/jsdom/jsdom/issues/1695
 Element.prototype.scrollTo = () => {};
-
-HTMLDialogElement.prototype.showModal = () => {};
-HTMLDialogElement.prototype.close = () => {};
+//HTMLDialogElement.prototype.showModal = () => {};
+//HTMLDialogElement.prototype.close = () => {};
 
 
 // Enable API mocking before tests.

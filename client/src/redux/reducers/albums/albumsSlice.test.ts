@@ -10,7 +10,8 @@ import { Notification, selectNotifications } from "../notificationSlice";
 import { selectQueue } from "../queueSlice";
 import { FilterCategories, selectFilterCategories } from "../filters/filterSlice";
 import { BASE_URL as CONVERTER_BASE_URL } from "../../../util/converterService";
-import server, { createServerMockErrorResponse } from "../../../../test/server";
+import server from "../../../../test/mocks/node";
+import { createServerMockErrorResponse } from "../../../../test/mocks/response";
 
 const createAlbumsRootTestState = (albums: Album[] = []) =>
   createDefaultAlbumsRootState({ albums });

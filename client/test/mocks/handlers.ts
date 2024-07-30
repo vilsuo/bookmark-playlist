@@ -1,13 +1,9 @@
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
-import { BASE_URL as ALBUMS_BASE_URL } from "../src/util/albumService";
-import { albums, newAlbum } from "./constants";
-import { Album, AlbumUpdate } from "../src/types";
-import { BASE_URL as CONVERTER_BASE_URL } from "../src/util/converterService";
+import { Album, AlbumUpdate } from "../../src/types";
 
-export const createServerMockErrorResponse = (message: string, status = 400) => {
-  return HttpResponse.json({ message } , { status });
-};
+import { albums, newAlbum } from "../constants";
+import { BASE_URL as ALBUMS_BASE_URL } from "../../src/util/albumService";
+import { BASE_URL as CONVERTER_BASE_URL } from "../../src/util/converterService";
 
 const albumHandlers = [
   http.get(ALBUMS_BASE_URL, async () => {
@@ -49,6 +45,4 @@ const converterHandlers = [
 
 const handlers = [ ...albumHandlers, ...converterHandlers ];
 
-const server = setupServer(...handlers);
-
-export default server;
+export default handlers;
