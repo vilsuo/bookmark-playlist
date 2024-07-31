@@ -22,6 +22,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "test", "jest-setup.ts"],
+  "include": ["src", "test", "jest-setup.ts", "cypress"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

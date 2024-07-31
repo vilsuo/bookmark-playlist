@@ -42,7 +42,7 @@ interface ExtendedMountOptions extends MountOptions {
 declare global {
   namespace Cypress {
     interface Chainable {
-      mount(component: React.ReactNode, options: ExtendedMountOptions): Chainable<Element>
+      mount(component: React.ReactNode, options: ExtendedMountOptions): ReturnType<typeof mountWithProviders>
     }
   }
 }
@@ -64,11 +64,3 @@ const mountWithProviders = (
 };
 
 Cypress.Commands.add("mount", mountWithProviders);
-
-/*
-Cypress.Commands.add("mount", (component: React.ReactNode, options: ExtendedMountOptions = {}) => {
-  // Wrap any parent components needed
-  // ie: return mount(<MyProvider>{component}</MyProvider>, options)
-  return mountWithProviders(component, options)
-});
-*/
