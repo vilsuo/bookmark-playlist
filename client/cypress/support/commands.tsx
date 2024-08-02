@@ -26,7 +26,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-
+import 'cypress-wait-until';
 import React from 'react';
 import { mount, MountOptions } from 'cypress/react18';
 

@@ -4,8 +4,6 @@ import { createDefaultAlbumsRootState } from '../../../../test/state';
 import { selectAlbums } from '../../../redux/reducers/albums/albumsSlice';
 import { BASE_URL as ALBUMS_BASE_URL } from '../../../util/albumService';
 
-//import { waitForServiceWorker, serviceWorker } from "../../../../cypress/support/msw";
-
 const album = newAlbumValues;
 
 const mountAlbumForm = (close = () => {}) => cy.mount(
@@ -30,24 +28,32 @@ describe('<AlbumAddDialog />', () => {
   });
 
   describe("successfull upload", () => {
-    beforeEach(() => {
-      cy.intercept(
-        {
-          method: "POST",
-          url: ALBUMS_BASE_URL,
-        },
-        newAlbum
-      ).as("postAlbum")
-    });
+    //beforeEach(() => {
+    //  cy.intercept(
+    //    {
+    //      method: "POST",
+    //      url: ALBUMS_BASE_URL,
+    //    }
+    //  ).as("postAlbum")
+    //  //cy.interceptRequest()
+//
+    //  //cy.interceptRequest(handlers[1], "postAlbum");
+    //});
 
-    it("should add the album", () => {
+    it.only("should add the album", () => {
+      cy.interceptRequest(
+        'POST',
+        `http://localhost:5173${ALBUMS_BASE_URL}`,
+        'postAlbum',
+      );
+
       mountAlbumForm().then(({ store }) => {
-
         cy.log("store", store)
 
         clickAdd();
-        cy.wait("@postAlbum").then(() => {
+        cy.waitForRequest('@postAlbum').then(() => {
           const result = selectAlbums(store.getState());
+          cy.log("result", result);
 
           expect(result).to.haveOwnProperty("length", 1);
           expect(result[0]).to.deep.equal(newAlbum);

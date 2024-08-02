@@ -12,11 +12,10 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-
 import "../../src/index.css";
 
 import './commands';
-//import "../support/msw";
+import "../support/interceptor";
 
 //import { mount } from 'cypress/react18';
 
