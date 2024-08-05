@@ -28,32 +28,21 @@ describe('<AlbumAddDialog />', () => {
   });
 
   describe("successfull upload", () => {
-    //beforeEach(() => {
-    //  cy.intercept(
-    //    {
-    //      method: "POST",
-    //      url: ALBUMS_BASE_URL,
-    //    }
-    //  ).as("postAlbum")
-    //  //cy.interceptRequest()
-//
-    //  //cy.interceptRequest(handlers[1], "postAlbum");
-    //});
-
-    it.only("should add the album", () => {
+    const alias = '@postAlbum';
+    
+    beforeEach(() => {
       cy.interceptRequest(
         'POST',
         `http://localhost:5173${ALBUMS_BASE_URL}`,
-        'postAlbum',
+        alias.substring(1),
       );
+    });
 
+    it("should add the album", () => {
       mountAlbumForm().then(({ store }) => {
-        cy.log("store", store)
-
         clickAdd();
-        cy.waitForRequest('@postAlbum').then(() => {
+        cy.waitForRequest(alias).then(() => {
           const result = selectAlbums(store.getState());
-          cy.log("result", result);
 
           expect(result).to.haveOwnProperty("length", 1);
           expect(result[0]).to.deep.equal(newAlbum);
@@ -66,7 +55,7 @@ describe('<AlbumAddDialog />', () => {
       mountAlbumForm(mockClose);
 
       clickAdd();
-      cy.wait("@postAlbum").then(() => expect(mockClose).to.be.calledOnce);
+      cy.waitForRequest(alias).then(() => expect(mockClose).to.be.calledOnce);
     });
   });
 

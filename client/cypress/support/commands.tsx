@@ -33,6 +33,7 @@ import { mount, MountOptions } from 'cypress/react18';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../src/redux/store';
 import type { AppStore, RootState } from '../../src/redux/store';
+import type { Call } from './interceptor';
 
 interface ExtendedMountOptions extends MountOptions {
   preloadedState?: Partial<RootState>
@@ -42,7 +43,10 @@ interface ExtendedMountOptions extends MountOptions {
 declare global {
   namespace Cypress {
     interface Chainable {
-      mount(component: React.ReactNode, options: ExtendedMountOptions): ReturnType<typeof mountWithProviders>
+      mount(component: React.ReactNode, options: ExtendedMountOptions): ReturnType<typeof mountWithProviders>;
+      
+      waitForRequest(alias: string): Chainable<Call>;
+      interceptRequest(type: string, route: string, alias: string): Chainable<string>;
     }
   }
 }

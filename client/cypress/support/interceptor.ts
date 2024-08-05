@@ -1,11 +1,11 @@
 // source: https://www.npmjs.com/package/cypress-msw-interceptor
-import { match } from 'node-match-path'
+import { match } from 'node-match-path';
 
-import worker from "../../test/mocks/browser"
+import worker from "../../test/mocks/browser";
 
-const { last } = Cypress._
+const { last } = Cypress._;
 
-type Call = {
+export type Call = {
   id: string,
   request: Request,
   response?: Response,
@@ -39,23 +39,7 @@ const registerRequest = ({ request, requestId }: { request: Request, requestId: 
   requestMap[requestId] = key;
 };
 
-const completeRequest = async ({ response, requestId }: { response: Response, requestId: string }) => {
-  console.log("before complete", requests);
-
-  await completeGenericRequest(
-    response,
-    requestId,
-    requests,
-  );
-
-  console.log("after complete", requests);
-};
-
-const completeGenericRequest = async(
-  response: Response,
-  requestId: string,
-  requests: Record<string, { calls: Call[], complete: boolean }>,
-) => {
+const completeRequest = ({ response, requestId }: { response: Response, requestId: string }) => {
   const key = requestMap[requestId];
   if (!requests[key]) return;
 
@@ -66,6 +50,18 @@ const completeGenericRequest = async(
 
   call.response = response;
   call.complete = true;
+
+  Cypress.log({
+    alias: aliases[key],
+    displayName: `[MSW] completed`,
+    message: `${requests[key]}`,
+    consoleProps: () => ({
+      [key]: requests[key],
+      url: call.request.url,
+      request: call.request,
+      response,
+    }),
+  })
 };
 
 before(() => {
@@ -94,21 +90,20 @@ Cypress.on('test:before:run', () => {
 
 Cypress.Commands.add('waitForRequest', (alias: string) => {
   cy.get(alias, { log: false }).then(url => {
-    console.log("url", url);
-
     Cypress.log({
       alias,
       displayName: 'Wait',
       name: 'wait',
       message: '',
-    })
+    });
+
     cy.waitUntil(() => requests[url] && requests[url].complete, {
       log: false,
     }).then(() => {
-      cy.wrap(last(requests[url].calls), { log: false })
+      cy.wrap(last(requests[url].calls), { log: false });
     })
-  })
-})
+  });
+});
 
 /*
 function getCalls(type, alias) {
@@ -125,18 +120,17 @@ Cypress.Commands.add('interceptRequest', (type: string, route: string, alias: st
   const key = `${method}:${route}`;
   keys.add(key);
 
-  console.log("set", alias, key)
   return setAlias(alias, key);
 });
 
 const setAlias = (alias: string, value: string) => {
-  if (alias) {
-    aliases[value] = alias;
-    return cy
-      .wrap(value, { log: false })
-      .as(alias)
-      .then(() => value);
-  }
+  //if (alias) {
+  aliases[value] = alias;
+  return cy
+    .wrap(value, { log: false })
+    .as(alias)
+    .then(() => value);
+  //}
 
-  return value;
+  //return value;
 };
