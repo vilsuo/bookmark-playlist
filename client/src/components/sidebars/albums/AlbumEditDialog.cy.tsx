@@ -5,9 +5,12 @@ import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
 import { selectAlbums } from "../../../redux/reducers/albums/albumsSlice";
 import { HttpMethods } from "msw";
 import { AlbumColumn } from "../../../types";
+import { createServerMockErrorResponse } from "../../../../test/mocks/response";
 
 const editIdx = 1;
 const album = albums[editIdx];
+
+const putBaseUrl = `${ALBUMS_BASE_URL}/${album.id}`;
 
 const mountAlbumDialog = (close = () => {}) => cy.mount(
   <AlbumEditDialog album={album} isOpen={true} onClose={close} />,
@@ -18,28 +21,22 @@ const mountAlbumDialog = (close = () => {}) => cy.mount(
 const clickEditCancel = () => cy.contains(".album-form button", /Cancel/).click();
 const clickEditSubmit = () => cy.contains(".album-form button", /Save/).click();
 
-/*
-const clickOpenConfirm = () => fireEvent.click(
-  screen.getByRole("button", { name: "Remove", hidden: true })
-);
+const clickOpenConfirm = () => cy.contains(".album-form button", /Remove/).click();
 
 // Confirm dialog
-const queryConfirmDialog = () => screen.getByTestId("confirm-dialog")
+const confirmDialogTestId = "delete-confirm";
 
-const clickConfirmOk = () => fireEvent.click(
-  within(queryConfirmDialog()!).getByRole("button", {
-    name: "Confirm",
-    hidden: true,
-  })
-);
+const clickConfirmOk = () => {
+  cy.findByTestId(confirmDialogTestId).within(() => {
+    cy.findByRole("button", { name: /Confirm/ }).click();
+  });
+};
 
-const clickConfirmCancel = () => fireEvent.click(
-  within(queryConfirmDialog()!).getByRole("button", {
-    name: "Cancel",
-    hidden: true,
-  })
-);
-*/
+const clickConfirmCancel = () => {
+  cy.findByTestId(confirmDialogTestId).within(() => {
+    cy.findByRole("button", { name: /Cancel/ }).click();
+  });
+};
 
 describe("<AlbumEditDialog />", () => {
   const newTitle = newAlbumValues.title;
@@ -65,7 +62,7 @@ describe("<AlbumEditDialog />", () => {
       beforeEach(() => {
         cy.interceptRequest(
           HttpMethods.PUT,
-          `${ALBUMS_BASE_URL}/${album.id}`,
+          putBaseUrl,
           alias.substring(1),
         );
       });
@@ -99,85 +96,135 @@ describe("<AlbumEditDialog />", () => {
       });
     });
   
-    /*
     describe("unsuccessfull edit", () => {
       const message = "validation failed";
 
       beforeEach(() => {
-        server.use(http.put(`${ALBUMS_BASE_URL}:/id`, async () => {
-          return createServerMockErrorResponse(message);
-        }));
+        cy.interceptRequest(
+          HttpMethods.PUT,
+          putBaseUrl,
+          () => createServerMockErrorResponse(message),
+          alias.substring(1),
+        );
       });
 
-      test("should not edit the album", async () => {
-        const { store } = renderAlbumForm();
+      it("should not edit the album", () => {
+        mountAlbumDialog().then(({ store }) => {
+          // type a new album title
+          cy.findByLabelText(AlbumColumn.ALBUM).clear().type(newTitle);
 
-        await submit(getEditSubmitButton());
+          clickEditSubmit();
 
-        expect(selectAlbums(store.getState())).not.toContainEqual(updatedAlbum);
+          cy.waitForRequest(alias).then(() => {
+            const result = selectAlbums(store.getState());
+
+            // no albums are added
+            expect(result).to.haveOwnProperty("length", albums.length);
+
+            // album is not updated
+            expect(result[editIdx]).not.to.deep.equal(updatedAlbum);
+            expect(result[editIdx]).to.deep.equal(album);
+          });
+        });
       });
 
-      test("should not close the dialog", async () => {
-        renderAlbumForm();
+      it("should not close the dialog", () => {
+        const mockClose = cy.stub().as("close");
+        mountAlbumDialog(mockClose);
 
-        await submit(getEditSubmitButton());
-
-        expect(mockClose).not.toHaveBeenCalled();
+        clickEditSubmit();
+        cy.waitForRequest(alias).then(() => {
+          cy.get("@close").should('not.have.been.called');
+        });
       });
     });
-    */
   });
 
-  /*
   describe("removing", () => {
-    test("should be able to open the confirm dialog", () => {
-      renderAlbumForm();
+    const alias = "@deleteAlbum";
+
+    beforeEach(() => {
+      cy.interceptRequest(
+        HttpMethods.DELETE,
+        putBaseUrl,
+        alias.substring(1),
+      );
+    });
+
+    it("should be able to open the confirm dialog", () => {
+      mountAlbumDialog();
   
       clickOpenConfirm();
 
-      expect(queryConfirmDialog()).toBeInTheDocument();
+      cy.findByTestId(confirmDialogTestId);
     });
 
     describe("confirming", () => {
-      test("should remove the album", () => {
-        const { store } = renderAlbumForm();
-        clickOpenConfirm();
+      it("should remove the album", () => {
+        mountAlbumDialog().then(({ store }) => {
+          clickOpenConfirm();
+          clickConfirmOk();
 
-        clickConfirmOk();
+          cy.waitForRequest(alias).then(() => {
+            const result = selectAlbums(store.getState());
 
-        expect(selectAlbums(store.getState())).not.toContainEqual(album);
+            // album is deleted
+            expect(result).to.haveOwnProperty("length", albums.length - 1);
+            expect(result).not.to.contain(album);
+
+            cy.getRequestCalls(alias).then(calls => {
+              expect(calls).to.have.length(1);
+            });
+          });
+        });
       });
 
-      test("should close the dialog", () => {
-        renderAlbumForm();
-        clickOpenConfirm();
+      it("should close the dialog", () => {
+        const mockClose = cy.stub().as("close");
+        mountAlbumDialog(mockClose);
 
+        clickOpenConfirm();
         clickConfirmOk();
 
-        expect(mockClose).toHaveBeenCalledTimes(1);
+        cy.waitForRequest(alias).then(() => {
+          cy.get("@close").should('have.been.called');
+        });
       });
     });
 
     describe("cancelling", () => {
-      test("should not remove the album", () => {
-        const { store } = renderAlbumForm();
-        clickOpenConfirm();
+      it("should not remove the album", () => {
+        mountAlbumDialog().then(({ store }) => {
+          clickOpenConfirm();
+          clickConfirmCancel();
 
-        clickConfirmCancel();
-  
-        expect(selectAlbums(store.getState())).toContainEqual(album);
+          // wait for dialog to be closed instead, since a request is not sent
+          cy.findAllByTestId(confirmDialogTestId).should('not.be.visible').then(() => {
+            const result = selectAlbums(store.getState());
+
+            // album is not deleted
+            expect(result).to.haveOwnProperty("length", albums.length);
+            expect(result).to.contain(album);
+
+            cy.getRequestCalls(alias).then(calls => {
+              expect(calls).to.have.length(0);
+            });
+          });
+        });
       });
 
-      test("should only close the confirm dialog", () => {
-        renderAlbumForm();
-        clickOpenConfirm();
+      it("should only close the confirm dialog", () => {
+        const mockClose = cy.stub().as("close");
+        mountAlbumDialog(mockClose);
 
+        clickOpenConfirm();
         clickConfirmCancel();
 
-        expect(queryConfirmDialog()).not.toBeInTheDocument();
-        expect(mockClose).not.toHaveBeenCalled();
+        // confirm dialog does not exist
+        cy.findAllByTestId(confirmDialogTestId).should('not.be.visible');
+
+        cy.get("@close").should('not.have.been.calledOnce');
       });
     });
   });
-  */
 });
