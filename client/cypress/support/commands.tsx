@@ -34,6 +34,7 @@ import { Provider } from 'react-redux';
 import { setupStore } from '../../src/redux/store';
 import type { AppStore, RootState } from '../../src/redux/store';
 import type { Call } from './interceptor';
+import { HttpResponseResolver } from 'msw';
 
 interface ExtendedMountOptions extends MountOptions {
   preloadedState?: Partial<RootState>
@@ -46,7 +47,12 @@ declare global {
       mount(component: React.ReactNode, options: ExtendedMountOptions): ReturnType<typeof mountWithProviders>;
       
       waitForRequest(alias: string): Chainable<Call>;
-      interceptRequest(type: string, route: string, alias: string): Chainable<string>;
+
+      interceptRequest(
+        method: string,
+        route: string,
+        ...args: Array<string | HttpResponseResolver>,
+      ): Chainable<string>;
     }
   }
 }

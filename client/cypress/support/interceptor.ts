@@ -2,6 +2,7 @@
 import { match } from 'node-match-path';
 
 import worker from "../../test/mocks/browser";
+import { http, HttpResponseResolver } from 'msw';
 
 const { last } = Cypress._;
 
@@ -89,7 +90,7 @@ Cypress.on('test:before:run', () => {
 });
 
 Cypress.Commands.add('waitForRequest', (alias: string) => {
-  cy.get(alias, { log: false }).then(url => {
+  cy.get<string>(alias, { log: false }).then(url => {
     Cypress.log({
       alias,
       displayName: 'Wait',
@@ -115,22 +116,46 @@ function getCalls(type, alias) {
 Cypress.Commands.add('getRequestCalls', alias => getCalls(requests, alias))
 */
 
-Cypress.Commands.add('interceptRequest', (type: string, route: string, alias: string) => {
-  const method = type.toUpperCase();
-  const key = `${method}:${route}`;
+Cypress.Commands.add('interceptRequest', (
+  method: string, 
+  route: string, 
+  ...args: Array<string | HttpResponseResolver>
+) => {
+  const { alias, fn } = getInterceptArgs(...args);
+
+  const key = `${method.toUpperCase()}:${route}`;
   keys.add(key);
+
+  if (fn) {
+    worker.use(http[method.toLowerCase()](route, fn));
+  }
 
   return setAlias(alias, key);
 });
 
-const setAlias = (alias: string, value: string) => {
-  //if (alias) {
-  aliases[value] = alias;
-  return cy
-    .wrap(value, { log: false })
-    .as(alias)
-    .then(() => value);
-  //}
+const getInterceptArgs = (...args: Array<string | HttpResponseResolver>) => {
+  let alias: string | undefined;
+  let fn: HttpResponseResolver | undefined;
+  
+  args.forEach(arg => {
+    if (Cypress._.isFunction(arg)) {
+      fn = arg;
+    } else if (Cypress._.isString(arg)) {
+      alias = arg;
+    }
+  });
 
-  //return value;
+  return { alias, fn };
+};
+
+const setAlias = (alias: string | undefined, value: string) => {
+  if (alias) {
+    aliases[value] = alias;
+    return cy
+      .wrap(value, { log: false })
+      .as(alias)
+      .then(() => value);
+  }
+
+  return value;
 };

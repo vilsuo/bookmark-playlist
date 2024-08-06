@@ -3,6 +3,8 @@ import { newAlbum, newAlbumValues } from '../../../../test/constants';
 import { createDefaultAlbumsRootState } from '../../../../test/state';
 import { selectAlbums } from '../../../redux/reducers/albums/albumsSlice';
 import { BASE_URL as ALBUMS_BASE_URL } from '../../../util/albumService';
+import { createServerMockErrorResponse } from '../../../../test/mocks/response';
+import { HttpMethods } from 'msw';
 
 const album = newAlbumValues;
 
@@ -16,6 +18,8 @@ const clickCancel = () => cy.contains("button", /Cancel/).click();
 const clickAdd = () => cy.contains("button", /Add/).click();
 
 describe('<AlbumAddDialog />', () => {
+  const alias = '@postAlbum';
+
   it('renders', () => {
     mountAlbumForm();
   });
@@ -28,11 +32,9 @@ describe('<AlbumAddDialog />', () => {
   });
 
   describe("successfull upload", () => {
-    const alias = '@postAlbum';
-    
     beforeEach(() => {
       cy.interceptRequest(
-        'POST',
+        HttpMethods.POST,
         `http://localhost:5173${ALBUMS_BASE_URL}`,
         alias.substring(1),
       );
@@ -59,31 +61,35 @@ describe('<AlbumAddDialog />', () => {
     });
   });
 
-  /*
   describe("unsuccessfull upload", () => {
     const message = "validation failed";
 
     beforeEach(() => {
-      server.use(http.post(ALBUMS_BASE_URL, async () => {
-        return createServerMockErrorResponse(message);
-      }));
+      cy.interceptRequest(
+        HttpMethods.POST,
+        `http://localhost:5173${ALBUMS_BASE_URL}`,
+        () => createServerMockErrorResponse(message),
+        alias.substring(1),
+      );
     });
 
-    test("should not add the album", async () => {
-      const { store } = renderAlbumForm();
+    it("should not add the album", () => {
+      mountAlbumForm().then(({ store }) => {
+        clickAdd();
+        cy.waitForRequest(alias).then(() => {
+          const result = selectAlbums(store.getState());
 
-      await submit(getSubmitButton());
-
-      expect(selectAlbums(store.getState())).toHaveLength(0);
+          expect(result).to.haveOwnProperty("length", 0);
+        });
+      });
     });
 
-    test("should not close the dialog", async () => {
-      renderAlbumForm();
+    it("should not close the dialog", () => {
+      const mockClose = cy.stub();
+      mountAlbumForm(mockClose);
 
-      await submit(getSubmitButton());
-
-      expect(mockClose).not.toHaveBeenCalled();
+      clickAdd();
+      cy.waitForRequest(alias).then(() => expect(mockClose).not.to.be.called);
     });
   });
-  */
 });
