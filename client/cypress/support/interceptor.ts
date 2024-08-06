@@ -106,23 +106,22 @@ Cypress.Commands.add('waitForRequest', (alias: string) => {
   });
 });
 
-/*
-function getCalls(type, alias) {
-  cy.get(alias, { log: false }).then(name => {
-    return cy.wrap(type[name].calls, { log: false })
-  })
-}
+const getCalls = (requests: Record<string, { calls: Call[], complete: boolean }>, alias: string) => {
+  cy.get<string>(alias, { log: false }).then(name => {
+    return cy.wrap(requests[name].calls, { log: false });
+  });
+};
 
-Cypress.Commands.add('getRequestCalls', alias => getCalls(requests, alias))
-*/
+Cypress.Commands.add('getRequestCalls', (alias: string) => getCalls(requests, alias));
 
 Cypress.Commands.add('interceptRequest', (
   method: string, 
-  route: string, 
+  path: string, 
   ...args: Array<string | HttpResponseResolver>
 ) => {
   const { alias, fn } = getInterceptArgs(...args);
 
+  const route = Cypress.env("CYPRESS_BACKEND_URL") + path;
   const key = `${method.toUpperCase()}:${route}`;
   keys.add(key);
 
@@ -151,6 +150,7 @@ const getInterceptArgs = (...args: Array<string | HttpResponseResolver>) => {
 const setAlias = (alias: string | undefined, value: string) => {
   if (alias) {
     aliases[value] = alias;
+
     return cy
       .wrap(value, { log: false })
       .as(alias)

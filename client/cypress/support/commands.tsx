@@ -48,8 +48,10 @@ declare global {
       
       waitForRequest(alias: string): Chainable<Call>;
 
+      getRequestCalls(alias: string): Chainable<Call[]>;
+
       interceptRequest(
-        method: string,
+        path: string,
         route: string,
         ...args: Array<string | HttpResponseResolver>,
       ): Chainable<string>;

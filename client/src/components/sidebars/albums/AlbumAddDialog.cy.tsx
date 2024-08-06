@@ -35,7 +35,7 @@ describe('<AlbumAddDialog />', () => {
     beforeEach(() => {
       cy.interceptRequest(
         HttpMethods.POST,
-        `http://localhost:5173${ALBUMS_BASE_URL}`,
+        ALBUMS_BASE_URL,
         alias.substring(1),
       );
     });
@@ -48,6 +48,10 @@ describe('<AlbumAddDialog />', () => {
 
           expect(result).to.haveOwnProperty("length", 1);
           expect(result[0]).to.deep.equal(newAlbum);
+
+          cy.getRequestCalls(alias).then(calls => {
+            expect(calls).to.have.length(1);
+          });
         });
       });
     });
@@ -67,7 +71,7 @@ describe('<AlbumAddDialog />', () => {
     beforeEach(() => {
       cy.interceptRequest(
         HttpMethods.POST,
-        `http://localhost:5173${ALBUMS_BASE_URL}`,
+        ALBUMS_BASE_URL,
         () => createServerMockErrorResponse(message),
         alias.substring(1),
       );
@@ -80,6 +84,10 @@ describe('<AlbumAddDialog />', () => {
           const result = selectAlbums(store.getState());
 
           expect(result).to.haveOwnProperty("length", 0);
+
+          cy.getRequestCalls(alias).then(calls => {
+            expect(calls).to.have.length(1);
+          });
         });
       });
     });
