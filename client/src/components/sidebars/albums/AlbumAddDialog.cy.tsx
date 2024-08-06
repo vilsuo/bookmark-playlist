@@ -8,7 +8,7 @@ import { HttpMethods } from 'msw';
 
 const album = newAlbumValues;
 
-const mountAlbumForm = (close = () => {}) => cy.mount(
+const mountAlbumDialog = (close = () => {}) => cy.mount(
   <AlbumAddDialog album={album} isOpen={true} onClose={close} />,
   { preloadedState: createDefaultAlbumsRootState() },
 );
@@ -21,14 +21,15 @@ describe('<AlbumAddDialog />', () => {
   const alias = '@postAlbum';
 
   it('renders', () => {
-    mountAlbumForm();
+    mountAlbumDialog();
   });
 
   it("should be able to close the dialog", () => {
-    const mockClose = cy.stub();
-    mountAlbumForm(mockClose);
+    const mockClose = cy.stub().as("close");
+    mountAlbumDialog(mockClose);
 
-    clickCancel().then(() => expect(mockClose).to.be.calledOnce);
+    clickCancel();
+    cy.get("@close").should('have.been.calledOnce');
   });
 
   describe("successfull upload", () => {
@@ -41,7 +42,7 @@ describe('<AlbumAddDialog />', () => {
     });
 
     it("should add the album", () => {
-      mountAlbumForm().then(({ store }) => {
+      mountAlbumDialog().then(({ store }) => {
         clickAdd();
         cy.waitForRequest(alias).then(() => {
           const result = selectAlbums(store.getState());
@@ -57,11 +58,11 @@ describe('<AlbumAddDialog />', () => {
     });
 
     it("should close the dialog", () => {
-      const mockClose = cy.stub();
-      mountAlbumForm(mockClose);
+      const mockClose = cy.stub().as("close");
+      mountAlbumDialog(mockClose);
 
       clickAdd();
-      cy.waitForRequest(alias).then(() => expect(mockClose).to.be.calledOnce);
+      cy.get("@close").should('have.been.calledOnce');
     });
   });
 
@@ -78,7 +79,7 @@ describe('<AlbumAddDialog />', () => {
     });
 
     it("should not add the album", () => {
-      mountAlbumForm().then(({ store }) => {
+      mountAlbumDialog().then(({ store }) => {
         clickAdd();
         cy.waitForRequest(alias).then(() => {
           const result = selectAlbums(store.getState());
@@ -93,11 +94,13 @@ describe('<AlbumAddDialog />', () => {
     });
 
     it("should not close the dialog", () => {
-      const mockClose = cy.stub();
-      mountAlbumForm(mockClose);
+      const mockClose = cy.stub().as("close");
+      mountAlbumDialog(mockClose);
 
       clickAdd();
-      cy.waitForRequest(alias).then(() => expect(mockClose).not.to.be.called);
+      cy.waitForRequest(alias).then(() => {
+        cy.get("@close").should('not.have.been.called');
+      });
     });
   });
 });

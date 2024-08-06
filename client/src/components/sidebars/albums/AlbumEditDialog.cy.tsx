@@ -1,48 +1,27 @@
-// TODO: test component with Cypress (jestdom does not support dialogs) so that
-// test do not test hidden elements!
-
-/*
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import AlbumEditDialog from "./AlbumEditDialog";
-import { renderWithProviders } from "../../../../test/render";
 import { albums, newAlbumValues } from "../../../../test/constants";
 import { createDefaultAlbumsRootState } from "../../../../test/state";
-import { fireEvent, screen, within } from "@testing-library/dom";
-import { http } from "msw";
 import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
 import { selectAlbums } from "../../../redux/reducers/albums/albumsSlice";
+import { HttpMethods } from "msw";
 import { AlbumColumn } from "../../../types";
-import { changeOptionByLabel, submit } from "../../../../test/uiHelpers";
-import server, { createServerMockErrorResponse } from "../../../../test/server";
 
 const editIdx = 1;
 const album = albums[editIdx];
 
-const mockClose = jest.fn();
-
-const renderAlbumForm = () => renderWithProviders(
-  <AlbumEditDialog album={album} isOpen={true} onClose={mockClose} />,
+const mountAlbumDialog = (close = () => {}) => cy.mount(
+  <AlbumEditDialog album={album} isOpen={true} onClose={close} />,
   { preloadedState: createDefaultAlbumsRootState({ albums }) },
 );
 
 // Edit dialog
-const getEditDialog = () => screen.getByTestId("edit-dialog")
+const clickEditCancel = () => cy.contains(".album-form button", /Cancel/).click();
+const clickEditSubmit = () => cy.contains(".album-form button", /Save/).click();
 
-const getEditSubmitButton = () => within(getEditDialog()!)
-  .getByRole("button", { name: "Save", hidden: true });
-
-const clickEditCancel = () => fireEvent.click(
-  within(getEditDialog()!).getByRole("button", {
-    name: "Cancel",
-    hidden: true,
-  })
-);
-
-
+/*
 const clickOpenConfirm = () => fireEvent.click(
   screen.getByRole("button", { name: "Remove", hidden: true })
 );
-
 
 // Confirm dialog
 const queryConfirmDialog = () => screen.getByTestId("confirm-dialog")
@@ -60,46 +39,67 @@ const clickConfirmCancel = () => fireEvent.click(
     hidden: true,
   })
 );
+*/
 
 describe("<AlbumEditDialog />", () => {
   const newTitle = newAlbumValues.title;
 
   const updatedAlbum = { ...album, title: newTitle };
 
-  test.only("should be able to close the dialog", () => {
-    renderAlbumForm();
+  it('renders', () => {
+    mountAlbumDialog();
+  });
 
-    screen.debug(getEditDialog())
+  it("should be able to close the dialog", () => {
+    const mockClose = cy.stub().as("close");
+    mountAlbumDialog(mockClose);
 
     clickEditCancel();
-
-    expect(mockClose).toHaveBeenCalledTimes(1);
+    cy.get("@close").should('have.been.calledOnce');
   });
 
   describe("editing", () => {
+    const alias = '@putAlbum';
+
     describe("successfull edit", () => {
-      test("should edit the album", async () => {
-        const { store } = renderAlbumForm();
-
-        await changeOptionByLabel(AlbumColumn.ALBUM, newTitle);
-
-        await submit(getEditSubmitButton());
-
-        const result = selectAlbums(store.getState());
-        expect(result).toHaveLength(albums.length);
-        expect(result).not.toContainEqual(album);
-        expect(result).toContainEqual(updatedAlbum);
+      beforeEach(() => {
+        cy.interceptRequest(
+          HttpMethods.PUT,
+          `${ALBUMS_BASE_URL}/${album.id}`,
+          alias.substring(1),
+        );
       });
 
-      test("should close the dialog", async () => {
-        renderAlbumForm();
+      it("should edit the album", () => {
+        mountAlbumDialog().then(({ store }) => {
+          // type a new album title
+          cy.findByLabelText(AlbumColumn.ALBUM).clear().type(newTitle);
 
-        await submit(getEditSubmitButton());
+          clickEditSubmit();
 
-        expect(mockClose).toHaveBeenCalledTimes(1);
+          cy.waitForRequest(alias).then(() => {
+            const result = selectAlbums(store.getState());
+
+            // no albums are added
+            expect(result).to.haveOwnProperty("length", albums.length);
+
+            // album is updated
+            expect(result[editIdx]).to.deep.equal(updatedAlbum);
+            expect(result[editIdx]).not.to.deep.equal(album);
+          });
+        });
+      });
+
+      it("should close the dialog", () => {
+        const mockClose = cy.stub().as("close");
+        mountAlbumDialog(mockClose);
+
+        clickEditSubmit();
+        cy.get("@close").should('have.been.calledOnce');
       });
     });
-
+  
+    /*
     describe("unsuccessfull edit", () => {
       const message = "validation failed";
 
@@ -125,8 +125,10 @@ describe("<AlbumEditDialog />", () => {
         expect(mockClose).not.toHaveBeenCalled();
       });
     });
+    */
   });
 
+  /*
   describe("removing", () => {
     test("should be able to open the confirm dialog", () => {
       renderAlbumForm();
@@ -177,5 +179,5 @@ describe("<AlbumEditDialog />", () => {
       });
     });
   });
+  */
 });
-*/

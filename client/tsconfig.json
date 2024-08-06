@@ -8,6 +8,8 @@
     
     "esModuleInterop": true,
 
+    "types": ["cypress", "@testing-library/cypress"],
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
