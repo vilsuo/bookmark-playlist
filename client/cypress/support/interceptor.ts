@@ -108,7 +108,10 @@ Cypress.Commands.add('waitForRequest', (alias: string) => {
 
 const getCalls = (requests: Record<string, { calls: Call[], complete: boolean }>, alias: string) => {
   cy.get<string>(alias, { log: false }).then(name => {
-    return cy.wrap(requests[name].calls, { log: false });
+    return cy.wrap(
+      (name in requests) ? requests[name].calls: [],
+      { log: false }
+    );
   });
 };
 
