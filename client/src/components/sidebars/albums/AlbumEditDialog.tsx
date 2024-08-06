@@ -41,6 +41,7 @@ const AlbumEditDialog = ({ album, isOpen, onClose }: AlbumEditDialogProps) => {
   return (
     <React.Fragment>
       <ConfirmDialog
+        dataTestId="delete-confirm"
         title='Remove album'
         isOpen={isRemoveOpen}
         onConfirm={removeAndClose}

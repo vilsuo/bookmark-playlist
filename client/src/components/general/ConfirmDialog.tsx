@@ -6,14 +6,16 @@ interface ConfirmDialogProps {
   onConfirm: () => Promise<void>;
   onCancel: () => void;
   children: React.ReactNode;
+  dataTestId?: string;
 };
 
-const ConfirmDialog = ({ title, isOpen, onConfirm, onCancel, children }: ConfirmDialogProps) => {
+const ConfirmDialog = ({ title, isOpen, onConfirm, onCancel, children, dataTestId }: ConfirmDialogProps) => {
   return (
     <DragDialog
       title={title}
       isOpen={isOpen}
       onClose={onCancel}
+      dataTestId={dataTestId}
     >
       <div className="dialog-body">
         { children }

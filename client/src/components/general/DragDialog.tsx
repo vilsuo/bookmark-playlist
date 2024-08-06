@@ -5,6 +5,7 @@ interface ToggleDialogProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  dataTestId?: string;
 };
 
 const DragDialog = ({
@@ -12,6 +13,7 @@ const DragDialog = ({
   isOpen,
   onClose,
   children,
+  dataTestId,
 }: ToggleDialogProps) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const elementRef = useRef<HTMLDialogElement>(null);
@@ -48,7 +50,7 @@ const DragDialog = ({
   );
 
   return (
-    <dialog className="draggable" ref={elementRef}>
+    <dialog className="draggable" ref={elementRef} data-testid={dataTestId}>
       <div className="header" onMouseDown={onMouseDown}>
         <h3>{title}</h3>
         <button onClick={onClose}>&#x2715;</button>
