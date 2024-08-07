@@ -13,6 +13,17 @@ export type Call = {
   complete: boolean
 };
 
+export enum HttpMethods {
+  ALL = "all",
+  HEAD = "head",
+  GET = "get",
+  POST = "post",
+  PUT = "put",
+  DELETE = "delete",
+  PATCH = "patch",
+  OPTIONS = "options",
+};
+
 let requests: Record<string, { calls: Call[], complete: boolean }> = {};
 let keys = new Set<string>();
 let requestMap: Record<string, string> = {}; // { requestId: key }
@@ -110,7 +121,7 @@ const getCalls = (requests: Record<string, { calls: Call[], complete: boolean }>
   cy.get<string>(alias, { log: false }).then(name => {
     return cy.wrap(
       (name in requests) ? requests[name].calls: [],
-      { log: false }
+      { log: false },
     );
   });
 };
@@ -118,47 +129,25 @@ const getCalls = (requests: Record<string, { calls: Call[], complete: boolean }>
 Cypress.Commands.add('getRequestCalls', (alias: string) => getCalls(requests, alias));
 
 Cypress.Commands.add('interceptRequest', (
-  method: string, 
+  method: HttpMethods, 
   path: string, 
-  ...args: Array<string | HttpResponseResolver>
+  alias: string,
+  resolver?: HttpResponseResolver,
 ) => {
-  const { alias, fn } = getInterceptArgs(...args);
-
   const route = Cypress.env("CYPRESS_BACKEND_URL") + path;
   const key = `${method.toUpperCase()}:${route}`;
   keys.add(key);
 
-  if (fn) {
-    worker.use(http[method.toLowerCase()](route, fn));
+  if (resolver) {
+    worker.use(http[method](route, resolver));
   }
 
   return setAlias(alias, key);
 });
 
-const getInterceptArgs = (...args: Array<string | HttpResponseResolver>) => {
-  let alias: string | undefined;
-  let fn: HttpResponseResolver | undefined;
-  
-  args.forEach(arg => {
-    if (Cypress._.isFunction(arg)) {
-      fn = arg;
-    } else if (Cypress._.isString(arg)) {
-      alias = arg;
-    }
-  });
-
-  return { alias, fn };
-};
-
-const setAlias = (alias: string | undefined, value: string) => {
-  if (alias) {
-    aliases[value] = alias;
-
-    return cy
-      .wrap(value, { log: false })
-      .as(alias)
-      .then(() => value);
-  }
-
-  return value;
+const setAlias = (alias: string, value: string) => {
+  return cy
+    .wrap(value, { log: false })
+    .as(alias)
+    .then(() => value);
 };

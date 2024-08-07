@@ -4,7 +4,7 @@ import { createDefaultAlbumsRootState } from '../../../../test/state';
 import { selectAlbums } from '../../../redux/reducers/albums/albumsSlice';
 import { BASE_URL as ALBUMS_BASE_URL } from '../../../util/albumService';
 import { createServerMockErrorResponse } from '../../../../test/mocks/response';
-import { HttpMethods } from 'msw';
+import { HttpMethods } from '../../../../cypress/support/interceptor';
 
 const album = newAlbumValues;
 
@@ -73,8 +73,8 @@ describe('<AlbumAddDialog />', () => {
       cy.interceptRequest(
         HttpMethods.POST,
         ALBUMS_BASE_URL,
-        () => createServerMockErrorResponse(message),
         alias.substring(1),
+        () => createServerMockErrorResponse(message),
       );
     });
 

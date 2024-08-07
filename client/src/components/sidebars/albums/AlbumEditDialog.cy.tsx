@@ -3,9 +3,9 @@ import { albums, newAlbumValues } from "../../../../test/constants";
 import { createDefaultAlbumsRootState } from "../../../../test/state";
 import { BASE_URL as ALBUMS_BASE_URL } from "../../../util/albumService";
 import { selectAlbums } from "../../../redux/reducers/albums/albumsSlice";
-import { HttpMethods } from "msw";
 import { AlbumColumn } from "../../../types";
 import { createServerMockErrorResponse } from "../../../../test/mocks/response";
+import { HttpMethods } from "../../../../cypress/support/interceptor";
 
 const editIdx = 1;
 const album = albums[editIdx];
@@ -53,6 +53,14 @@ describe("<AlbumEditDialog />", () => {
 
     clickEditCancel();
     cy.get("@close").should('have.been.calledOnce');
+  });
+
+  it("should be able to open the delete confirm dialog", () => {
+    mountAlbumDialog();
+
+    clickOpenConfirm();
+
+    cy.findByTestId(confirmDialogTestId);
   });
 
   describe("editing", () => {
@@ -103,8 +111,8 @@ describe("<AlbumEditDialog />", () => {
         cy.interceptRequest(
           HttpMethods.PUT,
           putBaseUrl,
-          () => createServerMockErrorResponse(message),
           alias.substring(1),
+          () => createServerMockErrorResponse(message),
         );
       });
 
@@ -150,15 +158,6 @@ describe("<AlbumEditDialog />", () => {
         alias.substring(1),
       );
     });
-
-    it("should be able to open the confirm dialog", () => {
-      mountAlbumDialog();
-  
-      clickOpenConfirm();
-
-      cy.findByTestId(confirmDialogTestId);
-    });
-
     describe("confirming", () => {
       it("should remove the album", () => {
         mountAlbumDialog().then(({ store }) => {

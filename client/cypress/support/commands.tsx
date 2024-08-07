@@ -35,7 +35,7 @@ import { mount, MountOptions } from 'cypress/react18';
 import { Provider } from 'react-redux';
 import { setupStore } from '../../src/redux/store';
 import type { AppStore, RootState } from '../../src/redux/store';
-import type { Call } from './interceptor';
+import type { Call, HttpMethods } from './interceptor';
 import { HttpResponseResolver } from 'msw';
 
 interface ExtendedMountOptions extends MountOptions {
@@ -53,9 +53,10 @@ declare global {
       getRequestCalls(alias: string): Chainable<Call[]>;
 
       interceptRequest(
+        method: HttpMethods,
         path: string,
-        route: string,
-        ...args: Array<string | HttpResponseResolver>,
+        alias: string,
+        resolver?: HttpResponseResolver,
       ): Chainable<string>;
     }
   }
