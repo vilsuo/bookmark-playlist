@@ -65,13 +65,13 @@ const completeRequest = ({ response, requestId }: { response: Response, requestI
 
   Cypress.log({
     alias: aliases[key],
-    displayName: `[MSW] completed`,
-    message: `${requests[key]}`,
+    displayName: `[MSW]`,
+    message: `completed`,
     consoleProps: () => ({
       [key]: requests[key],
       url: call.request.url,
       request: call.request,
-      response,
+      response: call.response,
     }),
   })
 };
@@ -146,6 +146,8 @@ Cypress.Commands.add('interceptRequest', (
 });
 
 const setAlias = (alias: string, value: string) => {
+  aliases[value] = alias;
+
   return cy
     .wrap(value, { log: false })
     .as(alias)
