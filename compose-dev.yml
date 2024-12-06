@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   server:
@@ -24,7 +22,7 @@ services:
     command: npm run dev -- --host
 
   db-dev:
-    image: postgres
+    image: postgres:16
     container_name: playlist-db-dev
     environment:
       POSTGRES_PASSWORD: password
@@ -33,7 +31,7 @@ services:
     ports:
       - 5555:5432
     volumes:
-      - ./pd_data:/var/lib/postgresql/data
+      - ./pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --username username --dbname dev"]
       interval: 5s
