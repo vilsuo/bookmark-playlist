@@ -15,8 +15,11 @@ const toAlbumBodyBase = (body: unknown): AlbumBodyBase => {
   }
 
   if (
-    !('videoId' in body) || !('artist' in body) || !('title' in body) ||
-    !('published' in body) || !('category' in body)
+    !('videoId' in body) ||
+    !('artist' in body) ||
+    !('title' in body) ||
+    !('published' in body) ||
+    !('category' in body)
   ) {
     throw new Error('missing required values');
   }
@@ -50,6 +53,13 @@ router.post('/', async (req, res) => {
   const addDate = new Date();
   const newBase = toAlbumBodyBase(req.body);
   const created = await albumService.createIfNotExists({ ...newBase, addDate });
+
+  if (!created) {
+    return res.status(400).send({
+      message: 'Already exists: ' + newBase.artist + ' - ' + newBase.title,
+    });
+  }
+
   return res.status(201).send(created);
 });
 
@@ -82,7 +92,7 @@ router.get('/download', async (_req, res) => {
   return res
     .setHeader(
       'Content-Disposition',
-      `attachment; filename="${createFilename()}"`
+      `attachment; filename="${createFilename()}"`,
     )
     .status(200)
     .send(albums);
